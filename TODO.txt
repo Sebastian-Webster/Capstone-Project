@@ -1,9 +1,0 @@
-Add dates - frontend
-Instagram like settings
-Private accounts
-Home and Search pages
-Delete and edit posts
-Instant messaging - private and group messages
-Add Redis caching for image posts
-Add Redis cache update when deleting or updating a post
-Add comments and tidy up code
