@@ -6,12 +6,18 @@ import './App.css'
 import { CredentialsContext } from './context/CredentialsContext';
 import { DarkModeContext } from './context/DarkModeContext';
 import useComponent from './hooks/useComponent';
+import { defaultPfp } from './constants';
+import { ServerUrlContext } from './context/ServerUrlContext';
+import useColorScheme from './hooks/useColorScheme';
 
 function App() {
   const {storedCredentials, setStoredCredentials} = useContext(CredentialsContext);
+  if (storedCredentials) {var {profileImageKey} = storedCredentials}
+  const {serverUrl, setServerUrl} = useContext(ServerUrlContext);
   const {darkMode, setDarkMode} = useContext(DarkModeContext);
   const {Div} = useComponent()
   const [anchorEl, setAnchorEl] = useState(null);
+  const colors = useColorScheme();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     console.log(event.currentTarget)
@@ -58,7 +64,7 @@ function App() {
             <FontAwesomeIcon icon={faMagnifyingGlass}/>
           </NavLink>
           <NavLink to="profile" style={navStyle}>
-            <FontAwesomeIcon icon={faChartLine}/>
+            <img src={profileImageKey ? `${serverUrl}/image/${profileImageKey}` : defaultPfp} style={{width: 45, height: 45, borderRadius: '50%', cursor: 'pointer', borderColor: colors.tertiary, borderWidth: 1, marginTop: 10, objectFit: 'center'}}/>
           </NavLink>
           <NavLink to="posts" style={navStyle}>
             <FontAwesomeIcon icon={faPlus}/>
