@@ -1,18 +1,16 @@
 version: '3.8'
 
-networks:
-  app-network:
-    driver: bridge
-
 services:
   redis:
     image: bitnami/redis:latest
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
-    networks:
-      - app-network
     volumes:
       - '/home/ec2-user/redis-store:/bitnami'
+    ports:
+      - 6379
+    expose:
+      - 6379
 
   backend:
     depends_on:
@@ -21,7 +19,7 @@ services:
     container_name: sebmedia_backend
     restart: unless-stopped
     ports:
-      - 8080
+      - 8080:8080
     expose:
       - 8080
 
@@ -34,6 +32,6 @@ services:
     container_name: sebmedia_frontend
     restart: unless-stopped
     ports:
-      - 80
+      - 80:80
     expose:
       - 80

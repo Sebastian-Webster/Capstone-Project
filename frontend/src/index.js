@@ -7,6 +7,7 @@ import { CredentialsContext } from './context/CredentialsContext';
 import PageNotFound from './routes/PageNotFound';
 import { DarkModeContext } from './context/DarkModeContext';
 import CircularProgress from '@mui/material/CircularProgress';
+import { ServerUrlContext } from './context/ServerUrlContext';
 
 const LazyApp = lazy(() => import('./App'))
 const LazyHome = lazy(() => import('./routes/Home'));
@@ -32,7 +33,8 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 const ComponentToRender = () => {
   const [storedCredentials, setStoredCredentials] = useState(JSON.parse(localStorage.getItem('SebMediaCredentials')));
-  const [darkMode, setDarkMode] = useState(window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : true)
+  const [darkMode, setDarkMode] = useState(window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : true);
+  const [serverUrl, setServerUrl] = useState(`http://${window.location.host}:8080`);
 
   window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
     setDarkMode(event.matches)
@@ -42,20 +44,22 @@ const ComponentToRender = () => {
     <div style={{height: '100vh', backgroundColor: darkMode ? 'black' : 'white', color: darkMode ? 'white' : 'black'}}>
       <CredentialsContext.Provider value={{storedCredentials, setStoredCredentials}}>
         <DarkModeContext.Provider value={{darkMode, setDarkMode}}>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Suspense fallback={<LazyLoadingComponent text="SebMedia is loading..."/>}><LazyApp/></Suspense>}>
-                <Route path="home" element={<Suspense fallback={<LazyLoadingComponent text="Home Screen is loading..."/>}><LazyHome/></Suspense>}/>
-                <Route path="search" element={<Suspense fallback={<LazyLoadingComponent text="Search Screen is loading..."/>}><LazySearch/></Suspense>}/>
-                <Route path="posts" element={<Suspense fallback={<LazyLoadingComponent text="Post creation screen is loading..."/>}><LazyPosts/></Suspense>}/>
-                <Route path="profile" element={<Suspense fallback={<LazyLoadingComponent text="Profile Screen is loading..."/>}><LazyProfile/></Suspense>}/>
-                <Route path="settings" element={<Suspense fallback={<LazyLoadingComponent text="Settings Screen is loading..."/>}><LazySettings/></Suspense>}/>
-              </Route>
-              <Route path="login" element={<Suspense fallback={<LazyLoadingComponent text="Login Screen is loading..."/>}><LazyLogin/></Suspense>}/>
-              <Route path="signup" element={<Suspense fallback={<LazyLoadingComponent text="Signup Screen is loading..."/>}><LazySignup/></Suspense>}/>
-              <Route path="*" element={<PageNotFound/>}/>
-            </Routes>
-          </BrowserRouter>
+          <ServerUrlContext.Provider value={{serverUrl, setServerUrl}}>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Suspense fallback={<LazyLoadingComponent text="SebMedia is loading..."/>}><LazyApp/></Suspense>}>
+                  <Route path="home" element={<Suspense fallback={<LazyLoadingComponent text="Home Screen is loading..."/>}><LazyHome/></Suspense>}/>
+                  <Route path="search" element={<Suspense fallback={<LazyLoadingComponent text="Search Screen is loading..."/>}><LazySearch/></Suspense>}/>
+                  <Route path="posts" element={<Suspense fallback={<LazyLoadingComponent text="Post creation screen is loading..."/>}><LazyPosts/></Suspense>}/>
+                  <Route path="profile" element={<Suspense fallback={<LazyLoadingComponent text="Profile Screen is loading..."/>}><LazyProfile/></Suspense>}/>
+                  <Route path="settings" element={<Suspense fallback={<LazyLoadingComponent text="Settings Screen is loading..."/>}><LazySettings/></Suspense>}/>
+                </Route>
+                <Route path="login" element={<Suspense fallback={<LazyLoadingComponent text="Login Screen is loading..."/>}><LazyLogin/></Suspense>}/>
+                <Route path="signup" element={<Suspense fallback={<LazyLoadingComponent text="Signup Screen is loading..."/>}><LazySignup/></Suspense>}/>
+                <Route path="*" element={<PageNotFound/>}/>
+              </Routes>
+            </BrowserRouter>
+          </ServerUrlContext.Provider>
         </DarkModeContext.Provider>
       </CredentialsContext.Provider>
     </div>

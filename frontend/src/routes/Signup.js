@@ -14,6 +14,7 @@ import Link from '@mui/material/Link'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { DarkModeContext } from '../context/DarkModeContext';
 import useComponent from '../hooks/useComponent';
+import { ServerUrlContext } from '../context/ServerUrlContext';
 
 const Signup = () => {
     const [loading, setLoading] = useState(false)
@@ -24,6 +25,7 @@ const Signup = () => {
     const navigate = useNavigate()
     const theme = createTheme();
     const { StyledTextField } = useComponent();
+    const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
 
     const handleSignup = (e) => {
         e.preventDefault();
@@ -31,7 +33,7 @@ const Signup = () => {
         setLoading(true)
         setError(null)
 
-        const url = 'http://localhost:8080/user/signup';
+        const url = `${serverUrl}/user/signup`;
         const data = new FormData(e.currentTarget)
         const toSend = {
             email: data.get('email'),

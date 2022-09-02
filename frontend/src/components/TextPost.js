@@ -6,18 +6,20 @@ import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';
 import Button from '@mui/material/Button'
 import axios from 'axios';
+import { ServerUrlContext } from '../context/ServerUrlContext';
 
 const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, userId, editMode}) => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext);
     const changingLikeStatus = useRef(false)
     const deleting = useRef(false)
+    const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
     const NetworkRequestController = new AbortController();
 
     const toggleLike = () => {
         if (liked) {
             //Unlike the post
             changingLikeStatus.current = true
-            axios.post('http://localhost:8080/user/unlikeTextPost', {publicId, postId}, {signal: NetworkRequestController.signal}).then(() => {
+            axios.post(`${serverUrl}/user/unlikeTextPost`, {publicId, postId}, {signal: NetworkRequestController.signal}).then(() => {
                 changingLikeStatus.current = false
                 dispatch({type: 'unlikePost', postId: postId})
             }).catch(error => {
@@ -27,7 +29,7 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
         } else {
             //Like the post
             changingLikeStatus.current = true
-            axios.post('http://localhost:8080/user/likeTextPost', {publicId, postId}, {signal: NetworkRequestController.signal}).then(() => {
+            axios.post(`${serverUrl}/user/likeTextPost`, {publicId, postId}, {signal: NetworkRequestController.signal}).then(() => {
                 changingLikeStatus.current = false
                 dispatch({type: 'likePost', postId: postId})
             }).catch(error => {
@@ -40,7 +42,7 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
     const deletePost = () => { //Self-destruct :-)
         if (deleting.current === false) {
             deleting.current = true;
-            axios.delete('http://localhost:8080/user/textPost', {data: {userId, postId}, signal: NetworkRequestController.signal}).then(() => {
+            axios.delete(`${serverUrl}/user/textPost`, {data: {userId, postId}, signal: NetworkRequestController.signal}).then(() => {
                 deleting.current = false;
                 dispatch({type: 'deletePost', postId})
             }).catch(error => {

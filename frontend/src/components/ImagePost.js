@@ -6,18 +6,20 @@ import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';
 import Button from '@mui/material/Button'
 import axios from 'axios';
+import { ServerUrlContext } from '../context/ServerUrlContext';
 
 const ImagePost = ({title, body, datePosted, imageKey, previewImage, liked, publicId, postId, dispatch, userId}) => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext)
     const changingLikeStatus = useRef(false)
     const deleting = useRef(false)
+    const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
     const NetworkRequestController = new AbortController();
 
     const toggleLike = () => {
         if (liked) {
             //Unlike the post
             changingLikeStatus.current = true
-            axios.post('http://localhost:8080/user/unlikeImagePost', {publicId, postId}, {signal: NetworkRequestController.signal}).then(() => {
+            axios.post(`${serverUrl}/user/unlikeImagePost`, {publicId, postId}, {signal: NetworkRequestController.signal}).then(() => {
                 changingLikeStatus.current = false
                 dispatch({type: 'unlikePost', postId: postId})
             }).catch(error => {
@@ -27,7 +29,7 @@ const ImagePost = ({title, body, datePosted, imageKey, previewImage, liked, publ
         } else {
             //Like the post
             changingLikeStatus.current = true
-            axios.post('http://localhost:8080/user/likeImagePost', {publicId, postId}, {signal: NetworkRequestController.signal}).then(() => {
+            axios.post(`${serverUrl}/user/likeImagePost`, {publicId, postId}, {signal: NetworkRequestController.signal}).then(() => {
                 changingLikeStatus.current = false
                 dispatch({type: 'likePost', postId: postId})
             }).catch(error => {
@@ -40,7 +42,7 @@ const ImagePost = ({title, body, datePosted, imageKey, previewImage, liked, publ
     const deletePost = () => {
         if (deleting.current === false) {
             deleting.current = true;
-            axios.delete('http://localhost:8080/user/imagePost', {data: {userId, postId}, signal: NetworkRequestController.signal}).then(() => {
+            axios.delete(`${serverUrl}/user/imagePost`, {data: {userId, postId}, signal: NetworkRequestController.signal}).then(() => {
                 deleting.current = false;
                 dispatch({type: 'deletePost', postId})
             }).catch(error => {
@@ -62,7 +64,7 @@ const ImagePost = ({title, body, datePosted, imageKey, previewImage, liked, publ
             <div style={{border: `1px solid ${darkMode ? 'white' : 'black'}`}}>
                 <h1>{title}</h1>
                 <p>{body}</p>
-                <img src={previewImage ? previewImage : `http://localhost:8080/image/${imageKey}`} style={{maxHeight: '100%', maxWidth: '100%'}}/>
+                <img src={previewImage ? previewImage : `${serverUrl}/image/${imageKey}`} style={{maxHeight: '100%', maxWidth: '100%'}}/>
                 <br/>
                 <FontAwesomeIcon 
                     icon={liked ? fasHeart : farHeart}
