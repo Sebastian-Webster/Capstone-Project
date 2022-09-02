@@ -14,6 +14,7 @@ import Link from '@mui/material/Link'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { DarkModeContext } from '../context/DarkModeContext';
 import useComponent from '../hooks/useComponent';
+import { ServerUrlContext } from '../context/ServerUrlContext';
 
 const Login = () => {
     const [error, setError] = useState(null)
@@ -24,13 +25,14 @@ const Login = () => {
     const theme = createTheme();
     const {darkMode, setDarkMode} = useContext(DarkModeContext);
     const { StyledTextField } = useComponent();
+    const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
 
     const handleLogin = (e) => {
         e.preventDefault()
         setLoading(true)
         setError(null)
 
-        const url = 'http://localhost:8080/user/login'
+        const url = `${serverUrl}/user/login`
         const data = new FormData(e.currentTarget)
         const toSend = {
             email: data.get('email'),

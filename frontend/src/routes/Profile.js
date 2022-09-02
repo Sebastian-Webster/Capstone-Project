@@ -12,6 +12,7 @@ import ImagePost from '../components/ImagePost';
 import { defaultPfp } from '../constants';
 import { useFilePicker } from 'use-file-picker';
 import { DarkModeContext } from '../context/DarkModeContext';
+import { ServerUrlContext } from '../context/ServerUrlContext';
 
 var _ = require('lodash')
 
@@ -23,6 +24,7 @@ const Profile = () => {
     const [openProfileImageFileSelector, { plainFiles: profileImageToUpload, loading: profileImageFileLoading}] = useFilePicker({accept: 'image/jpeg', multiple: false})
     const [profileImageUploading, setProfileImageUploading] = useState(false);
     const {darkMode, setDarkMode} = useContext(DarkModeContext);
+    const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
 
     const textPostReducer = (state, action) => {
         switch(action.type) {
@@ -190,7 +192,7 @@ const Profile = () => {
             if (textPostState.loading === false) {
                 dispatchTextPostUpdate({type: 'nowLoading'})
 
-                axios.get(`http://localhost:8080/user/textPostsByUserName/?username=${name}&skip=${Array.isArray(textPostState.posts) ? textPostState.posts.length : 0}&publicId=${publicId}`)
+                axios.get(`${serverUrl}/user/textPostsByUserName/?username=${name}&skip=${Array.isArray(textPostState.posts) ? textPostState.posts.length : 0}&publicId=${publicId}`)
                 .then(response => response.data.data)
                 .then(result => {
                     dispatchTextPostUpdate({
@@ -210,7 +212,7 @@ const Profile = () => {
             if (imagePostState.loading === false) {
                 dispatchImagePostUpdate({type: 'nowLoading'})
 
-                axios.get(`http://localhost:8080/user/imagePostsByUserName/?username=${name}&skip=${Array.isArray(imagePostState.posts) ? imagePostState.posts.length : 0}&publicId=${publicId}`)
+                axios.get(`${serverUrl}/user/imagePostsByUserName/?username=${name}&skip=${Array.isArray(imagePostState.posts) ? imagePostState.posts.length : 0}&publicId=${publicId}`)
                 .then(response => response.data.data)
                 .then(result => {
                     dispatchImagePostUpdate({
@@ -267,7 +269,7 @@ const Profile = () => {
             toSend.append('image', profileImageToUpload[0])
             toSend.append('_id', _id)
 
-            axios.post('http://localhost:8080/user/updateProfileImage', toSend, {
+            axios.post(`${serverUrl}/user/updateProfileImage`, toSend, {
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'multipart/form-data'
@@ -300,7 +302,7 @@ const Profile = () => {
                             <CircularProgress/>
                         </Box>
                     :
-                        <img onClick={() => openProfileImageFileSelector()} src={profileImageKey ? `http://localhost:8080/image/${profileImageKey}` : defaultPfp} style={{width: 50, height: 50, borderRadius: '100%', marginLeft: 10, cursor: 'pointer'}}/>
+                        <img onClick={() => openProfileImageFileSelector()} src={profileImageKey ? `${serverUrl}/image/${profileImageKey}` : defaultPfp} style={{width: 50, height: 50, borderRadius: '100%', marginLeft: 10, cursor: 'pointer'}}/>
                     }
                 </FlexRowCentreDiv>
                 <FlexColumnCentreDiv>
