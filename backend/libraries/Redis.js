@@ -7,7 +7,7 @@ const generalLib = new General();
 class RedisLibrary {
     constructor() {
         (async () => { //IIFE - Immediately Invoked Function Expression
-            this.redisClient = redis.createClient();
+            this.redisClient = redis.createClient({url: 'redis://redis:6379'});
           
             this.redisClient.on("error", logger.error);
           

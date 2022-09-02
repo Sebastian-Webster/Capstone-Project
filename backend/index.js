@@ -15,7 +15,7 @@ const HTTPHandler = require('./libraries/HTTPHandler')
 const logger = new LoggerLibrary();
 const http = new HTTPHandler();
 const bodyParser = require('body-parser')
-const ports = [80, 443, 8080]
+const ports = [8080]
 const servers = []
 
 const UserRoute = require('./routes/User');
