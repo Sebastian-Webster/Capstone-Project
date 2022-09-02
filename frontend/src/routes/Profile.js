@@ -39,7 +39,7 @@ const Profile = () => {
                     const newTextPosts = Array.isArray(state.posts) ? _.cloneDeep(state.posts) : []
                     newTextPosts.push(...action.result)
                     return {...state, posts: newTextPosts, loading: false, error: null}
-                } else return Array.isArray(state.posts) ? {...state, posts: [...action.result, ...state.posts], loading: false, error: null} : {...state, posts: []}
+                } else return Array.isArray(state.posts) ? {...state, posts: [...action.result, ...state.posts], loading: false, error: null} : {...state, posts: [], loading: false}
             case 'likePost':
                 const likePostIndex = state.posts.findIndex(item => item.postId === action.postId)
                 if (likePostIndex === -1) {
@@ -118,7 +118,7 @@ const Profile = () => {
                     const newTextPosts = Array.isArray(state.posts) ? _.cloneDeep(state.posts) : []
                     newTextPosts.push(...action.result)
                     return {...state, posts: newTextPosts, loading: false, error: null}
-                } else return Array.isArray(state.posts) ? {...state, posts: [...action.result, ...state.posts], loading: false, error: null} : {...state, posts: []}
+                } else return Array.isArray(state.posts) ? {...state, posts: [...action.result, ...state.posts], loading: false, error: null} : {...state, posts: [], loading: false}
             case 'likePost':
                 const likePostIndex = state.posts.findIndex(item => item.postId === action.postId)
                 if (likePostIndex === -1) {
