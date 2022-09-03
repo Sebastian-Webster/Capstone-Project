@@ -64,7 +64,7 @@ function App() {
             <FontAwesomeIcon icon={faMagnifyingGlass}/>
           </NavLink>
           <NavLink to="profile" style={navStyle}>
-            <img src={profileImageKey ? `${serverUrl}/image/${profileImageKey}` : defaultPfp} style={{width: 45, height: 45, borderRadius: '50%', cursor: 'pointer', borderColor: colors.tertiary, borderWidth: 1, marginTop: 10, objectFit: 'center'}}/>
+            <img src={profileImageKey ? `${serverUrl}/image/${profileImageKey}` : defaultPfp} style={{width: 50, height: 50, borderRadius: '50%', cursor: 'pointer', borderColor: colors.tertiary, borderWidth: 1, marginTop: 10, objectFit: 'center'}} alt='Profile Image'/>
           </NavLink>
           <NavLink to="posts" style={navStyle}>
             <FontAwesomeIcon icon={faPlus}/>
