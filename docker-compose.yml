@@ -6,7 +6,7 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
-      - '/home/ec2-user/redis-store:/bitnami'
+      - '${REDIS_STORE}:/bitnami'
     ports:
       - 6379
     expose:
