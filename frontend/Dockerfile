@@ -1,7 +1,6 @@
 FROM node:18-alpine
 WORKDIR /app
 COPY . .
-RUN npm install npm@latest
 RUN npm install
 RUN npm install serve --location=global
 RUN npm run build

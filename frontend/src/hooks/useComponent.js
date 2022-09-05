@@ -2,9 +2,11 @@ import { useContext } from "react";
 import { DarkModeContext } from "../context/DarkModeContext";
 import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
+import useColorScheme from "./useColorScheme";
 
 const useComponent = () => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext);
+    const colors = useColorScheme()
 
     const FlexRowCentreDiv = (props) => {
         return <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', backgroundColor: darkMode ? 'black' : 'white', color: darkMode ? 'white' : 'black', ...props.style}}>{props.children}</div>
