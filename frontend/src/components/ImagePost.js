@@ -8,7 +8,7 @@ import Button from '@mui/material/Button'
 import axios from 'axios';
 import { ServerUrlContext } from '../context/ServerUrlContext';
 
-const ImagePost = ({title, body, datePosted, imageKey, previewImage, liked, publicId, postId, dispatch, userId}) => {
+const ImagePost = ({title, body, datePosted, imageKey, previewImage, liked, publicId, postId, dispatch, userId, previewMode}) => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext)
     const changingLikeStatus = useRef(false)
     const deleting = useRef(false)
@@ -16,31 +16,33 @@ const ImagePost = ({title, body, datePosted, imageKey, previewImage, liked, publ
     const NetworkRequestController = new AbortController();
 
     const toggleLike = () => {
-        if (liked) {
-            //Unlike the post
-            changingLikeStatus.current = true
-            axios.post(`${serverUrl}/user/unlikeImagePost`, {publicId, postId}, {signal: NetworkRequestController.signal}).then(() => {
-                changingLikeStatus.current = false
-                dispatch({type: 'unlikePost', postId: postId})
-            }).catch(error => {
-                alert(error?.response?.data?.error || String(error))
-                changingLikeStatus.current = false
-            })
-        } else {
-            //Like the post
-            changingLikeStatus.current = true
-            axios.post(`${serverUrl}/user/likeImagePost`, {publicId, postId}, {signal: NetworkRequestController.signal}).then(() => {
-                changingLikeStatus.current = false
-                dispatch({type: 'likePost', postId: postId})
-            }).catch(error => {
-                alert(error?.response?.data?.error || String(error))
-                changingLikeStatus.current = false
-            })
+        if (!previewMode && changingLikeStatus.current === false) {
+            if (liked) {
+                //Unlike the post
+                changingLikeStatus.current = true
+                axios.post(`${serverUrl}/user/unlikeImagePost`, {publicId, postId}, {signal: NetworkRequestController.signal}).then(() => {
+                    changingLikeStatus.current = false
+                    dispatch({type: 'unlikePost', postId: postId})
+                }).catch(error => {
+                    alert(error?.response?.data?.error || String(error))
+                    changingLikeStatus.current = false
+                })
+            } else {
+                //Like the post
+                changingLikeStatus.current = true
+                axios.post(`${serverUrl}/user/likeImagePost`, {publicId, postId}, {signal: NetworkRequestController.signal}).then(() => {
+                    changingLikeStatus.current = false
+                    dispatch({type: 'likePost', postId: postId})
+                }).catch(error => {
+                    alert(error?.response?.data?.error || String(error))
+                    changingLikeStatus.current = false
+                })
+            }
         }
     }
 
     const deletePost = () => {
-        if (deleting.current === false) {
+        if (deleting.current === false && !previewMode) {
             deleting.current = true;
             axios.delete(`${serverUrl}/user/imagePost`, {data: {userId, postId}, signal: NetworkRequestController.signal}).then(() => {
                 deleting.current = false;
@@ -61,17 +63,15 @@ const ImagePost = ({title, body, datePosted, imageKey, previewImage, liked, publ
 
     return (
         <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
-            <div style={{border: `1px solid ${darkMode ? 'white' : 'black'}`}}>
-                <h1>{title}</h1>
-                <p>{body}</p>
+            <div style={{border: `1px solid ${darkMode ? 'white' : 'black'}`, maxHeight: '100%'}}>
+                <h1 style={{wordBreak: 'break-all'}}>{title}</h1>
+                <p style={{wordBreak: 'break-all'}}>{body}</p>
                 <img src={previewImage ? previewImage : `${serverUrl}/image/${imageKey}`} style={{maxHeight: '100%', maxWidth: '100%'}}/>
                 <br/>
                 <FontAwesomeIcon 
                     icon={liked ? fasHeart : farHeart}
                     style={{color: liked ? 'red' : darkMode ? 'white' : 'black', cursor: 'pointer', fontSize: 30}}
-                    onClick={() => {
-                        if (changingLikeStatus.current === false) toggleLike()
-                    }}
+                    onClick={toggleLike}
                 />
                 <br/>
                 <Button color="secondary" variant="contained" sx={{mt: 1}} onClick={deletePost}>Delete</Button>

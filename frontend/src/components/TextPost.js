@@ -8,7 +8,7 @@ import Button from '@mui/material/Button'
 import axios from 'axios';
 import { ServerUrlContext } from '../context/ServerUrlContext';
 
-const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, userId, editMode}) => {
+const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, userId, editMode, previewMode}) => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext);
     const changingLikeStatus = useRef(false)
     const deleting = useRef(false)
@@ -16,52 +16,62 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
     const NetworkRequestController = new AbortController();
 
     const toggleLike = () => {
-        if (liked) {
-            //Unlike the post
-            changingLikeStatus.current = true
-            axios.post(`${serverUrl}/user/unlikeTextPost`, {publicId, postId}, {signal: NetworkRequestController.signal}).then(() => {
-                changingLikeStatus.current = false
-                dispatch({type: 'unlikePost', postId: postId})
-            }).catch(error => {
-                alert(error?.response?.data?.error || String(error))
-                changingLikeStatus.current = false
-            })
-        } else {
-            //Like the post
-            changingLikeStatus.current = true
-            axios.post(`${serverUrl}/user/likeTextPost`, {publicId, postId}, {signal: NetworkRequestController.signal}).then(() => {
-                changingLikeStatus.current = false
-                dispatch({type: 'likePost', postId: postId})
-            }).catch(error => {
-                alert(error?.response?.data?.error || String(error))
-                changingLikeStatus.current = false
-            })
+        if (!previewMode) {
+            if (liked) {
+                //Unlike the post
+                changingLikeStatus.current = true
+                axios.post(`${serverUrl}/user/unlikeTextPost`, {publicId, postId}, {signal: NetworkRequestController.signal}).then(() => {
+                    changingLikeStatus.current = false
+                    dispatch({type: 'unlikePost', postId: postId})
+                }).catch(error => {
+                    alert(error?.response?.data?.error || String(error))
+                    changingLikeStatus.current = false
+                })
+            } else {
+                //Like the post
+                changingLikeStatus.current = true
+                axios.post(`${serverUrl}/user/likeTextPost`, {publicId, postId}, {signal: NetworkRequestController.signal}).then(() => {
+                    changingLikeStatus.current = false
+                    dispatch({type: 'likePost', postId: postId})
+                }).catch(error => {
+                    alert(error?.response?.data?.error || String(error))
+                    changingLikeStatus.current = false
+                })
+            }
         }
     }
 
     const deletePost = () => { //Self-destruct :-)
-        if (deleting.current === false) {
-            deleting.current = true;
-            axios.delete(`${serverUrl}/user/textPost`, {data: {userId, postId}, signal: NetworkRequestController.signal}).then(() => {
-                deleting.current = false;
-                dispatch({type: 'deletePost', postId})
-            }).catch(error => {
-                alert(error?.response?.data?.error || String(error))
-                deleting.current = false
-            })
+        if (!previewMode) {
+            if (deleting.current === false) {
+                deleting.current = true;
+                axios.delete(`${serverUrl}/user/textPost`, {data: {userId, postId}, signal: NetworkRequestController.signal}).then(() => {
+                    deleting.current = false;
+                    dispatch({type: 'deletePost', postId})
+                }).catch(error => {
+                    alert(error?.response?.data?.error || String(error))
+                    deleting.current = false
+                })
+            }
         }
     }
 
     const editPost = () => {
-        dispatch({type: 'turnOnEditMode', postId})
+        if (!previewMode) {
+            dispatch({type: 'turnOnEditMode', postId})
+        }
     }
 
     const revertEdits = () => {
-        dispatch({type: 'turnOffEditMode', postId})
+        if (!previewMode) {
+            dispatch({type: 'turnOffEditMode', postId})
+        }
     }
 
     const saveEdits = () => {
-        alert('Coming soon')
+        if (!previewMode) {
+            alert('Coming soon!')
+        }
     }
 
     useEffect(() => {
@@ -74,8 +84,8 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
     return (
         <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
             <div style={{border: `1px solid ${darkMode ? 'white' : 'black'}`, padding: 10}}>
-                <h1>{title}</h1>
-                <p>{body}</p>
+                <h1 style={{wordBreak: 'break-all'}}>{title}</h1>
+                <p style={{wordBreak: 'break-all'}}>{body}</p>
                 {editMode ?
                     <>
                         <Button color="error" variant="outlined" sx={{mt: 1, mr: 1}} onClick={revertEdits}>Revert</Button>

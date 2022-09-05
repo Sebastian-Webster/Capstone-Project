@@ -13,10 +13,14 @@ const useColorScheme = () => {
         tertiary: 'white',
         secondary: '#EFEFEF'
     }
-    const [colorScheme, setColorScheme] = useState(lightColors)
+    const [colorScheme, setColorScheme] = useState(darkMode ? darkColors : lightColors)
 
     useEffect(() => {
-        setColorScheme(darkMode ? darkColors : lightColors)
+        if ((darkMode && colorScheme == darkColors) || (!darkMode && colorScheme == lightColors)) {
+            //Do not run
+        } else {
+            setColorScheme(darkMode ? darkColors : lightColors)
+        }
     }, [darkMode])
 
     return colorScheme
