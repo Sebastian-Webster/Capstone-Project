@@ -12,7 +12,7 @@ import useColorScheme from './hooks/useColorScheme';
 
 function App() {
   const {storedCredentials, setStoredCredentials} = useContext(CredentialsContext);
-  if (storedCredentials) {var {profileImageKey} = storedCredentials}
+  if (storedCredentials) {var {profileImageUri} = storedCredentials}
   const {serverUrl, setServerUrl} = useContext(ServerUrlContext);
   const {darkMode, setDarkMode} = useContext(DarkModeContext);
   const {Div} = useComponent()
@@ -64,7 +64,7 @@ function App() {
             <FontAwesomeIcon icon={faMagnifyingGlass}/>
           </NavLink>
           <NavLink to="profile" style={navStyle}>
-            <img src={profileImageKey ? `${serverUrl}/image/${profileImageKey}` : defaultPfp} style={{width: 50, height: 50, borderRadius: '50%', cursor: 'pointer', borderColor: colors.tertiary, borderWidth: 1, marginTop: 10, objectFit: 'center'}} alt='Profile Image'/>
+            <img src={profileImageUri} style={{width: 50, height: 50, cursor: 'pointer', border: `2px solid ${colors.tertiary}`, borderRadius: '50%', marginTop: 10, objectFit: 'center'}} alt='Profile Image'/>
           </NavLink>
           <NavLink to="posts" style={navStyle}>
             <FontAwesomeIcon icon={faPlus}/>

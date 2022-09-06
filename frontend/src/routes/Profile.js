@@ -13,18 +13,20 @@ import { defaultPfp } from '../constants';
 import { useFilePicker } from 'use-file-picker';
 import { DarkModeContext } from '../context/DarkModeContext';
 import { ServerUrlContext } from '../context/ServerUrlContext';
+import useColorScheme from '../hooks/useColorScheme';
 
 var _ = require('lodash')
 
 const Profile = () => {
     const {storedCredentials, setStoredCredentials} = useContext(CredentialsContext)
     const { FlexRowCentreDiv, FlexColumnCentreDiv, FlexRowSpaceAroundDiv, H3NoMargin } = useComponent()
-    const {name, followers, following, profileImageKey, _id, publicId} = storedCredentials;
+    const {name, followers, following, profileImageUri, _id, publicId} = storedCredentials;
     const [view, setView] = useState('textPosts')
     const [openProfileImageFileSelector, { plainFiles: profileImageToUpload, loading: profileImageFileLoading}] = useFilePicker({accept: 'image/jpeg', multiple: false})
     const [profileImageUploading, setProfileImageUploading] = useState(false);
     const {darkMode, setDarkMode} = useContext(DarkModeContext);
     const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
+    const colors = useColorScheme()
 
     const textPostReducer = (state, action) => {
         switch(action.type) {
@@ -269,26 +271,44 @@ const Profile = () => {
             toSend.append('image', profileImageToUpload[0])
             toSend.append('_id', _id)
 
-            axios.post(`${serverUrl}/user/updateProfileImage`, toSend, {
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'multipart/form-data'
-                }
-            }).then(response => response.data.data)
-            .then(result => {
-                const newStoredCredentials = _.cloneDeep(storedCredentials)
-                newStoredCredentials.profileImageKey = result
-                if (localStorage.getItem('SebMediaCredentials')) {
-                    localStorage.setItem('SebMediaCredentials', JSON.stringify(newStoredCredentials))
-                }
-                setStoredCredentials(newStoredCredentials)
-                setProfileImageUploading(false)
-            })
-            .catch(error => {
-                alert('Error uploading profile image: ' + (error?.response?.data?.error || String(error)))
+            var file = profileImageToUpload[0]
+            var reader = new FileReader();
+
+            reader.onloadend = (e) => {
+                axios.post(`${serverUrl}/user/updateProfileImage`, toSend, {
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                .then(response => response.data.data)
+                .then(result => {
+                    const newStoredCredentials = _.cloneDeep(storedCredentials)
+                    newStoredCredentials.profileImageKey = result
+                    newStoredCredentials.profileImageUri = reader.result
+                    if (newStoredCredentials.rememberMe) {
+                        localStorage.setItem('SebMediaCredentials', JSON.stringify(newStoredCredentials))
+                    }
+                    setStoredCredentials(newStoredCredentials)
+                    setProfileImageUploading(false)
+                })
+                .catch(error => {
+                    alert('Error uploading profile image: ' + (error?.response?.data?.error || String(error)))
+                    console.error(error)
+                    setProfileImageUploading(false)
+                })
+            }
+
+            const handleError = (error) => {
                 console.error(error)
+                alert('Error processing profile image: ' + String(error))
                 setProfileImageUploading(false)
-            })
+            }
+
+            reader.onabort = handleError
+            reader.onerror = handleError
+
+            reader.readAsDataURL(file);
         }
     }, [profileImageToUpload])
 
@@ -302,7 +322,9 @@ const Profile = () => {
                             <CircularProgress/>
                         </Box>
                     :
-                        <img onClick={() => openProfileImageFileSelector()} src={profileImageKey ? `${serverUrl}/image/${profileImageKey}` : defaultPfp} style={{width: 50, height: 50, borderRadius: '100%', marginLeft: 10, cursor: 'pointer'}}/>
+                        <div style={{height: 50, width: 50, marginLeft: 10, cursor: 'pointer', border: `2px solid ${colors.tertiary}`, borderRadius: '50%'}} onClick={() => openProfileImageFileSelector()}>
+                            <img src={profileImageUri} style={{width: 50, height: 50, borderRadius: '50%'}} alt='Profile Image'/>
+                        </div>
                     }
                 </FlexRowCentreDiv>
                 <FlexColumnCentreDiv>

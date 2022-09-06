@@ -18,6 +18,8 @@ services:
     image: sebastianweb/capstone-project-backend
     container_name: sebmedia_backend
     restart: unless-stopped
+    volumes:
+      - '${UPLOAD_DIR}:/uploads'
     ports:
       - 8080:8080
     expose:
