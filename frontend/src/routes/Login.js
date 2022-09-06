@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { DarkModeContext } from '../context/DarkModeContext';
 import useComponent from '../hooks/useComponent';
 import { ServerUrlContext } from '../context/ServerUrlContext';
+import { defaultPfp } from '../constants';
 
 const Login = () => {
     const [error, setError] = useState(null)
@@ -39,14 +40,21 @@ const Login = () => {
             password: data.get('password')
         }
 
-        axios.post(url, toSend).then(result => {
+        axios.post(url, toSend).then(async (result) => {
+            const accountData = result.data.data
+            if (accountData.profileImageKey) {
+                const profileImageData = (await axios.get(`${serverUrl}/image/${accountData.profileImageKey}`)).data
+                if (!profileImageData) throw new Error('No profile image was provided')
+                else accountData.profileImageUri = 'data:image/jpeg;base64,' + profileImageData
+            } else accountData.profileImageUri = defaultPfp
             setLoading(false)
+            accountData.rememberMe = rememberMe
             setStoredCredentials(result.data.data)
             if (rememberMe) localStorage.setItem('SebMediaCredentials', JSON.stringify(result.data.data))
             navigate('/home')
         }).catch(error => {
             setLoading(false)
-            setError(error?.response?.data?.error || 'Unknown error occured')
+            setError(error?.response?.data?.error || String(error))
             console.error(error)
         })
     }
