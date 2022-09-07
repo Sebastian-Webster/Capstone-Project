@@ -216,10 +216,16 @@ const Profile = () => {
 
                 axios.get(`${serverUrl}/user/imagePostsByUserName/?username=${name}&skip=${Array.isArray(imagePostState.posts) ? imagePostState.posts.length : 0}&publicId=${publicId}`)
                 .then(response => response.data.data)
-                .then(result => {
+                .then(async (result) => {
+                    const posts = []
+                    for (const post of result) {
+                        const imageData = (await axios.get(`${serverUrl}/image/${post.imageKey}`)).data
+                        post.image = 'data:image/jpeg;base64,' + imageData
+                        posts.push(post)
+                    }
                     dispatchImagePostUpdate({
                         type: 'addPosts',
-                        result
+                        result: posts
                     })
                 }).catch(error => {
                     dispatchImagePostUpdate({
@@ -249,7 +255,7 @@ const Profile = () => {
     const DisplayTextPosts = useMemo(() => {
         return Array.isArray(textPostState.posts) ? textPostState.posts.map((post, index) => (
             <Fragment key={index.toString()}>
-                <TextPost {...post} publicId={publicId} dispatch={dispatchTextPostUpdate} userId={_id}/>
+                <TextPost {...post} publicId={publicId} dispatch={dispatchTextPostUpdate} userId={_id} profileName={name} profileImage={profileImageUri}/>
             </Fragment>
         )) : null
     }, [textPostState.posts, textPostState.reRenderTimes])
