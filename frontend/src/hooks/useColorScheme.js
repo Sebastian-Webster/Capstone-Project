@@ -9,8 +9,8 @@ const useColorScheme = () => {
         secondary: '#14141f'
     }
     const lightColors = {
-        primary: 'black',
-        tertiary: 'white',
+        primary: 'white',
+        tertiary: 'black',
         secondary: '#EFEFEF'
     }
     const [colorScheme, setColorScheme] = useState(darkMode ? darkColors : lightColors)

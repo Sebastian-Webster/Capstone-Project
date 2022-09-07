@@ -5,7 +5,7 @@ const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
-const useInput = (initialText = '', inputName, variant = 'outlined') => {
+const useInput = (initialText = '', inputName, variant = 'outlined', extraStyles = {}) => {
     const [text, setText] = useState(initialText);
     const {darkMode, setDarkMode} = useContext(DarkModeContext);
 
@@ -61,6 +61,12 @@ const useInput = (initialText = '', inputName, variant = 'outlined') => {
             notchedOutline: {
                 color: darkMode ? 'white' : 'black'
             }
+        },
+        style: {
+            backgroundColor: 'transparent',
+            border: `2px solid ${darkMode ? 'white' : 'black'}`,
+            color: darkMode ? 'white' : 'black',
+            ...extraStyles
         }
     }
 

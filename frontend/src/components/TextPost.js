@@ -8,7 +8,7 @@ import Button from '@mui/material/Button'
 import axios from 'axios';
 import { ServerUrlContext } from '../context/ServerUrlContext';
 
-const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, userId, editMode, previewMode}) => {
+const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, userId, editMode, previewMode, profileImage, profileName}) => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext);
     const changingLikeStatus = useRef(false)
     const deleting = useRef(false)
@@ -84,6 +84,15 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
     return (
         <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
             <div style={{border: `1px solid ${darkMode ? 'white' : 'black'}`, padding: 10}}>
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row'}}>
+                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
+                        <img src={profileImage} alt={`Profile Image for user ${profileName}`} style={{width: 50, height: 50, borderRadius: '50%', marginRight: 10}}/>
+                        <h3>{profileName}</h3>
+                    </div>
+                    <div>
+                        <i class="fa-solid fa-ellipsis" style={{fontSize: 20, cursor: 'pointer'}}></i>
+                    </div>
+                </div>
                 <h1 style={{wordBreak: 'break-all'}}>{title}</h1>
                 <p style={{wordBreak: 'break-all'}}>{body}</p>
                 {editMode ?
