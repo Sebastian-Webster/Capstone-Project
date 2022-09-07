@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { Outlet, NavLink, Navigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHouse, faChartLine, faPlus, faGear, faMoon, faSun, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
@@ -43,6 +43,11 @@ function App() {
     marginLeft: 10,
     cursor: 'pointer'
   }
+
+  useEffect(() => {
+    document.body.style = `background-color: ${darkMode ? 'black' : 'white'}`
+  }, [darkMode])
+
   return (
     <Div>
       <header style={{borderBottomColor: darkMode ? 'white' : 'black', height: 70}}>
