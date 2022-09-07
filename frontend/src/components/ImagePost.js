@@ -8,7 +8,7 @@ import Button from '@mui/material/Button'
 import axios from 'axios';
 import { ServerUrlContext } from '../context/ServerUrlContext';
 
-const ImagePost = ({title, body, datePosted, imageKey, previewImage, liked, publicId, postId, dispatch, userId, previewMode}) => {
+const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicId, postId, dispatch, userId, previewMode}) => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext)
     const changingLikeStatus = useRef(false)
     const deleting = useRef(false)
@@ -66,7 +66,7 @@ const ImagePost = ({title, body, datePosted, imageKey, previewImage, liked, publ
             <div style={{border: `1px solid ${darkMode ? 'white' : 'black'}`, maxHeight: '100%'}}>
                 <h1 style={{wordBreak: 'break-all'}}>{title}</h1>
                 <p style={{wordBreak: 'break-all'}}>{body}</p>
-                <img src={previewImage ? previewImage : `${serverUrl}/image/${imageKey}`} style={{maxHeight: '100%', maxWidth: '100%'}}/>
+                <img src={previewImage ? previewImage : image} style={{maxHeight: '100%', maxWidth: '100%'}}/>
                 <br/>
                 <FontAwesomeIcon 
                     icon={liked ? fasHeart : farHeart}
