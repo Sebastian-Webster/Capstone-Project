@@ -736,6 +736,11 @@ const deleteTextPost = async (req, res) => {
 
     TextPost.deletePostById(postId).then(() => {
         http.OK(res, 'Post successfully deleted.')
+        redis.removeTextPostFromCache(userId, postId).then(() => {
+            logger.log(`Successfully deleted post with ID: ${postId} from database and Redis cache`)
+        }).catch(error => {
+            logger.error(`Successfully deleted post with ID: ${postId} from database but ran into error while removing it from Redis cache: ${error}`)
+        })
     }).catch(error => {
         http.ServerError(res, 'An error occured while deleting the text post. Please try again later.')
         logger.error(error)
