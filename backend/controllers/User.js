@@ -741,6 +741,59 @@ const deleteTextPost = async (req, res) => {
     })
 }
 
+const findProfilesByName = (req, res) => {
+    const profileName = req?.params?.name
+
+    if (!profileName) {
+        http.BadInput(res, 'profileName was not provided')
+        return
+    }
+
+    if (typeof profileName !== 'string') {
+        http.BadInput(res, 'profileName must be a string')
+        return
+    }
+
+    user.findUsersByNameBeginningWithString(profileName).then(result => {
+        const cleanedResult = result.map(generalLib.returnPublicProfileInformation)
+        http.OK(res, 'Successfully found profiles.', cleanedResult)
+    }).catch(error => {
+        http.ServerError(res, 'An error occured while fetching profiles. Please try again later.')
+        logger.error(error)
+    })
+}
+
+const getPublicProfileInformation = async (req, res) => {
+    const publicId = req?.params?.publicId
+
+    if (!publicId) {
+        http.BadInput(res, 'You must provide a publicId')
+        return
+    }
+
+    if (typeof publicId !== 'string') {
+        http.BadInput(res, 'publicId must be a string')
+        return
+    }
+
+    const userFound = await user.findUserByPublicId(publicId)
+
+    if (typeof userFound === 'object' && userFound.error) {
+        http.ServerError(res, 'An error occured while retrieving public profile information. Please try again later.')
+        logger.error(userFound.error)
+        return
+    }
+
+    if (!userFound) {
+        http.NotFound(res, 'User with publicId was not found.')
+        return
+    }
+
+    const cleanedResult = generalLib.returnPublicProfileInformation(userFound)
+
+    http.OK(res, 'Successfully retreived public profile information', cleanedResult)
+}
+
 module.exports = {
     login,
     signup,
@@ -754,5 +807,7 @@ module.exports = {
     likeTextPost,
     unlikeTextPost,
     deleteImagePost,
-    deleteTextPost
+    deleteTextPost,
+    findProfilesByName,
+    getPublicProfileInformation
 }

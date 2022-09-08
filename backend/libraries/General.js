@@ -21,6 +21,13 @@ class General {
         const itemsNotSkipped = postArrayLength - skip;
         return itemsNotSkipped > limit ? limit : itemsNotSkipped
     }
+
+    returnPublicProfileInformation = (profile) => {
+        let {profileImageKey, name, followers, following, publicId} = profile;
+        followers = followers.length;
+        following = following.length;
+        return {profileImageKey, name, followers, following, publicId}
+    }
 }
 
 module.exports = General;

@@ -34,6 +34,13 @@ class HTTPHandler {
             error
         })
     }
+
+    NotFound(res, error) {
+        res.status(404).json({
+            status: "FAILED",
+            error
+        })
+    }
 }
 
 module.exports = HTTPHandler;
