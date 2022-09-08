@@ -35,9 +35,8 @@ const profilesInitialState = {
 
 
 const Search = () => {
-    const searchBoxRef = useRef(null)
     const colors = useColorScheme()
-    const [searchQuery, bindSearchQuery] = useInput('', 'searchQuery', 'standard', {width: '60vw', height: 60, fontSize: 20, paddingLeft: 70, borderRadius: 30, paddingRight: 20})
+    const [searchQuery, bindSearchQuery] = useInput('', 'searchQuery', 'standard', {width: '60vw', height: 60, fontSize: 20, borderRadius: 30, marginLeft: 50})
     const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
     const [profileState, dispatchProfiles] = useReducer(profilesReducer, profilesInitialState)
 
@@ -84,7 +83,7 @@ const Search = () => {
         <div style={{display: 'flex', justifyContent: 'center', width: '100%', flexDirection: 'column', alignItems: 'center'}}>
             <div style={{marginTop: 15, width: '60vw', height: 60, position: 'relative'}}>
                 <FontAwesomeIcon icon={faMagnifyingGlass} style={{color: colors.tertiary, fontSize: 40, position: 'absolute', top: 14, left: 20}}/>
-                <input {...bindSearchQuery}/>
+                <input {...bindSearchQuery} autoFocus/>
             </div>
             <div style={{minHeight: 20, maxHeight: 20}}/>
             {
