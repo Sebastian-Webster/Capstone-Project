@@ -43,9 +43,24 @@ class RedisLibrary {
             try {
                 const redisCacheKey = `textposts-bycreatorid-${userId}`
                 const cache = await this.getCache(redisCacheKey)
+                if (!Array.isArray(cache)) return resolve() //No need to throw an error because there is no cache to delete a post from
                 const postIndex = cache.findIndex(post => post._id === postId)
                 if (postIndex === -1) throw new Error('Post was not found in cache.')
                 cache.splice(postIndex, 1)
+                this.setCache(redisCacheKey, cache).then(resolve)
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    addTextPostToCache = (userId, postObj) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const redisCacheKey = `textposts-bycreatorid-${userId}`
+                const cache = await this.getCache(redisCacheKey)
+                if (!Array.isArray(cache)) return resolve() //No need to throw an error because there is no cache to add a post too. When someone visits the user's profile page the fresh data from the database will be put in the cache
+                cache.push(postObj)
                 this.setCache(redisCacheKey, cache).then(resolve)
             } catch (error) {
                 reject(error)

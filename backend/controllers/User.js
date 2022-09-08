@@ -233,8 +233,13 @@ const uploadTextPost = (req, res) => {
     }
 
     user.uploadTextPost(postObj)
-    .then(() => {
+    .then(result => {
         http.OK(res, 'Post successfully uploaded')
+        redis.addTextPostToCache(userId, result).then(() => {
+            logger.log(`Successfully added post with ID: ${result._id} to database and redis cache.`)
+        }).catch(error => {
+            logger.error(`Successfully added post with ID: ${result._id} to database but failed to add to redis cache because of error: ${error}`)
+        })
     })
     .catch(error => {
         http.ServerError(res, 'An error occured while uploading text post. Please try again later.')
