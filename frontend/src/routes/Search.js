@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, useContext, useReducer, useMemo, Fragment} from "react";
+import React, {useEffect, useContext, useReducer, useMemo, Fragment} from "react";
 import useColorScheme from "../hooks/useColorScheme";
 import useInput from "../hooks/useInput";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -36,7 +36,7 @@ const profilesInitialState = {
 
 const Search = () => {
     const colors = useColorScheme()
-    const [searchQuery, bindSearchQuery] = useInput('', 'searchQuery', 'standard', {width: '60vw', height: 60, fontSize: 20, borderRadius: 30, marginLeft: 50})
+    const [searchQuery, bindSearchQuery] = useInput('', 'searchQuery', 'standard', {width: '60vw', height: 60, fontSize: 20, paddingLeft: 70, borderRadius: 30, paddingRight: 20})
     const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
     const [profileState, dispatchProfiles] = useReducer(profilesReducer, profilesInitialState)
 
