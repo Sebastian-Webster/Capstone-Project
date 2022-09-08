@@ -381,7 +381,7 @@ const Profile = () => {
                                     <CircularProgress/>
                                 </Box>
                             :
-                                <div style={{height: 50, width: 50, marginLeft: 10, cursor: 'pointer', border: `2px solid ${colors.tertiary}`, borderRadius: '50%'}} onClick={() => profilePublicId ? null : openProfileImageFileSelector()}>
+                                <div style={{height: 50, width: 50, marginLeft: 10, cursor: 'pointer', border: `2px solid ${colors.tertiary}`, borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2}} onClick={() => profilePublicId ? null : openProfileImageFileSelector()}>
                                     <img src={profilePublicId ? profileData.profileImageUri : profileImageUri} style={{width: 50, height: 50, borderRadius: '50%'}} alt='Profile Image'/>
                                 </div>
                             }
