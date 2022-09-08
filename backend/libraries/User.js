@@ -99,6 +99,12 @@ class UserLibrary {
             return {error}
         }
     }
+
+    findUsersByNameBeginningWithString = (string) => {
+        return new Promise((resolve, reject) => {
+            User.find({name: {$regex: `^${string}`, $options: 'i'}}).then(resolve).catch(reject)
+        })
+    }
 }
 
 module.exports = UserLibrary

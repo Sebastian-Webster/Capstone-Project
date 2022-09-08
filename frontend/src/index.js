@@ -8,6 +8,7 @@ import PageNotFound from './routes/PageNotFound';
 import { DarkModeContext } from './context/DarkModeContext';
 import CircularProgress from '@mui/material/CircularProgress';
 import { ServerUrlContext } from './context/ServerUrlContext';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const LazyApp = lazy(() => import('./App'))
 const LazyHome = lazy(() => import('./routes/Home'));
@@ -54,6 +55,7 @@ const ComponentToRender = () => {
                   <Route path="posts" element={<Suspense fallback={<LazyLoadingComponent text="Post creation screen is loading..."/>}><LazyPosts/></Suspense>}/>
                   <Route path="profile" element={<Suspense fallback={<LazyLoadingComponent text="Profile Screen is loading..."/>}><LazyProfile/></Suspense>}/>
                   <Route path="settings" element={<Suspense fallback={<LazyLoadingComponent text="Settings Screen is loading..."/>}><LazySettings/></Suspense>}/>
+                  <Route path="profile/:publicId" element={<Suspense fallback={<LazyLoadingComponent text="Profile Screen is loading..."/>}><LazyProfile/></Suspense>}/>
                 </Route>
                 <Route path="login" element={<Suspense fallback={<LazyLoadingComponent text="Login Screen is loading..."/>}><LazyLogin/></Suspense>}/>
                 <Route path="signup" element={<Suspense fallback={<LazyLoadingComponent text="Signup Screen is loading..."/>}><LazySignup/></Suspense>}/>
@@ -68,7 +70,9 @@ const ComponentToRender = () => {
 }
 
 root.render(
-  <ComponentToRender/>
+  <ErrorBoundary>
+    <ComponentToRender/>
+  </ErrorBoundary>
 );
 
 // If you want to start measuring performance in your app, pass a function
