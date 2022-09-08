@@ -184,7 +184,8 @@ const signup = async (req, res) => {
         email: newUserResponse.email,
         followers: newUserResponse.followers,
         following: newUserResponse.following,
-        _id: newUserResponse._id
+        _id: newUserResponse._id,
+        publicId: newUserResponse.publicId
     }
 
     http.OK(res, 'Successfully created an account.', toSend)

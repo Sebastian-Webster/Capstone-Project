@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { DarkModeContext } from '../context/DarkModeContext';
 import useComponent from '../hooks/useComponent';
 import { ServerUrlContext } from '../context/ServerUrlContext';
+import { defaultPfp } from '../constants';
 
 const Signup = () => {
     const [loading, setLoading] = useState(false)
@@ -41,10 +42,11 @@ const Signup = () => {
             name: data.get('name')
         }
 
-        axios.post(url, toSend).then(result => {
+        axios.post(url, toSend).then(response => response.data.data).then(result => {
+            result.profileImageUri = defaultPfp
             setLoading(false)
-            setStoredCredentials(result.data.data)
-            if (rememberMe) localStorage.setItem('SebMediaCredentials', JSON.stringify(result.data.data))
+            setStoredCredentials(result)
+            if (rememberMe) localStorage.setItem('SebMediaCredentials', JSON.stringify(result))
             navigate('/home')
         }).catch(error => {
             setLoading(false)
