@@ -38,8 +38,19 @@ class RedisLibrary {
         }
     }
 
-    updateCache = (key, value) => {
-
+    removeTextPostFromCache = (userId, postId) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const redisCacheKey = `textposts-bycreatorid-${userId}`
+                const cache = await this.getCache(redisCacheKey)
+                const postIndex = cache.findIndex(post => post._id === postId)
+                if (postIndex === -1) throw new Error('Post was not found in cache.')
+                cache.splice(postIndex, 1)
+                this.setCache(redisCacheKey, cache).then(resolve)
+            } catch (error) {
+                reject(error)
+            }
+        })
     }
 }
 
