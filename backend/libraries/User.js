@@ -58,7 +58,7 @@ class UserLibrary {
 
     findUserById = async (id) => {
         try {
-            return await User.findOne({id})
+            return await User.findOne({_id: id})
         } catch(error) {
             return {error}
         }
