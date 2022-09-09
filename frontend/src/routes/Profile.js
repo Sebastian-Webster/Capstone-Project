@@ -385,6 +385,7 @@ const Profile = () => {
                                     <img src={profilePublicId ? profileData.profileImageUri : profileImageUri} style={{width: 50, height: 50, borderRadius: '50%'}} alt='Profile Image'/>
                                 </div>
                             }
+                            {profilePublicId && profilePublicId !== publicId && <h1>Follow button will go here</h1>}
                         </FlexRowCentreDiv>
                         <FlexColumnCentreDiv>
                             <H3NoMargin>{profilePublicId ? profileData.followers : followers.length}</H3NoMargin>
