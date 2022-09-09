@@ -35,6 +35,7 @@ const Profile = () => {
     const [loadingProfile, setLoadingProfile] = useState(profilePublicId ? true : false)
     const [errorLoadingProfile, setErrorLoadingProfile] = useState(null)
     const followingOrUnfollowing = useRef(false)
+    const [isFollowing, setIsFollowing] = useState(null)
 
     console.log('profilePublicId:', profilePublicId, ' loadingProfile:', loadingProfile)
 
@@ -51,6 +52,7 @@ const Profile = () => {
             setLoadingProfile(false)
             setErrorLoadingProfile(null)
             setProfileData(result)
+            setIsFollowing(result.isFollowing)
             console.log(result)
         })
         .catch(error => {
@@ -368,9 +370,7 @@ const Profile = () => {
                     }
 
                     axios.post(`${serverUrl}/user/followUser`, toSend).then(result => {
-                        const newProfileData = _.cloneDeep(profileData)
-                        newProfileData.isFollowing = true;
-                        setProfileData(newProfileData)
+                        setIsFollowing(true)
                         followingOrUnfollowing.current = false;
                         console.log(result?.data?.message)
                     }).catch(error => {
@@ -385,9 +385,7 @@ const Profile = () => {
                     }
 
                     axios.post(`${serverUrl}/user/unfollowUser`, toSend).then(result => {
-                        const newProfileData = _.cloneDeep(profileData)
-                        newProfileData.isFollowing = false;
-                        setProfileData(newProfileData)
+                        setIsFollowing(false)
                         followingOrUnfollowing.current = false;
                         console.log(result?.data?.message)
                     }).catch(error => {
@@ -433,7 +431,7 @@ const Profile = () => {
                                     <img src={profilePublicId ? profileData.profileImageUri : profileImageUri} style={{width: 50, height: 50, borderRadius: '50%'}} alt='Profile Image'/>
                                 </div>
                             }
-                            {profilePublicId && profilePublicId !== publicId && <FollowButton following={profileData.isFollowing} onPress={handleFollowButtonPress} extraStyles={{marginLeft: 10}}/>}
+                            {profilePublicId && profilePublicId !== publicId && <FollowButton following={isFollowing} onPress={handleFollowButtonPress} extraStyles={{marginLeft: 10}}/>}
                         </FlexRowCentreDiv>
                         <FlexColumnCentreDiv>
                             <H3NoMargin>{profilePublicId ? profileData.followers : followers.length}</H3NoMargin>
