@@ -46,7 +46,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: ./frontend
-        file: ./Dockerfile
+        file: ./frontend/Dockerfile
         push: true
 #Change this to whatever your repository is called
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-project-frontend:latest
@@ -56,7 +56,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: ./backend
-        file: ./Dockerfile
+        file: ./backend/Dockerfile
         push: true
 #Change this to whatever your repository is called
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-project-backend:latest
