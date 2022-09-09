@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect, useMemo, Fragment, useReducer} from 'react';
+import React, {useContext, useState, useEffect, useMemo, Fragment, useReducer, useRef} from 'react';
 import { CredentialsContext } from '../context/CredentialsContext';
 import useComponent from '../hooks/useComponent';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -34,6 +34,7 @@ const Profile = () => {
     const [profileData, setProfileData] = useState(null)
     const [loadingProfile, setLoadingProfile] = useState(profilePublicId ? true : false)
     const [errorLoadingProfile, setErrorLoadingProfile] = useState(null)
+    const followingOrUnfollowing = useRef(false)
 
     console.log('profilePublicId:', profilePublicId, ' loadingProfile:', loadingProfile)
 
@@ -356,6 +357,49 @@ const Profile = () => {
         }
     }, [profileImageToUpload])
 
+    const handleFollowButtonPress = () => {
+        if (profileData !== null) {
+            if (!followingOrUnfollowing.current) {
+                followingOrUnfollowing.current = true;
+                if (profileData.isFollowing) {
+                    const toSend = {
+                        followerId: _id,
+                        userToFollowPublicId: profileData.publicId
+                    }
+
+                    axios.post(`${serverUrl}/user/followUser`, toSend).then(() => {
+                        const newProfileData = _.cloneDeep(profileData)
+                        newProfileData.isFollowing = true;
+                        setProfileData(newProfileData)
+                        followingOrUnfollowing.current = false;
+                    }).catch(error => {
+                        console.error(error)
+                        alert(error?.response?.data?.error || String(error))
+                        followingOrUnfollowing.current = false;
+                    })
+                } else {
+                    const toSend = {
+                        followerId: _id,
+                        userToUnfollowPublicId: profileData.publicId
+                    }
+
+                    axios.post(`${serverUrl}/user/unfollowUser`, toSend).then(() => {
+                        const newProfileData = _.cloneDeep(profileData)
+                        newProfileData.isFollowing = false;
+                        setProfileData(newProfileData)
+                        followingOrUnfollowing.current = false;
+                    }).catch(error => {
+                        console.error(error)
+                        alert(error?.response?.data?.error || String(error))
+                        followingOrUnfollowing.current = false;
+                    })
+                }
+            }
+        } else {
+            alert('profileData is null. Cannot follow user.')
+        }
+    }
+
     return (
         <>
             {errorLoadingProfile ?
@@ -386,7 +430,7 @@ const Profile = () => {
                                     <img src={profilePublicId ? profileData.profileImageUri : profileImageUri} style={{width: 50, height: 50, borderRadius: '50%'}} alt='Profile Image'/>
                                 </div>
                             }
-                            {profilePublicId && profilePublicId !== publicId && <FollowButton following={profileData.isFollowing} onPress={() => alert('Coming soon')} extraStyles={{marginLeft: 10}}/>}
+                            {profilePublicId && profilePublicId !== publicId && <FollowButton following={profileData.isFollowing} onPress={handleFollowButtonPress} extraStyles={{marginLeft: 10}}/>}
                         </FlexRowCentreDiv>
                         <FlexColumnCentreDiv>
                             <H3NoMargin>{profilePublicId ? profileData.followers : followers.length}</H3NoMargin>
