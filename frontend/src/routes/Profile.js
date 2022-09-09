@@ -386,7 +386,7 @@ const Profile = () => {
                                     <img src={profilePublicId ? profileData.profileImageUri : profileImageUri} style={{width: 50, height: 50, borderRadius: '50%'}} alt='Profile Image'/>
                                 </div>
                             }
-                            {profilePublicId && profilePublicId !== publicId && <FollowButton following={profileData.isFollowing} onPress={() => alert('Coming soon')}/>}
+                            {profilePublicId && profilePublicId !== publicId && <FollowButton following={profileData.isFollowing} onPress={() => alert('Coming soon')} extraStyles={{marginLeft: 10}}/>}
                         </FlexRowCentreDiv>
                         <FlexColumnCentreDiv>
                             <H3NoMargin>{profilePublicId ? profileData.followers : followers.length}</H3NoMargin>
