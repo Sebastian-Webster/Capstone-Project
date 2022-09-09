@@ -363,7 +363,7 @@ const Profile = () => {
         if (profileData !== null) {
             if (!followingOrUnfollowing.current) {
                 followingOrUnfollowing.current = true;
-                if (!profileData.isFollowing) {
+                if (!isFollowing) {
                     const toSend = {
                         followerId: _id,
                         userToFollowPublicId: profileData.publicId
@@ -434,7 +434,7 @@ const Profile = () => {
                             {profilePublicId && profilePublicId !== publicId && <FollowButton following={isFollowing} onPress={handleFollowButtonPress} extraStyles={{marginLeft: 10}}/>}
                         </FlexRowCentreDiv>
                         <FlexColumnCentreDiv>
-                            <H3NoMargin>{profilePublicId ? profileData.followers : followers.length}</H3NoMargin>
+                            <H3NoMargin>{profilePublicId ? profileData.isFollowing ? isFollowing ? profileData.followers : profileData.followers - 1 : isFollowing ? profileData.followers + 1 : profileData.followers : followers.length}</H3NoMargin>
                             <H3NoMargin>Followers</H3NoMargin>
                         </FlexColumnCentreDiv>
                         <FlexColumnCentreDiv>
