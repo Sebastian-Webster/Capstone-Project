@@ -847,7 +847,7 @@ const followUser = async (req, res) => {
         return
     }
 
-    const followingUser = user.findUserById(followerId);
+    const followingUser = await user.findUserById(followerId);
 
     if (followingUser === null) {
         http.NotFound(res, 'User with followerId was not found')
@@ -865,6 +865,21 @@ const followUser = async (req, res) => {
         logger.error('followingUser.publicId WAS NOT A STRING. followingUser.publicId is actually: ' + followingUser.publicId)
     }
 
+    if (followingUser.publicId === userToFollowPublicId) {
+        http.NotAuthorized(res, 'You cannot follow yourself.')
+    }
+
+    const userToFollow = await user.findUserByPublicId(userToFollowPublicId)
+
+    if (userToFollow === null) {
+        http.NotFound(res, 'User to follow was not found.')
+        return
+    }
+
+    if (userToFollow.error) {
+        http.ServerError(res, 'An error occured while following the user. Please try again later.')
+    }
+
     user.followUser(followingUser.publicId, userToFollowPublicId).then(() => {
         http.OK(res, 'Successfully followed the user.')
     }).catch(error => {
@@ -873,7 +888,7 @@ const followUser = async (req, res) => {
     })
 }
 
-const unfollowUser = (req, res) => {
+const unfollowUser = async (req, res) => {
     const followerId = req?.body?.followerId
     const userToUnfollowPublicId = req?.body?.userToUnfollowPublicId
 
@@ -901,7 +916,7 @@ const unfollowUser = (req, res) => {
         http.BadInput(res, 'userToUnfollowPublicId must be a string')
     }
 
-    const followingUser = user.findUserById(followerId);
+    const followingUser = await user.findUserById(followerId);
 
     if (followingUser === null) {
         http.NotFound(res, 'User with followerId was not found')
@@ -917,6 +932,21 @@ const unfollowUser = (req, res) => {
     if (typeof followingUser.publicId !== 'string') {
         http.ServerError(res, 'An error occured while unfollowing the user. Please try again later.')
         logger.error('followingUser.publicId WAS NOT A STRING. followingUser.publicId is actually: ' + followingUser.publicId)
+    }
+
+    if (followingUser.publicId === userToUnfollowPublicId) {
+        http.NotAuthorized(res, 'You cannot unfollow yourself.')
+    }
+
+    const userToUnfollow = await user.findUserByPublicId(userToUnfollowPublicId)
+
+    if (userToUnfollow === null) {
+        http.NotFound(res, 'User to unfollow was not found.')
+        return
+    }
+
+    if (userToUnfollow.error) {
+        http.ServerError(res, 'An error occured while unfollowing the user. Please try again later.')
     }
 
     user.unfollowUser(followingUser.publicId, userToUnfollowPublicId).then(() => {
