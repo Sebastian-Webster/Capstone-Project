@@ -37,7 +37,31 @@ const Profile = () => {
     const followingOrUnfollowing = useRef(false)
     const [isFollowing, setIsFollowing] = useState(null)
 
-    console.log('profilePublicId:', profilePublicId, ' loadingProfile:', loadingProfile)
+    //Set to followers.length if you are visitng your own profile page via the profile button.
+    //Set to followers.length if you are visitng your own profile page via the search page.
+    //Set to 0 if you are visiting someone else's profile as loadPublicProfileInformation() will get the amount of followers and set followerNumber to that.
+    const [followerNumber, setFollowerNumber] = useState(profilePublicId ? profilePublicId === publicId ? followers.length : 0 : followers.length)
+
+    useEffect(() => {
+        setFollowerNumber(
+            profilePublicId ? 
+                profileData === null ?
+                    'Loading...'
+                :
+                    profileData.isFollowing ? 
+                        isFollowing ? 
+                            profileData.followers 
+                        : 
+                            profileData.followers - 1 
+                    : 
+                        isFollowing ? 
+                            profileData.followers + 1 
+                        : 
+                            profileData.followers 
+            : 
+                followers.length
+        )
+    }, [profilePublicId, profileData, isFollowing])
 
     const loadPublicProfileInformation = () => {
         setLoadingProfile(true)
@@ -53,6 +77,7 @@ const Profile = () => {
             setErrorLoadingProfile(null)
             setProfileData(result)
             setIsFollowing(result.isFollowing)
+            setFollowerNumber(result.followers)
             console.log(result)
         })
         .catch(error => {
@@ -434,8 +459,8 @@ const Profile = () => {
                             {profilePublicId && profilePublicId !== publicId && <FollowButton following={isFollowing} onPress={handleFollowButtonPress} extraStyles={{marginLeft: 10}}/>}
                         </FlexRowCentreDiv>
                         <FlexColumnCentreDiv>
-                            <H3NoMargin>{profilePublicId ? profileData.isFollowing ? isFollowing ? profileData.followers : profileData.followers - 1 : isFollowing ? profileData.followers + 1 : profileData.followers : followers.length}</H3NoMargin>
-                            <H3NoMargin>Followers</H3NoMargin>
+                            <H3NoMargin>{followerNumber}</H3NoMargin>
+                            <H3NoMargin>{followerNumber === 1 ? 'Follower' : 'Followers'}</H3NoMargin>
                         </FlexColumnCentreDiv>
                         <FlexColumnCentreDiv>
                             <H3NoMargin>{profilePublicId ? profileData.following : following.length}</H3NoMargin>
