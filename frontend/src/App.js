@@ -52,7 +52,7 @@ function App() {
     <Div>
       <header style={{borderBottomColor: darkMode ? 'white' : 'black', height: 70}}>
         <div>
-          <h1>SebMedia 2.0</h1>
+          <h1>SebMedia</h1>
           <button style={{background: 'none', margin: 0, padding: 0, border: 'none'}} onClick={() => {setDarkMode(!darkMode)}}>
             {darkMode ?
               <FontAwesomeIcon icon={faSun} style={{...darkLightModeIconStyle, color: 'yellow'}}/>
