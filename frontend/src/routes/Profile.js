@@ -456,7 +456,7 @@ const Profile = () => {
                                     <img src={profilePublicId ? profileData.profileImageUri : profileImageUri} style={{width: 50, height: 50, borderRadius: '50%'}} alt='Profile Image'/>
                                 </div>
                             }
-                            {profilePublicId && profilePublicId !== publicId && <FollowButton following={isFollowing} onPress={handleFollowButtonPress} extraStyles={{marginLeft: 10}}/>}
+                            {profilePublicId && profilePublicId !== publicId && <FollowButton following={isFollowing} followBack={profileData.isFollower} onPress={handleFollowButtonPress} extraStyles={{marginLeft: 10}}/>}
                         </FlexRowCentreDiv>
                         <FlexColumnCentreDiv>
                             <H3NoMargin>{followerNumber}</H3NoMargin>
@@ -465,6 +465,7 @@ const Profile = () => {
                         <FlexColumnCentreDiv>
                             <H3NoMargin>{profilePublicId ? profileData.following : following.length}</H3NoMargin>
                             <H3NoMargin>Following</H3NoMargin>
+                            {profilePublicId && profileData.isFollower && <H3NoMargin>({profileData.name} follows you)</H3NoMargin>}
                         </FlexColumnCentreDiv>
                     </FlexRowSpaceAroundDiv>
                     <ToggleButtonGroup
