@@ -361,17 +361,18 @@ const Profile = () => {
         if (profileData !== null) {
             if (!followingOrUnfollowing.current) {
                 followingOrUnfollowing.current = true;
-                if (profileData.isFollowing) {
+                if (!profileData.isFollowing) {
                     const toSend = {
                         followerId: _id,
                         userToFollowPublicId: profileData.publicId
                     }
 
-                    axios.post(`${serverUrl}/user/followUser`, toSend).then(() => {
+                    axios.post(`${serverUrl}/user/followUser`, toSend).then(result => {
                         const newProfileData = _.cloneDeep(profileData)
                         newProfileData.isFollowing = true;
                         setProfileData(newProfileData)
                         followingOrUnfollowing.current = false;
+                        console.log(result?.data?.message)
                     }).catch(error => {
                         console.error(error)
                         alert(error?.response?.data?.error || String(error))
@@ -383,11 +384,12 @@ const Profile = () => {
                         userToUnfollowPublicId: profileData.publicId
                     }
 
-                    axios.post(`${serverUrl}/user/unfollowUser`, toSend).then(() => {
+                    axios.post(`${serverUrl}/user/unfollowUser`, toSend).then(result => {
                         const newProfileData = _.cloneDeep(profileData)
                         newProfileData.isFollowing = false;
                         setProfileData(newProfileData)
                         followingOrUnfollowing.current = false;
+                        console.log(result?.data?.message)
                     }).catch(error => {
                         console.error(error)
                         alert(error?.response?.data?.error || String(error))
@@ -397,6 +399,7 @@ const Profile = () => {
             }
         } else {
             alert('profileData is null. Cannot follow user.')
+            console.error('profileData is null. Cannot follow user.')
         }
     }
 
