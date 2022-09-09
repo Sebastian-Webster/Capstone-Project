@@ -16,6 +16,7 @@ import { DarkModeContext } from '../context/DarkModeContext';
 import { ServerUrlContext } from '../context/ServerUrlContext';
 import useColorScheme from '../hooks/useColorScheme';
 import { useParams } from 'react-router-dom';
+import FollowButton from '../components/FollowButton';
 
 var _ = require('lodash')
 
@@ -39,7 +40,7 @@ const Profile = () => {
     const loadPublicProfileInformation = () => {
         setLoadingProfile(true)
         setErrorLoadingProfile(null)
-        axios.get(`${serverUrl}/user/publicProfileInformation/${profilePublicId}`)
+        axios.get(`${serverUrl}/user/publicProfileInformation/${profilePublicId}/${publicId}`)
         .then(response => response.data.data)
         .then(async result => {
             if (result.profileImageKey) {
@@ -385,7 +386,7 @@ const Profile = () => {
                                     <img src={profilePublicId ? profileData.profileImageUri : profileImageUri} style={{width: 50, height: 50, borderRadius: '50%'}} alt='Profile Image'/>
                                 </div>
                             }
-                            {profilePublicId && profilePublicId !== publicId && <h1>Follow button will go here</h1>}
+                            {profilePublicId && profilePublicId !== publicId && <FollowButton following={profileData.isFollowing} onPress={() => alert('Coming soon')}/>}
                         </FlexRowCentreDiv>
                         <FlexColumnCentreDiv>
                             <H3NoMargin>{profilePublicId ? profileData.followers : followers.length}</H3NoMargin>
