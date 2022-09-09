@@ -863,10 +863,12 @@ const followUser = async (req, res) => {
     if (typeof followingUser.publicId !== 'string') {
         http.ServerError(res, 'An error occured while following the user. Please try again later.')
         logger.error('followingUser.publicId WAS NOT A STRING. followingUser.publicId is actually: ' + followingUser.publicId)
+        return
     }
 
     if (followingUser.publicId === userToFollowPublicId) {
         http.NotAuthorized(res, 'You cannot follow yourself.')
+        return
     }
 
     const userToFollow = await user.findUserByPublicId(userToFollowPublicId)
@@ -878,6 +880,12 @@ const followUser = async (req, res) => {
 
     if (userToFollow.error) {
         http.ServerError(res, 'An error occured while following the user. Please try again later.')
+        return
+    }
+
+    if (userToFollow.followers.includes(followingUser.publicId)) {
+        http.NotAuthorized(res, 'You cannot follow someone more than once.')
+        return
     }
 
     user.followUser(followingUser.publicId, userToFollowPublicId).then(() => {
@@ -914,6 +922,7 @@ const unfollowUser = async (req, res) => {
 
     if (typeof userToUnfollowPublicId !== 'string') {
         http.BadInput(res, 'userToUnfollowPublicId must be a string')
+        return
     }
 
     const followingUser = await user.findUserById(followerId);
@@ -932,10 +941,12 @@ const unfollowUser = async (req, res) => {
     if (typeof followingUser.publicId !== 'string') {
         http.ServerError(res, 'An error occured while unfollowing the user. Please try again later.')
         logger.error('followingUser.publicId WAS NOT A STRING. followingUser.publicId is actually: ' + followingUser.publicId)
+        return
     }
 
     if (followingUser.publicId === userToUnfollowPublicId) {
         http.NotAuthorized(res, 'You cannot unfollow yourself.')
+        return
     }
 
     const userToUnfollow = await user.findUserByPublicId(userToUnfollowPublicId)
@@ -947,6 +958,7 @@ const unfollowUser = async (req, res) => {
 
     if (userToUnfollow.error) {
         http.ServerError(res, 'An error occured while unfollowing the user. Please try again later.')
+        return
     }
 
     user.unfollowUser(followingUser.publicId, userToUnfollowPublicId).then(() => {
