@@ -775,7 +775,8 @@ const findProfilesByName = (req, res) => {
 }
 
 const getPublicProfileInformation = async (req, res) => {
-    const publicId = req?.params?.publicId
+    const userPublicId = req?.params?.userPublicId //The publicId of the user that is requesting the information
+    const publicId = req?.params?.publicId //The publicId of the user to get the information of
 
     if (!publicId) {
         http.BadInput(res, 'You must provide a publicId')
@@ -784,6 +785,16 @@ const getPublicProfileInformation = async (req, res) => {
 
     if (typeof publicId !== 'string') {
         http.BadInput(res, 'publicId must be a string')
+        return
+    }
+
+    if (!userPublicId) {
+        http.BadInput(res, 'You must provide a userPublicId')
+        return
+    }
+
+    if (typeof userPublicId !== 'string') {
+        http.BadInput(res, 'userPublicId must be a string')
         return
     }
 
@@ -801,8 +812,161 @@ const getPublicProfileInformation = async (req, res) => {
     }
 
     const cleanedResult = generalLib.returnPublicProfileInformation(userFound)
+    cleanedResult.isFollowing = userFound.followers.includes(userPublicId)
+    cleanedResult.isFollower = userFound.following.includes(userPublicId)
 
     http.OK(res, 'Successfully retreived public profile information', cleanedResult)
+}
+
+const followUser = async (req, res) => {
+    const followerId = req?.body?.followerId
+    const userToFollowPublicId = req?.body?.userToFollowPublicId
+
+    if (!followerId) {
+        http.BadInput(res, 'followerId must be supplied')
+        return
+    }
+
+    if (typeof followerId !== 'string') {
+        http.BadInput(res, 'followerId must be a string')
+        return
+    }
+
+    if (!isValidObjectId(followerId)) {
+        http.BadInput(res, 'followerId must be a valid objectId')
+        return
+    }
+
+    if (!userToFollowPublicId) {
+        http.BadInput(res, 'userToFollowPublicId must be supplied')
+        return
+    }
+
+    if (typeof userToFollowPublicId !== 'string') {
+        http.BadInput(res, 'userToFollowPublicId must be a string')
+        return
+    }
+
+    const followingUser = await user.findUserById(followerId);
+
+    if (followingUser === null) {
+        http.NotFound(res, 'User with followerId was not found')
+        return
+    }
+
+    if (followingUser.error) {
+        http.ServerError(res, 'An error occured while following the user. Please try again later.')
+        logger.error(followingUser.error)
+        return
+    }
+
+    if (typeof followingUser.publicId !== 'string') {
+        http.ServerError(res, 'An error occured while following the user. Please try again later.')
+        logger.error('followingUser.publicId WAS NOT A STRING. followingUser.publicId is actually: ' + followingUser.publicId)
+        return
+    }
+
+    if (followingUser.publicId === userToFollowPublicId) {
+        http.NotAuthorized(res, 'You cannot follow yourself.')
+        return
+    }
+
+    const userToFollow = await user.findUserByPublicId(userToFollowPublicId)
+
+    if (userToFollow === null) {
+        http.NotFound(res, 'User to follow was not found.')
+        return
+    }
+
+    if (userToFollow.error) {
+        http.ServerError(res, 'An error occured while following the user. Please try again later.')
+        return
+    }
+
+    if (userToFollow.followers.includes(followingUser.publicId)) {
+        http.NotAuthorized(res, 'You cannot follow someone more than once.')
+        return
+    }
+
+    user.followUser(followingUser.publicId, userToFollowPublicId).then(() => {
+        http.OK(res, 'Successfully followed the user.')
+    }).catch(error => {
+        logger.error(error)
+        http.ServerError(res, 'An error occured while following the user. Please try again later.')
+    })
+}
+
+const unfollowUser = async (req, res) => {
+    const followerId = req?.body?.followerId
+    const userToUnfollowPublicId = req?.body?.userToUnfollowPublicId
+
+    if (!followerId) {
+        http.BadInput(res, 'followerId must be supplied')
+        return
+    }
+
+    if (typeof followerId !== 'string') {
+        http.BadInput(res, 'followerId must be a string')
+        return
+    }
+
+    if (!isValidObjectId(followerId)) {
+        http.BadInput(res, 'followerId must be a valid objectId')
+        return
+    }
+
+    if (!userToUnfollowPublicId) {
+        http,BadInput(res, 'userToUnfollowPublicId must be supplied')
+        return
+    }
+
+    if (typeof userToUnfollowPublicId !== 'string') {
+        http.BadInput(res, 'userToUnfollowPublicId must be a string')
+        return
+    }
+
+    const followingUser = await user.findUserById(followerId);
+
+    if (followingUser === null) {
+        http.NotFound(res, 'User with followerId was not found')
+        return
+    }
+
+    if (followingUser.error) {
+        http.ServerError(res, 'An error occured while unfollowing the user. Please try again later.')
+        logger.error(followingUser.error)
+        return
+    }
+
+    if (typeof followingUser.publicId !== 'string') {
+        http.ServerError(res, 'An error occured while unfollowing the user. Please try again later.')
+        logger.error('followingUser.publicId WAS NOT A STRING. followingUser.publicId is actually: ' + followingUser.publicId)
+        return
+    }
+
+    if (followingUser.publicId === userToUnfollowPublicId) {
+        http.NotAuthorized(res, 'You cannot unfollow yourself.')
+        return
+    }
+
+    const userToUnfollow = await user.findUserByPublicId(userToUnfollowPublicId)
+
+    if (userToUnfollow === null) {
+        http.NotFound(res, 'User to unfollow was not found.')
+        return
+    }
+
+    if (userToUnfollow.error) {
+        http.ServerError(res, 'An error occured while unfollowing the user. Please try again later.')
+        return
+    }
+
+    user.unfollowUser(followingUser.publicId, userToUnfollowPublicId).then(() => {
+        http.OK(res, 'Successfully unfollowed the user.')
+    }).catch(error => {
+        logger.error(error)
+        http.ServerError(res, 'An error occured while unfollowing the user. Please try again later.')
+    })
 }
 
 module.exports = {
@@ -820,5 +984,7 @@ module.exports = {
     deleteImagePost,
     deleteTextPost,
     findProfilesByName,
-    getPublicProfileInformation
+    getPublicProfileInformation,
+    followUser,
+    unfollowUser
 }
