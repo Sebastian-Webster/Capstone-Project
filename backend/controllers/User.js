@@ -775,7 +775,8 @@ const findProfilesByName = (req, res) => {
 }
 
 const getPublicProfileInformation = async (req, res) => {
-    const publicId = req?.params?.publicId
+    const userPublicId = req?.params?.userPublicId //The publicId of the user that is requesting the information
+    const publicId = req?.params?.publicId //The publicId of the user to get the information of
 
     if (!publicId) {
         http.BadInput(res, 'You must provide a publicId')
@@ -784,6 +785,16 @@ const getPublicProfileInformation = async (req, res) => {
 
     if (typeof publicId !== 'string') {
         http.BadInput(res, 'publicId must be a string')
+        return
+    }
+
+    if (!userPublicId) {
+        http.BadInput(res, 'You must provide a userPublicId')
+        return
+    }
+
+    if (typeof userPublicId !== 'string') {
+        http.BadInput(res, 'userPublicId must be a string')
         return
     }
 
@@ -801,6 +812,8 @@ const getPublicProfileInformation = async (req, res) => {
     }
 
     const cleanedResult = generalLib.returnPublicProfileInformation(userFound)
+    cleanedResult.isFollowing = userFound.followers.includes(userPublicId)
+    cleanedResult.isFollower = userFound.following.includes(userPublicId)
 
     http.OK(res, 'Successfully retreived public profile information', cleanedResult)
 }
