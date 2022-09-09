@@ -96,6 +96,6 @@ router.get('/searchProfilesByName/:name', (req, res) => {
     findProfilesByName(req, res)
 })
 
-router.get('/publicProfileInformation/:publicId', getPublicProfileInformation)
+router.get('/publicProfileInformation/:publicId/:userPublicId', getPublicProfileInformation)
 
 module.exports = router;
