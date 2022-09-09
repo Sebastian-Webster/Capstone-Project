@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect, useMemo, Fragment, useReducer} from 'react';
+import React, {useContext, useState, useEffect, useMemo, Fragment, useReducer, useRef} from 'react';
 import { CredentialsContext } from '../context/CredentialsContext';
 import useComponent from '../hooks/useComponent';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -16,6 +16,7 @@ import { DarkModeContext } from '../context/DarkModeContext';
 import { ServerUrlContext } from '../context/ServerUrlContext';
 import useColorScheme from '../hooks/useColorScheme';
 import { useParams } from 'react-router-dom';
+import FollowButton from '../components/FollowButton';
 
 var _ = require('lodash')
 
@@ -33,13 +34,39 @@ const Profile = () => {
     const [profileData, setProfileData] = useState(null)
     const [loadingProfile, setLoadingProfile] = useState(profilePublicId ? true : false)
     const [errorLoadingProfile, setErrorLoadingProfile] = useState(null)
+    const followingOrUnfollowing = useRef(false)
+    const [isFollowing, setIsFollowing] = useState(null)
 
-    console.log('profilePublicId:', profilePublicId, ' loadingProfile:', loadingProfile)
+    //Set to followers.length if you are visitng your own profile page via the profile button.
+    //Set to followers.length if you are visitng your own profile page via the search page.
+    //Set to 0 if you are visiting someone else's profile as loadPublicProfileInformation() will get the amount of followers and set followerNumber to that.
+    const [followerNumber, setFollowerNumber] = useState(profilePublicId ? profilePublicId === publicId ? followers.length : 0 : followers.length)
+
+    useEffect(() => {
+        setFollowerNumber(
+            profilePublicId ? 
+                profileData === null ?
+                    'Loading...'
+                :
+                    profileData.isFollowing ? 
+                        isFollowing ? 
+                            profileData.followers 
+                        : 
+                            profileData.followers - 1 
+                    : 
+                        isFollowing ? 
+                            profileData.followers + 1 
+                        : 
+                            profileData.followers 
+            : 
+                followers.length
+        )
+    }, [profilePublicId, profileData, isFollowing])
 
     const loadPublicProfileInformation = () => {
         setLoadingProfile(true)
         setErrorLoadingProfile(null)
-        axios.get(`${serverUrl}/user/publicProfileInformation/${profilePublicId}`)
+        axios.get(`${serverUrl}/user/publicProfileInformation/${profilePublicId}/${publicId}`)
         .then(response => response.data.data)
         .then(async result => {
             if (result.profileImageKey) {
@@ -49,6 +76,8 @@ const Profile = () => {
             setLoadingProfile(false)
             setErrorLoadingProfile(null)
             setProfileData(result)
+            setIsFollowing(result.isFollowing)
+            setFollowerNumber(result.followers)
             console.log(result)
         })
         .catch(error => {
@@ -355,6 +384,48 @@ const Profile = () => {
         }
     }, [profileImageToUpload])
 
+    const handleFollowButtonPress = () => {
+        if (profileData !== null) {
+            if (!followingOrUnfollowing.current) {
+                followingOrUnfollowing.current = true;
+                if (!isFollowing) {
+                    const toSend = {
+                        followerId: _id,
+                        userToFollowPublicId: profileData.publicId
+                    }
+
+                    axios.post(`${serverUrl}/user/followUser`, toSend).then(result => {
+                        setIsFollowing(true)
+                        followingOrUnfollowing.current = false;
+                        console.log(result?.data?.message)
+                    }).catch(error => {
+                        console.error(error)
+                        alert(error?.response?.data?.error || String(error))
+                        followingOrUnfollowing.current = false;
+                    })
+                } else {
+                    const toSend = {
+                        followerId: _id,
+                        userToUnfollowPublicId: profileData.publicId
+                    }
+
+                    axios.post(`${serverUrl}/user/unfollowUser`, toSend).then(result => {
+                        setIsFollowing(false)
+                        followingOrUnfollowing.current = false;
+                        console.log(result?.data?.message)
+                    }).catch(error => {
+                        console.error(error)
+                        alert(error?.response?.data?.error || String(error))
+                        followingOrUnfollowing.current = false;
+                    })
+                }
+            }
+        } else {
+            alert('profileData is null. Cannot follow user.')
+            console.error('profileData is null. Cannot follow user.')
+        }
+    }
+
     return (
         <>
             {errorLoadingProfile ?
@@ -385,10 +456,11 @@ const Profile = () => {
                                     <img src={profilePublicId ? profileData.profileImageUri : profileImageUri} style={{width: 50, height: 50, borderRadius: '50%'}} alt='Profile Image'/>
                                 </div>
                             }
+                            {profilePublicId && profilePublicId !== publicId && <FollowButton following={isFollowing} onPress={handleFollowButtonPress} extraStyles={{marginLeft: 10}}/>}
                         </FlexRowCentreDiv>
                         <FlexColumnCentreDiv>
-                            <H3NoMargin>{profilePublicId ? profileData.followers : followers.length}</H3NoMargin>
-                            <H3NoMargin>Followers</H3NoMargin>
+                            <H3NoMargin>{followerNumber}</H3NoMargin>
+                            <H3NoMargin>{followerNumber === 1 ? 'Follower' : 'Followers'}</H3NoMargin>
                         </FlexColumnCentreDiv>
                         <FlexColumnCentreDiv>
                             <H3NoMargin>{profilePublicId ? profileData.following : following.length}</H3NoMargin>
