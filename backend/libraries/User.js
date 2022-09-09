@@ -105,6 +105,24 @@ class UserLibrary {
             User.find({name: {$regex: `^${string}`, $options: 'i'}}).then(resolve).catch(reject)
         })
     }
+
+    followUser = (followerPublicId, userToFollowPublicId) => {
+        return new Promise((resolve, reject) => {
+            Promise.all([
+                User.findOneAndUpdate({publicId: followerPublicId}, {$push: {following: userToFollowPublicId}}),
+                User.findOneAndUpdate({publicId: userToFollowPublicId}, {$push: {followers: followerPublicId}})
+            ]).then(resolve).catch(reject)
+        })
+    }
+
+    unfollowUser = (followerPublicId, userToUnfollowPublicId) => {
+        return new Promise((resolve, reject) => {
+            Promise.all([
+                User.findOneAndUpdate({publicId: followerPublicId}, {$pull: {following: userToUnfollowPublicId}}),
+                User.findOneAndUpdate({publicId: userToUnfollowPublicId}, {$pull: {followers: followerPublicId}})
+            ]).then(resolve).catch(reject)
+        })
+    }
 }
 
 module.exports = UserLibrary

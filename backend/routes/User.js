@@ -15,7 +15,9 @@ const {
     deleteTextPost,
     deleteImagePost,
     findProfilesByName,
-    getPublicProfileInformation
+    getPublicProfileInformation,
+    followUser,
+    unfollowUser
 } = require('../controllers/User')
 const multer = require('multer')
 const path = require('path')
@@ -97,5 +99,9 @@ router.get('/searchProfilesByName/:name', (req, res) => {
 })
 
 router.get('/publicProfileInformation/:publicId/:userPublicId', getPublicProfileInformation)
+
+router.post('/followUser', followUser)
+
+router.post('/unfollowUser', unfollowUser)
 
 module.exports = router;

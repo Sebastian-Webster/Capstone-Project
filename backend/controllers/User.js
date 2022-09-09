@@ -818,6 +818,115 @@ const getPublicProfileInformation = async (req, res) => {
     http.OK(res, 'Successfully retreived public profile information', cleanedResult)
 }
 
+const followUser = async (req, res) => {
+    const followerId = req?.body?.followerId
+    const userToFollowPublicId = req?.body?.userToFollowPublicId
+
+    if (!followerId) {
+        http.BadInput(res, 'followerId must be supplied')
+        return
+    }
+
+    if (typeof followerId !== 'string') {
+        http.BadInput(res, 'followerId must be a string')
+        return
+    }
+
+    if (!isValidObjectId(followerId)) {
+        http.BadInput(res, 'followerId must be a valid objectId')
+        return
+    }
+
+    if (!userToFollowPublicId) {
+        http.BadInput(res, 'userToFollowPublicId must be supplied')
+        return
+    }
+
+    if (typeof userToFollowPublicId !== 'string') {
+        http.BadInput(res, 'userToFollowPublicId must be a string')
+        return
+    }
+
+    const followingUser = user.findUserById(followerId);
+
+    if (followingUser === null) {
+        http.NotFound(res, 'User with followerId was not found')
+        return
+    }
+
+    if (followingUser.error) {
+        http.ServerError(res, 'An error occured while following the user. Please try again later.')
+        logger.error(followingUser.error)
+        return
+    }
+
+    if (typeof followingUser.publicId !== 'string') {
+        http.ServerError(res, 'An error occured while following the user. Please try again later.')
+        logger.error('followingUser.publicId WAS NOT A STRING. followingUser.publicId is actually: ' + followingUser.publicId)
+    }
+
+    user.followUser(followingUser.publicId, userToFollowPublicId).then(() => {
+        http.OK(res, 'Successfully followed the user.')
+    }).catch(error => {
+        logger.error(error)
+        http.ServerError(res, 'An error occured while following the user. Please try again later.')
+    })
+}
+
+const unfollowUser = (req, res) => {
+    const followerId = req?.body?.followerId
+    const userToUnfollowPublicId = req?.body?.userToUnfollowPublicId
+
+    if (!followerId) {
+        http.BadInput(res, 'followerId must be supplied')
+        return
+    }
+
+    if (typeof followerId !== 'string') {
+        http.BadInput(res, 'followerId must be a string')
+        return
+    }
+
+    if (!isValidObjectId(followerId)) {
+        http.BadInput(res, 'followerId must be a valid objectId')
+        return
+    }
+
+    if (!userToUnfollowPublicId) {
+        http,BadInput(res, 'userToUnfollowPublicId must be supplied')
+        return
+    }
+
+    if (typeof userToUnfollowPublicId !== 'string') {
+        http.BadInput(res, 'userToUnfollowPublicId must be a string')
+    }
+
+    const followingUser = user.findUserById(followerId);
+
+    if (followingUser === null) {
+        http.NotFound(res, 'User with followerId was not found')
+        return
+    }
+
+    if (followingUser.error) {
+        http.ServerError(res, 'An error occured while unfollowing the user. Please try again later.')
+        logger.error(followingUser.error)
+        return
+    }
+
+    if (typeof followingUser.publicId !== 'string') {
+        http.ServerError(res, 'An error occured while unfollowing the user. Please try again later.')
+        logger.error('followingUser.publicId WAS NOT A STRING. followingUser.publicId is actually: ' + followingUser.publicId)
+    }
+
+    user.unfollowUser(followingUser.publicId, userToUnfollowPublicId).then(() => {
+        http.OK(res, 'Successfully unfollowed the user.')
+    }).catch(error => {
+        logger.error(error)
+        http.ServerError(res, 'An error occured while unfollowing the user. Please try again later.')
+    })
+}
+
 module.exports = {
     login,
     signup,
@@ -833,5 +942,7 @@ module.exports = {
     deleteImagePost,
     deleteTextPost,
     findProfilesByName,
-    getPublicProfileInformation
+    getPublicProfileInformation,
+    followUser,
+    unfollowUser
 }
