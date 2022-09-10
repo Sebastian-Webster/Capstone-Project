@@ -472,6 +472,10 @@ const updateProfileImage = async (req, res) => {
         return
     }
 
+    if (typeof userFoundById.profileImageKey === 'string' && userFoundById.profileImageKey.trim().length > 0) {
+        filesystem.deleteFileSync(`/uploads/${userFoundById.profileImageKey}`)
+    }
+
     user.updateProfileImage(userId, req.file.filename)
     .then(() => {
         http.OK(res, 'Successfully updated profile image.', req.file.filename)
