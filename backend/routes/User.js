@@ -17,7 +17,8 @@ const {
     findProfilesByName,
     getPublicProfileInformation,
     followUser,
-    unfollowUser
+    unfollowUser,
+    getUserFollowers
 } = require('../controllers/User')
 const multer = require('multer')
 const path = require('path')
@@ -103,5 +104,7 @@ router.get('/publicProfileInformation/:publicId/:userPublicId', getPublicProfile
 router.post('/followUser', followUser)
 
 router.post('/unfollowUser', unfollowUser)
+
+router.post('/getUserFollowers', getUserFollowers)
 
 module.exports = router;
