@@ -688,6 +688,18 @@ const deleteImagePost = async (req, res) => {
         return
     }
 
+    const imagePost = await ImagePost.findPostById(postId);
+
+    if (imagePost === null) {
+        http.NotFound(res, 'Image post not found.')
+        return
+    }
+
+    if (imagePost.error) {
+        http.ServerError(res, 'An error occured while deleting image post. Please try again later.')
+        return
+    }
+
     const isOwner = await ImagePost.checkIfUserIsPostOwner(userId, postId)
 
     if (typeof isOwner === 'object' && isOwner.error) {
@@ -703,11 +715,11 @@ const deleteImagePost = async (req, res) => {
 
     Promise.all([
         ImagePost.deletePostById(postId),
-        filesystem.deleteFileAsync(`${process.env.UPLOAD_DIR}/uploads`)
+        filesystem.deleteFileAsync(`/uploads/${imagePost.imageKey}`)
     ]).then(() => {
         http.OK(res, 'Post successfully deleted.')
     }).catch(error => {
-        http.ServerError(res, 'An error occured while deleting iamge post. Please try again later.')
+        http.ServerError(res, 'An error occured while deleting image post. Please try again later.')
         logger.error(error)
     })
 }
