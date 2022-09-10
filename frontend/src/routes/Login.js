@@ -49,8 +49,8 @@ const Login = () => {
             } else accountData.profileImageUri = defaultPfp
             setLoading(false)
             accountData.rememberMe = rememberMe
-            setStoredCredentials(result.data.data)
-            if (rememberMe) localStorage.setItem('SebMediaCredentials', JSON.stringify(result.data.data))
+            setStoredCredentials(accountData)
+            if (rememberMe) localStorage.setItem('SebMediaCredentials', JSON.stringify(accountData))
             navigate('/home')
         }).catch(error => {
             setLoading(false)
