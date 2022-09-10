@@ -6,6 +6,7 @@ const TextPostLibrary = require('../libraries/TextPost');
 const ImagePostLibrary = require('../libraries/ImagePost');
 const RedisLibrary = require('../libraries/Redis');
 const GeneralLibrary = require('../libraries/General');
+const FilesystemLibrary = require('../libraries/Filesystem')
 const {v4: uuidv4} = require('uuid');
 const user = new UserLibrary();
 const http = new HTTPHandler();
@@ -14,6 +15,7 @@ const TextPost = new TextPostLibrary();
 const ImagePost = new ImagePostLibrary();
 const redis = new RedisLibrary();
 const generalLib = new GeneralLibrary();
+const filesystem = new FilesystemLibrary();
 const bcrypt = require('bcrypt');
 
 const login = async (req, res) => {
@@ -699,7 +701,10 @@ const deleteImagePost = async (req, res) => {
         return
     }
 
-    ImagePost.deletePostById(postId).then(() => {
+    Promise.all([
+        ImagePost.deletePostById(postId),
+        filesystem.deleteFileAsync(`${process.env.UPLOAD_DIR}/uploads`)
+    ]).then(() => {
         http.OK(res, 'Post successfully deleted.')
     }).catch(error => {
         http.ServerError(res, 'An error occured while deleting iamge post. Please try again later.')
@@ -739,13 +744,11 @@ const deleteTextPost = async (req, res) => {
         return
     }
 
-    TextPost.deletePostById(postId).then(() => {
+    Promise.all([
+        TextPost.deletePostById(postId),
+        redis.removeTextPostFromCache(userId, postId)
+    ]).then(() => {
         http.OK(res, 'Post successfully deleted.')
-        redis.removeTextPostFromCache(userId, postId).then(() => {
-            logger.log(`Successfully deleted post with ID: ${postId} from database and Redis cache`)
-        }).catch(error => {
-            logger.error(`Successfully deleted post with ID: ${postId} from database but ran into error while removing it from Redis cache: ${error}`)
-        })
     }).catch(error => {
         http.ServerError(res, 'An error occured while deleting the text post. Please try again later.')
         logger.error(error)

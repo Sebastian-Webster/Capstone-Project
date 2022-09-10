@@ -45,7 +45,7 @@ class RedisLibrary {
                 const cache = await this.getCache(redisCacheKey)
                 if (!Array.isArray(cache)) return resolve() //No need to throw an error because there is no cache to delete a post from
                 const postIndex = cache.findIndex(post => post._id === postId)
-                if (postIndex === -1) throw new Error('Post was not found in cache.')
+                if (postIndex === -1) return resolve() //No need to throw an error because there is no post to remove from cache. It is weird that it is not in the cache but we don't need to throw an error.
                 cache.splice(postIndex, 1)
                 this.setCache(redisCacheKey, cache).then(resolve)
             } catch (error) {
