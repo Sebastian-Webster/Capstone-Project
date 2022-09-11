@@ -29,7 +29,7 @@ class RedisLibrary {
             cache = JSON.parse(cache)
             if (cache) {
                 if (typeof skip === 'number' && typeof limit === 'number') {
-                    return cache.splice(skip, generalLib.calculateHowManyPostsToSend(cache.length, limit, skip))
+                    return cache.splice(skip, generalLib.calculateHowManyItemsToSend(cache.length, limit, skip))
                 } else return cache
             } else return cache
         } catch (error) {

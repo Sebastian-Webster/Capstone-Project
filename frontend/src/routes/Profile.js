@@ -15,7 +15,7 @@ import { useFilePicker } from 'use-file-picker';
 import { DarkModeContext } from '../context/DarkModeContext';
 import { ServerUrlContext } from '../context/ServerUrlContext';
 import useColorScheme from '../hooks/useColorScheme';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import FollowButton from '../components/FollowButton';
 
 var _ = require('lodash')
@@ -36,6 +36,7 @@ const Profile = () => {
     const [errorLoadingProfile, setErrorLoadingProfile] = useState(null)
     const followingOrUnfollowing = useRef(false)
     const [isFollowing, setIsFollowing] = useState(null)
+    const navigate = useNavigate()
 
     //Set to followers.length if you are visitng your own profile page via the profile button.
     //Set to followers.length if you are visitng your own profile page via the search page.
@@ -458,7 +459,7 @@ const Profile = () => {
                             }
                             {profilePublicId && profilePublicId !== publicId && <FollowButton following={isFollowing} followBack={profileData.isFollower} onPress={handleFollowButtonPress} extraStyles={{marginLeft: 10}}/>}
                         </FlexRowCentreDiv>
-                        <FlexColumnCentreDiv>
+                        <FlexColumnCentreDiv style={{cursor: 'pointer'}} onClick={() => profilePublicId && profilePublicId !== publicId ? navigate(`/followers/${profilePublicId}/${profileData.name}`) : navigate('/followers')}>
                             <H3NoMargin>{followerNumber}</H3NoMargin>
                             <H3NoMargin>{followerNumber === 1 ? 'Follower' : 'Followers'}</H3NoMargin>
                         </FlexColumnCentreDiv>

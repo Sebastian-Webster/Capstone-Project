@@ -315,7 +315,7 @@ const getTextPostsByUserName = async (req, res) => {
                 logger.error('An error occured while setting cache of text posts for user with ID: ' + foundUserByName._id)
                 logger.error(error)
             }
-            let postsToSend = result.splice(skip, generalLib.calculateHowManyPostsToSend(result.length, limit, skip))
+            let postsToSend = result.splice(skip, generalLib.calculateHowManyItemsToSend(result.length, limit, skip))
             postsToSend = postsToSend.map(post => {
                 const {_doc, ...otherNotWantedStuff} = post
                 return _doc
@@ -988,6 +988,57 @@ const unfollowUser = async (req, res) => {
     })
 }
 
+const getUserFollowers = async (req, res) => {
+    const userId = req?.body?.userId; //Once we implement hiding followers from certain users, the userId will be used to see if that user can see the followers
+    const profilePublicId = req?.body?.profilePublicId
+    const limit = 20;
+    let skip = req?.body?.skip
+
+    if (!userId) {
+        http.BadInput(res, 'userId must be provided')
+        return
+    }
+
+    if (typeof userId !== 'string') {
+        http.BadInput(res, 'userId must be a string')
+        return
+    }
+
+    if (!isValidObjectId(userId)) {
+        http.BadInput(res, 'userId must be a valid objectId')
+        return
+    }
+
+    if (typeof skip !== 'number') {
+        http.BadInput(res, 'skip must be a number')
+        return
+    }
+
+    if (typeof profilePublicId !== 'string') {
+        http.BadInput(res, 'profilePublicId must be a string')
+        return
+    }
+
+    const userFound = await user.findUserByPublicId(profilePublicId)
+
+    if (userFound === null) {
+        http.NotFound(res, 'User with ID could not be found')
+        return
+    }
+
+    if (userFound.error) {
+        http.ServerError(res, 'An error occured while finding followers. Please try again later.')
+        return
+    }
+
+    try {
+        const followersToSend = userFound.followers.splice(skip, generalLib.calculateHowManyItemsToSend(userFound.followers.length, limit, skip))
+        http.OK(res, 'Successfully found followers', followersToSend)
+    } catch (error) {
+        http.ServerError(res, 'An error occured while finding followers. Please try again later.')
+    }
+}
+
 module.exports = {
     login,
     signup,
@@ -1005,5 +1056,6 @@ module.exports = {
     findProfilesByName,
     getPublicProfileInformation,
     followUser,
-    unfollowUser
+    unfollowUser,
+    getUserFollowers
 }
