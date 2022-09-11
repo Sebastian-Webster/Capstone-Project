@@ -13,7 +13,7 @@ const useComponent = () => {
     }
 
     const FlexColumnCentreDiv = (props) => {
-        return <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', backgroundColor: darkMode ? 'black' : 'white', color: darkMode ? 'white' : 'black', ...props.style}}>{props.children}</div>
+        return <div onClick={props.onClick} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', backgroundColor: darkMode ? 'black' : 'white', color: darkMode ? 'white' : 'black', ...props.style}}>{props.children}</div>
     }
 
     const FlexRowSpaceAroundDiv = (props) => {

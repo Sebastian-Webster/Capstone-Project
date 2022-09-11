@@ -2,10 +2,10 @@ const Logger = require('./Logger')
 const logger = new Logger();
 
 class General {
-    calculateHowManyPostsToSend = (postArrayLength, limit, skip) => {
-        if (typeof postArrayLength !== 'number') {
-            logger.error('Provided postArrayLength: ' + postArrayLength)
-            throw new Error('postArrayLength is supposed to be a number')
+    calculateHowManyItemsToSend = (arrayLength, limit, skip) => {
+        if (typeof arrayLength !== 'number') {
+            logger.error('Provided arrayLength: ' + arrayLength)
+            throw new Error('arrayLength is supposed to be a number')
         }
 
         if (typeof limit !== 'number') {
@@ -18,7 +18,7 @@ class General {
             throw new Error('skip is supposed to be a number')
         }
 
-        const itemsNotSkipped = postArrayLength - skip;
+        const itemsNotSkipped = arrayLength - skip;
         return itemsNotSkipped > limit ? limit : itemsNotSkipped
     }
 

@@ -1008,11 +1008,6 @@ const getUserFollowers = async (req, res) => {
         return
     }
 
-    if (!skip) {
-        http.BadInput(res, 'skip must be supplied')
-        return
-    }
-
     if (typeof skip !== 'number') {
         http.BadInput(res, 'skip must be a number')
         return
