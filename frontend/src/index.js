@@ -55,9 +55,10 @@ const ComponentToRender = () => {
                   <Route path="search" element={<Suspense fallback={<LazyLoadingComponent text="Search Screen is loading..."/>}><LazySearch/></Suspense>}/>
                   <Route path="posts" element={<Suspense fallback={<LazyLoadingComponent text="Post creation screen is loading..."/>}><LazyPosts/></Suspense>}/>
                   <Route path="profile" element={<Suspense fallback={<LazyLoadingComponent text="Profile Screen is loading..."/>}><LazyProfile/></Suspense>}/>
-                  <Route path="followers" element={<Suspense fallback={<LazyLoadingComponent text="Followers Screen is loading..."/>}><LazyFollowers/></Suspense>}/>
-                  <Route path="settings" element={<Suspense fallback={<LazyLoadingComponent text="Settings Screen is loading..."/>}><LazySettings/></Suspense>}/>
                   <Route path="profile/:publicId" element={<Suspense fallback={<LazyLoadingComponent text="Profile Screen is loading..."/>}><LazyProfile/></Suspense>}/>
+                  <Route path="followers" element={<Suspense fallback={<LazyLoadingComponent text="Followers Screen is loading..."/>}><LazyFollowers/></Suspense>}/>
+                  <Route path="followers/:publicId/:accountName" element={<Suspense fallback={<LazyLoadingComponent text="Followers Screen is loading..."/>}><LazyFollowers/></Suspense>}/>
+                  <Route path="settings" element={<Suspense fallback={<LazyLoadingComponent text="Settings Screen is loading..."/>}><LazySettings/></Suspense>}/>
                 </Route>
                 <Route path="login" element={<Suspense fallback={<LazyLoadingComponent text="Login Screen is loading..."/>}><LazyLogin/></Suspense>}/>
                 <Route path="signup" element={<Suspense fallback={<LazyLoadingComponent text="Signup Screen is loading..."/>}><LazySignup/></Suspense>}/>

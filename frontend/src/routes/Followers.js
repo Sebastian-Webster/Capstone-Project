@@ -10,6 +10,7 @@ import ProfileItem from '../components/ProfileItem';
 import useComponent from '../hooks/useComponent';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import { useParams } from 'react-router-dom';
 
 const followersInitialState = {
     loading: true,
@@ -45,6 +46,7 @@ const Followers = () => {
     const sharedCode = useSharedCode();
     const colors = useColorScheme()
     const {FlexColumnCentreDiv} = useComponent()
+    const {publicId: profilePublicId, accountName} = useParams()
 
     const loadFollowers = (firstTime) => {
         if (!followersState.loading || firstTime) {
@@ -53,6 +55,7 @@ const Followers = () => {
 
             const toSend = {
                 userId: _id,
+                profilePublicId: profilePublicId || publicId,
                 skip
             }
 
@@ -87,13 +90,13 @@ const Followers = () => {
 
     return (
         <>
-            <h1 style={{color: colors.tertiary, textAlign: 'center'}}>Followers for {name}</h1>
+            <h1 style={{color: colors.tertiary, textAlign: 'center'}}>Followers for {accountName || name}</h1>
             {
                 Array.isArray(followersState.followers) ?
                     <>
                         {followersState.followers.length === 0 ? (
                             <FlexColumnCentreDiv>
-                                <h3 style={{color: colors.tertiary}}>No one follows {name}</h3>
+                                <h3 style={{color: colors.tertiary}}>No one follows {accountName || name}</h3>
                             </FlexColumnCentreDiv>
                         ) : (
                             <FlexColumnCentreDiv>

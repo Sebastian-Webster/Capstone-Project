@@ -989,7 +989,8 @@ const unfollowUser = async (req, res) => {
 }
 
 const getUserFollowers = async (req, res) => {
-    const userId = req?.body?.userId;
+    const userId = req?.body?.userId; //Once we implement hiding followers from certain users, the userId will be used to see if that user can see the followers
+    const profilePublicId = req?.body?.profilePublicId
     const limit = 20;
     let skip = req?.body?.skip
 
@@ -1013,7 +1014,12 @@ const getUserFollowers = async (req, res) => {
         return
     }
 
-    const userFound = await user.findUserById(userId)
+    if (typeof profilePublicId !== 'string') {
+        http.BadInput(res, 'profilePublicId must be a string')
+        return
+    }
+
+    const userFound = await user.findUserByPublicId(profilePublicId)
 
     if (userFound === null) {
         http.NotFound(res, 'User with ID could not be found')
