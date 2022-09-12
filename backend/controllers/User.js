@@ -1039,6 +1039,57 @@ const getUserFollowers = async (req, res) => {
     }
 }
 
+const getUserFollowing = async (req, res) => {
+    const userId = req?.body?.userId; //Once we implement hiding people who the user follows from certain users, the userId will be used to see if that user can see who they follow
+    const profilePublicId = req?.body?.profilePublicId
+    const limit = 20;
+    let skip = req?.body?.skip
+
+    if (!userId) {
+        http.BadInput(res, 'userId must be provided')
+        return
+    }
+
+    if (typeof userId !== 'string') {
+        http.BadInput(res, 'userId must be a string')
+        return
+    }
+
+    if (!isValidObjectId(userId)) {
+        http.BadInput(res, 'userId must be a valid objectId')
+        return
+    }
+
+    if (typeof skip !== 'number') {
+        http.BadInput(res, 'skip must be a number')
+        return
+    }
+
+    if (typeof profilePublicId !== 'string') {
+        http.BadInput(res, 'profilePublicId must be a string')
+        return
+    }
+
+    const userFound = await user.findUserByPublicId(profilePublicId)
+
+    if (userFound === null) {
+        http.NotFound(res, 'User with ID could not be found')
+        return
+    }
+
+    if (userFound.error) {
+        http.ServerError(res, 'An error occured while finding following. Please try again later.')
+        return
+    }
+
+    try {
+        const followingToSend = userFound.following.splice(skip, generalLib.calculateHowManyItemsToSend(userFound.following.length, limit, skip))
+        http.OK(res, 'Successfully found following', followingToSend)
+    } catch (error) {
+        http.ServerError(res, 'An error occured while finding following. Please try again later.')
+    }
+}
+
 module.exports = {
     login,
     signup,
@@ -1057,5 +1108,6 @@ module.exports = {
     getPublicProfileInformation,
     followUser,
     unfollowUser,
-    getUserFollowers
+    getUserFollowers,
+    getUserFollowing
 }
