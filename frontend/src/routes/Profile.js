@@ -463,7 +463,7 @@ const Profile = () => {
                             <H3NoMargin>{followerNumber}</H3NoMargin>
                             <H3NoMargin>{followerNumber === 1 ? 'Follower' : 'Followers'}</H3NoMargin>
                         </FlexColumnCentreDiv>
-                        <FlexColumnCentreDiv>
+                        <FlexColumnCentreDiv style={{cursor: 'pointer'}} onClick={() => profilePublicId && profilePublicId !== publicId ? navigate(`/following/${profilePublicId}/${profileData.name}`) : navigate('/following')}>
                             <H3NoMargin>{profilePublicId ? profileData.following : following.length}</H3NoMargin>
                             <H3NoMargin>Following</H3NoMargin>
                             {profilePublicId && profileData.isFollower && <H3NoMargin>({profileData.name} follows you)</H3NoMargin>}
