@@ -161,7 +161,7 @@ const Posts = () => {
                                     </Box>
                                 </>
                             :
-                                imagePreview ? <ImagePost title={title} body={body} previewImage={imagePreview} previewMode/> : <TextPost title={title} body={body} profileImage={profileImageUri} profileName={name} previewMode/>
+                                imagePreview ? <ImagePost title={title} body={body} previewImage={imagePreview} profileImage={profileImageUri} profileName={name} previewMode/> : <TextPost title={title} body={body} profileImage={profileImageUri} profileName={name} previewMode/>
                             }
                         </div>
                     </Container>
