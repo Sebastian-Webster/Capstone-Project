@@ -37,7 +37,7 @@ const ComponentToRender = () => {
   const [storedCredentials, setStoredCredentials] = useState(JSON.parse(localStorage.getItem('SebMediaCredentials')));
   const [darkMode, setDarkMode] = useState(window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)').matches : true);
   console.log(window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : 'Window Match Media is not available. Defaulting to dark mode.')
-  const [serverUrl, setServerUrl] = useState(`http://${window.location.host}:8080`);
+  const [serverUrl, setServerUrl] = useState(`http://${window.location.hostname}:8080`);
 
   window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
     setDarkMode(event.matches)

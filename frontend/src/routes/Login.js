@@ -34,6 +34,7 @@ const Login = () => {
         setError(null)
 
         const url = `${serverUrl}/user/login`
+        console.log('url is: ' + url)
         const data = new FormData(e.currentTarget)
         const toSend = {
             email: data.get('email'),
