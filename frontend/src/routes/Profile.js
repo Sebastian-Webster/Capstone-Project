@@ -330,7 +330,7 @@ const Profile = () => {
     const DisplayImagePosts = useMemo(() => {
         return Array.isArray(imagePostState.posts) ? imagePostState.posts.map((post, index) => (
             <Fragment key={index.toString()}>
-                <ImagePost {...post} publicId={publicId} dispatch={dispatchImagePostUpdate} userId={_id}/>
+                <ImagePost {...post} publicId={publicId} dispatch={dispatchImagePostUpdate} userId={_id} profileName={name} profileImage={profilePublicId ? profileData.profileImageUri : profileImageUri}/>
             </Fragment>
         )) : null
     }, [imagePostState.posts, imagePostState.reRenderTimes])
