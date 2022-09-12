@@ -1,2 +1,1 @@
-Capstone-Frontend: bin/frontend
-Capstone-Backend: bin/backend
+CapstoneProject: node ./backend/index.js
