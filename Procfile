@@ -1,1 +1,2 @@
-Capstone-Frontend: cd frontend && sudo npm start
+Capstone-Frontend: bin/frontend
+Capstone-Backend: bin/backend
