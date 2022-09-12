@@ -34,7 +34,7 @@ servers.forEach((server, index) => {
     server.get('/image/:imageKey', (req, res) => {
         const imageKey = req?.params?.imageKey;
         try {
-            const filepath = path.resolve('/uploads', imageKey)
+            const filepath = path.resolve('uploads', imageKey)
 
             const readableStream = fs.createReadStream(filepath, {encoding: 'base64'})
             const passthroughStream = new stream.PassThrough()
