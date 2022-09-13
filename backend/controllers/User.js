@@ -1168,7 +1168,6 @@ const editTextPost = async (req, res) => {
     .then(newDocument => {
         http.OK(res, 'Successfully edited text post')
         try {
-            console.log(newDocument)
             redis.EditTextPostInCache(newDocument).then(() => {
                 logger.log('Successfully saved edited post in redis cache')
             })
