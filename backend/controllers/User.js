@@ -672,7 +672,10 @@ const unlikeTextPost = async (req, res) => {
         http.ServerError(res, 'An error occured while unliking the post. Please try again later.')
     }
 
-    TextPost.unlikePost(postId, userPublicId)
+    Promise.all([
+        TextPost.unlikePost(postId, userPublicId),
+        redis.RemoveLikeFromTextPostInCache(userPublicId, PostFoundWithId)
+    ])
     .then(() => {
         http.OK(res, 'Post has successfully been unliked.')
     })
