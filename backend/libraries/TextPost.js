@@ -84,7 +84,7 @@ class TextPostLibrary {
                     dateMade: postObj.editHistory.length > 0 ? postObj.dateEdited : postObj.datePosted
                 }
 
-                TextPost.findOneAndUpdate({_id: postObj._id}, {$push: {editHistory: additionalEditHistory}, dateEdited: editedDate, title: newTitle, body: newBody})
+                TextPost.findOneAndUpdate({_id: postObj._id}, {$push: {editHistory: additionalEditHistory}, dateEdited: editedDate, title: newTitle, body: newBody}, {returnDocument: 'after'})
                 .then(resolve)
                 .catch(reject)
             } catch (error) {

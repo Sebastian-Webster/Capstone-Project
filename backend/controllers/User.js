@@ -1165,8 +1165,17 @@ const editTextPost = async (req, res) => {
     }
 
     TextPost.editTextPost(newTitle, newBody, postFoundById)
-    .then(() => {
+    .then(newDocument => {
         http.OK(res, 'Successfully edited text post')
+        try {
+            console.log(newDocument)
+            redis.EditTextPostInCache(newDocument).then(() => {
+                logger.log('Successfully saved edited post in redis cache')
+            })
+        } catch (error) {
+            logger.error('Error occured while saving edited post to redis cache:')
+            logger.error(error)
+        }
     })
     .catch(error => {
         logger.error(error)
