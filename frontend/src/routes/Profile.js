@@ -161,10 +161,7 @@ const Profile = () => {
                 newPostsAfterTurningEditModeOff[turnOffEditIndex].editMode = false;
                 return {...state, posts: newPostsAfterTurningEditModeOff, reRenderTimes: state.reRenderTimes + 1}
             case 'openContextMenu':
-                const openContextMenuState = {...state, contextMenuPostId: action.postId, contextMenuAnchorElement: action.anchorElement}
-                console.log('opening context menu')
-                console.log(openContextMenuState)
-                return openContextMenuState
+                return {...state, contextMenuPostId: action.postId, contextMenuAnchorElement: action.anchorElement}
             case 'closeContextMenu':
                 return {...state, contextMenuPostId: null, contextMenuAnchorElement: null}
             default:
@@ -246,6 +243,10 @@ const Profile = () => {
                 const newPostsAfterTurningEditModeOff = state.posts;
                 newPostsAfterTurningEditModeOff[turnOffEditIndex].editMode = false;
                 return {...state, posts: newPostsAfterTurningEditModeOff, reRenderTimes: state.reRenderTimes + 1}
+                case 'openContextMenu':
+                    return {...state, contextMenuPostId: action.postId, contextMenuAnchorElement: action.anchorElement}
+                case 'closeContextMenu':
+                    return {...state, contextMenuPostId: null, contextMenuAnchorElement: null}
             default:
                 throw new Error((action.type + ' is not a valid action for textPostReducer'))
         }
@@ -327,7 +328,6 @@ const Profile = () => {
     }
 
     const DisplayTextPosts = useMemo(() => {
-        console.log('rerendering text posts')
         return Array.isArray(textPostState.posts) ? textPostState.posts.map((post, index) => (
             <Fragment key={index.toString()}>
                 <TextPost {...post} publicId={publicId} dispatch={dispatchTextPostUpdate} userId={_id} profileName={name} profileImage={profilePublicId ? profileData.profileImageUri : profileImageUri} contextMenuPostId={textPostState.contextMenuPostId} contextMenuAnchorElement={textPostState.contextMenuAnchorElement}/>
@@ -338,10 +338,10 @@ const Profile = () => {
     const DisplayImagePosts = useMemo(() => {
         return Array.isArray(imagePostState.posts) ? imagePostState.posts.map((post, index) => (
             <Fragment key={index.toString()}>
-                <ImagePost {...post} publicId={publicId} dispatch={dispatchImagePostUpdate} userId={_id} profileName={name} profileImage={profilePublicId ? profileData.profileImageUri : profileImageUri}/>
+                <ImagePost {...post} publicId={publicId} dispatch={dispatchImagePostUpdate} userId={_id} profileName={name} profileImage={profilePublicId ? profileData.profileImageUri : profileImageUri} contextMenuPostId={imagePostState.contextMenuPostId} contextMenuAnchorElement={imagePostState.contextMenuAnchorElement}/>
             </Fragment>
         )) : null
-    }, [imagePostState.posts, imagePostState.reRenderTimes])
+    }, [imagePostState.posts, imagePostState.reRenderTimes, imagePostState.contextMenuPostId, imagePostState.contextMenuAnchorElement])
 
     useEffect(() => {
         console.log(profileImageToUpload[0])

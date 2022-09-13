@@ -7,13 +7,16 @@ import { faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';
 import Button from '@mui/material/Button'
 import axios from 'axios';
 import { ServerUrlContext } from '../context/ServerUrlContext';
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem';
 
-const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicId, postId, dispatch, userId, previewMode, profileName, profileImage}) => {
+const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicId, postId, dispatch, userId, previewMode, profileName, profileImage, contextMenuPostId, contextMenuAnchorElement}) => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext)
     const changingLikeStatus = useRef(false)
     const deleting = useRef(false)
     const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
     const NetworkRequestController = new AbortController();
+    const open = previewMode ? false : contextMenuPostId === postId
 
     const toggleLike = () => {
         if (!previewMode && changingLikeStatus.current === false) {
@@ -61,6 +64,14 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
         }
     }, [])
 
+    const handleContextMenuOpen = (event) => {
+        dispatch({type: 'openContextMenu', postId: postId, anchorElement: event.currentTarget})
+    }
+
+    const handleContextMenuClose = () => {
+        dispatch({type: 'closeContextMenu'})
+    }
+
     return (
         <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
             <div style={{border: `1px solid ${darkMode ? 'white' : 'black'}`, maxHeight: '100%', padding: 10}}>
@@ -70,9 +81,29 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
                         <h3>{profileName}</h3>
                     </div>
                     <div>
-                        <i class="fa-solid fa-ellipsis" style={{fontSize: 20, cursor: 'pointer'}}></i>
+                        <Button
+                            id={`${postId}-imagepost-context-menu-button`}
+                            aria-controls={open ? `${postId}-imagepost-context-menu` : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={open ? 'true' : undefined}
+                            onClick={handleContextMenuOpen}
+                        >
+                            <i className="fa-solid fa-ellipsis" style={{fontSize: 20, cursor: 'pointer'}}></i>
+                        </Button>
                     </div>
                 </div>
+                <Menu
+                    id={`${postId}-imagepost-context-menu`}
+                    anchorEl={contextMenuAnchorElement}
+                    open={open}
+                    onClose={handleContextMenuClose}
+                    MenuListProps={{
+                    'aria-labelledby': `${postId}-imagepost-context-menu-button`,
+                    }}
+                >
+                    <MenuItem onClick={() => alert('Coming soon')}>Edit (Coming Soon)</MenuItem>
+                    <MenuItem onClick={deletePost}>Delete</MenuItem>
+                </Menu>
                 <h1 style={{wordBreak: 'break-all'}}>{title}</h1>
                 <p style={{wordBreak: 'break-all'}}>{body}</p>
                 <img src={previewImage ? previewImage : image} style={{maxHeight: '100%', maxWidth: '100%'}}/>
@@ -82,8 +113,6 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
                     style={{color: liked ? 'red' : darkMode ? 'white' : 'black', cursor: 'pointer', fontSize: 30}}
                     onClick={toggleLike}
                 />
-                <br/>
-                <Button color="secondary" variant="contained" sx={{mt: 1}} onClick={deletePost}>Delete</Button>
             </div>
         </Grid>
     )
