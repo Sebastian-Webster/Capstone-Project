@@ -473,7 +473,7 @@ const updateProfileImage = async (req, res) => {
     }
 
     if (typeof userFoundById.profileImageKey === 'string' && userFoundById.profileImageKey.trim().length > 0) {
-        filesystem.deleteFileSync(`/uploads/${userFoundById.profileImageKey}`)
+        filesystem.deleteFileSync(`uploads/${userFoundById.profileImageKey}`)
     }
 
     user.updateProfileImage(userId, req.file.filename)
@@ -719,7 +719,7 @@ const deleteImagePost = async (req, res) => {
 
     Promise.all([
         ImagePost.deletePostById(postId),
-        filesystem.deleteFileAsync(`/uploads/${imagePost.imageKey}`)
+        filesystem.deleteFileAsync(`uploads/${imagePost.imageKey}`)
     ]).then(() => {
         http.OK(res, 'Post successfully deleted.')
     }).catch(error => {
