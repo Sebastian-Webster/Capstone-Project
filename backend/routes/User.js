@@ -19,7 +19,8 @@ const {
     followUser,
     unfollowUser,
     getUserFollowers,
-    getUserFollowing
+    getUserFollowing,
+    editTextPost
 } = require('../controllers/User')
 const multer = require('multer')
 const path = require('path')
@@ -109,5 +110,7 @@ router.post('/unfollowUser', unfollowUser)
 router.post('/getUserFollowers', getUserFollowers)
 
 router.post('/getUserFollowing', getUserFollowing)
+
+router.put('/textpost', editTextPost)
 
 module.exports = router;

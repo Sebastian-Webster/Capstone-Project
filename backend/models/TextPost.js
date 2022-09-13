@@ -6,6 +6,8 @@ const TextPostSchema = new Schema({
     title: String,
     body: String,
     datePosted: Number,
+    dateEdited: Number,
+    editHistory: {type: Array, default: []},
     likes: {type: Array, default: []}
 })
 

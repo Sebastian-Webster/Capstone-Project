@@ -73,7 +73,7 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
     }
 
     return (
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
+        <Grid item xs={12} md={6} lg={4} xl={3}>
             <div style={{border: `1px solid ${darkMode ? 'white' : 'black'}`, maxHeight: '100%', padding: 10}}>
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row'}}>
                     <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>

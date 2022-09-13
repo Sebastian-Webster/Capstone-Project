@@ -7,6 +7,7 @@ const ImagePostLibrary = require('../libraries/ImagePost');
 const RedisLibrary = require('../libraries/Redis');
 const GeneralLibrary = require('../libraries/General');
 const FilesystemLibrary = require('../libraries/Filesystem')
+const ErrorCheckLibrary = require('../libraries/ErrorCheck')
 const {v4: uuidv4} = require('uuid');
 const user = new UserLibrary();
 const http = new HTTPHandler();
@@ -16,6 +17,7 @@ const ImagePost = new ImagePostLibrary();
 const redis = new RedisLibrary();
 const generalLib = new GeneralLibrary();
 const filesystem = new FilesystemLibrary();
+const errorCheck = new ErrorCheckLibrary();
 const bcrypt = require('bcrypt');
 
 const login = async (req, res) => {
@@ -467,7 +469,7 @@ const updateProfileImage = async (req, res) => {
     }
 
     if (userFoundById.error) {
-        res.ServerError(res, 'An error occured while updating profile image. Please try again later.')
+        http.ServerError(res, 'An error occured while updating profile image. Please try again later.')
         logger.error(userFoundById.error)
         return
     }
@@ -1096,6 +1098,82 @@ const getUserFollowing = async (req, res) => {
     }
 }
 
+const editTextPost = async (req, res) => {
+    const userId = req?.body?.userId;
+    const postId = req?.body?.postId;
+    let newTitle = req?.body?.newTitle;
+    let newBody = req?.body?.newBody;
+
+    const errorChecks = [
+        errorCheck.checkIfValueIsValidObjectId('userId', userId),
+        errorCheck.checkIfValueIsValidObjectId('postId', postId),
+        errorCheck.checkIfValueIsNotEmptyString('newTitle', newTitle),
+        errorCheck.checkIfValueIsNotEmptyString('newBody', newBody)
+    ]
+
+    for (const error of errorChecks) {
+        if (error) {
+            http.BadInput(res, error)
+            return
+        }
+    }
+
+    newTitle = newTitle.trim()
+    newBody = newBody.trim()
+
+    const userFoundById = await user.findUserById(userId)
+
+    if (userFoundById === null) {
+        http.NotFound(res, 'Could not find user with id.')
+        return
+    }
+
+    if (userFoundById.error) {
+        http.ServerError(res, 'An error occured while editing text post. Please try again later.')
+        logger.error(userFoundById.error)
+        return
+    }
+
+    const postFoundById = await TextPost.findPostById(postId);
+
+    if (postFoundById === null) {
+        http.NotFound(res, 'Could not find post with id.')
+        return
+    }
+
+    if (postFoundById.error) {
+        http.ServerError(res, 'An error occured while editing text post. Please try again later.')
+        logger.error(userFoundById.error)
+        return
+    }
+
+    const isOwner = await TextPost.checkIfUserIsPostOwner(userId, postId)
+
+    if (isOwner.error) {
+        http.ServerError(res, 'An error occur4ed while editing text post. Please try again later.')
+        logger.error(isOwner.error)
+    }
+
+    if (isOwner !== true) {
+        http.NotAuthorized(res, 'You do not have authorizarion to edit this text post.')
+    }
+
+    if (newTitle === postFoundById.title && newBody === postFoundById.body) {
+        console.log('Not saving edit as title and body are same as original')
+        http.BadInput(res, 'The new title and body cannot be the same as the old title and body.')
+        return
+    }
+
+    TextPost.editTextPost(newTitle, newBody, postFoundById)
+    .then(() => {
+        http.OK(res, 'Successfully edited text post')
+    })
+    .catch(error => {
+        logger.error(error)
+        http.ServerError(res, 'An error occured while editing text post. Please try again later')
+    })
+}
+
 module.exports = {
     login,
     signup,
@@ -1115,5 +1193,6 @@ module.exports = {
     followUser,
     unfollowUser,
     getUserFollowers,
-    getUserFollowing
+    getUserFollowing,
+    editTextPost
 }
