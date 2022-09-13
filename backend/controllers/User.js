@@ -621,7 +621,10 @@ const likeTextPost = async (req, res) => {
         http.ServerError(res, 'An error occured while liking the post. Please try again later.')
     }
 
-    TextPost.likePost(postId, userPublicId)
+    Promise.all([
+        TextPost.likePost(postId, userPublicId),
+        redis.AddLikeToTextPostInCache(userPublicId, PostFoundWithId)
+    ])
     .then(() => {
         http.OK(res, 'Post has successfully been liked.')
     })

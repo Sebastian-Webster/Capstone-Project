@@ -67,6 +67,42 @@ class RedisLibrary {
             }
         })
     }
+
+    AddLikeToTextPostInCache = (userPublicId, postObj) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const redisCacheKey = `textposts-bycreatorid-${postObj.creatorId}`
+                const cache = await this.getCache(redisCacheKey)
+                if (!Array.isArray(cache)) return resolve() //No need to throw an error because there is no cache to update.
+                postObj.likes.push(userPublicId)
+                const postIndex = cache.findIndex(post => post._id === postObj._id)
+                if (postIndex === -1) return resolve() //No need to throw an error because this post is not in the cache. It is weird that it is not in the cache but we don't need to throw an error.
+                cache[postIndex] = postObj
+                this.setCache(redisCacheKey, cache).then(resolve)
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    RemoveLikeFromTextPostInCache = (userPublicId, postObj) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const redisCacheKey = `textposts-bycreatorid-${postObj.creatorId}`
+                const cache = await this.getCache(redisCacheKey)
+                if (!Array.isArray(cache)) return resolve() //No need to throw an error because there is no cache to update.
+                const postIndex = cache.findIndex(post => post._id === postObj._id)
+                if (postIndex === -1) return resolve() //No need to throw an error because this post is not in the cache. It is weird that it is not in the cache but we don't need to throw an error.
+                const likeIndex = postObj.likes.findIndex(like => like === userPublicId)
+                if (likeIndex === -1) return resolve() //No need to throw an error because the user with this userPublicId has not liked this post.
+                postObj.likes.splice(likeIndex, 1)
+                cache[postIndex] = postObj
+                this.setCache(redisCacheKey, cache).then(resolve)
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
 }
 
 module.exports = RedisLibrary;
