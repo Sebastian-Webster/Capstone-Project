@@ -9,6 +9,10 @@ const useInput = (initialText = '', inputName, variant = 'outlined', extraStyles
     const [text, setText] = useState(initialText);
     const {darkMode, setDarkMode} = useContext(DarkModeContext);
 
+    const resetToDefault = () => {
+        setText(initialText)
+    }
+
     const bind = {
         value: text,
         onChange: (e) => {
@@ -70,7 +74,7 @@ const useInput = (initialText = '', inputName, variant = 'outlined', extraStyles
         }
     }
 
-    return [text, bind];
+    return [text, bind, resetToDefault];
 }
 
 export default useInput;
