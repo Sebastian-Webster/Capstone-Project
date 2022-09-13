@@ -73,10 +73,16 @@ class RedisLibrary {
             try {
                 const redisCacheKey = `textposts-bycreatorid-${postObj.creatorId}`
                 const cache = await this.getCache(redisCacheKey)
-                if (!Array.isArray(cache)) return resolve() //No need to throw an error because there is no cache to update.
+                if (!Array.isArray(cache)) { //No need to throw an error because there is no cache to update.
+                    logger.log('Resolving as there is no cache to be found')
+                    return resolve() 
+                }
                 postObj.likes.push(userPublicId)
-                const postIndex = cache.findIndex(post => post._id === postObj._id)
-                if (postIndex === -1) return resolve() //No need to throw an error because this post is not in the cache. It is weird that it is not in the cache but we don't need to throw an error.
+                const postIndex = cache.findIndex(post => post._id === String(postObj._id))
+                if (postIndex === -1) { //No need to throw an error because this post is not in the cache. It is weird that it is not in the cache but we don't need to throw an error.
+                    logger.log('Resolving as there is no post to be found in the cache')
+                    return resolve()
+                }
                 cache[postIndex] = postObj
                 this.setCache(redisCacheKey, cache).then(resolve)
             } catch (error) {
@@ -91,7 +97,7 @@ class RedisLibrary {
                 const redisCacheKey = `textposts-bycreatorid-${postObj.creatorId}`
                 const cache = await this.getCache(redisCacheKey)
                 if (!Array.isArray(cache)) return resolve() //No need to throw an error because there is no cache to update.
-                const postIndex = cache.findIndex(post => post._id === postObj._id)
+                const postIndex = cache.findIndex(post => post._id === String(postObj._id))
                 if (postIndex === -1) return resolve() //No need to throw an error because this post is not in the cache. It is weird that it is not in the cache but we don't need to throw an error.
                 const likeIndex = postObj.likes.findIndex(like => like === userPublicId)
                 if (likeIndex === -1) return resolve() //No need to throw an error because the user with this userPublicId has not liked this post.
