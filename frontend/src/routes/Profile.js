@@ -160,6 +160,13 @@ const Profile = () => {
                 const newPostsAfterTurningEditModeOff = state.posts;
                 newPostsAfterTurningEditModeOff[turnOffEditIndex].editMode = false;
                 return {...state, posts: newPostsAfterTurningEditModeOff, reRenderTimes: state.reRenderTimes + 1}
+            case 'openContextMenu':
+                const openContextMenuState = {...state, contextMenuPostId: action.postId, contextMenuAnchorElement: action.anchorElement}
+                console.log('opening context menu')
+                console.log(openContextMenuState)
+                return openContextMenuState
+            case 'closeContextMenu':
+                return {...state, contextMenuPostId: null, contextMenuAnchorElement: null}
             default:
                 throw new Error((action.type + ' is not a valid action for textPostReducer'))
         }
@@ -320,12 +327,13 @@ const Profile = () => {
     }
 
     const DisplayTextPosts = useMemo(() => {
+        console.log('rerendering text posts')
         return Array.isArray(textPostState.posts) ? textPostState.posts.map((post, index) => (
             <Fragment key={index.toString()}>
-                <TextPost {...post} publicId={publicId} dispatch={dispatchTextPostUpdate} userId={_id} profileName={name} profileImage={profilePublicId ? profileData.profileImageUri : profileImageUri}/>
+                <TextPost {...post} publicId={publicId} dispatch={dispatchTextPostUpdate} userId={_id} profileName={name} profileImage={profilePublicId ? profileData.profileImageUri : profileImageUri} contextMenuPostId={textPostState.contextMenuPostId} contextMenuAnchorElement={textPostState.contextMenuAnchorElement}/>
             </Fragment>
         )) : null
-    }, [textPostState.posts, textPostState.reRenderTimes])
+    }, [textPostState.posts, textPostState.reRenderTimes, textPostState.contextMenuPostId, textPostState.contextMenuAnchorElement])
 
     const DisplayImagePosts = useMemo(() => {
         return Array.isArray(imagePostState.posts) ? imagePostState.posts.map((post, index) => (
