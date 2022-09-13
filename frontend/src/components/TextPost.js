@@ -13,8 +13,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import useColorScheme from '../hooks/useColorScheme';
+import useSharedCode from '../hooks/useSharedCode';
 
-const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, userId, editMode, previewMode, profileImage, profileName, contextMenuPostId, contextMenuAnchorElement, saving, edited, timesEdited}) => {
+const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, userId, editMode, previewMode, profileImage, profileName, contextMenuPostId, contextMenuAnchorElement, saving, edited, timesEdited, dateEdited}) => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext);
     const changingLikeStatus = useRef(false)
     const deleting = useRef(false)
@@ -24,6 +25,7 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
     const [editedTitle, bindTitle, resetTitle] = useInput(title, 'title', 'standard', {fontSize: 30, maxWidth: '80%', marginTop: 10})
     const [editedBody, bindBody, resetBody] = useInput(body, 'body', 'standard', {fontSize: 18, maxWidth: '90%', marginTop: 10, marginBottom: 10, maxHeight: 300})
     const colors = useColorScheme()
+    const { calculateDifferenceBetweenNowAndUTCMillisecondsTime } = useSharedCode()
 
     const toggleLike = () => {
         if (!previewMode) {
@@ -183,6 +185,9 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
                                         if (changingLikeStatus.current === false) toggleLike()
                                     }}
                                 />
+                                <br/>
+                                <h4 style={{marginTop: 10, marginBottom: 5}}>Posted {calculateDifferenceBetweenNowAndUTCMillisecondsTime(datePosted)}</h4>
+                                {edited && <h4 style={{margin: 0}}>Edited {calculateDifferenceBetweenNowAndUTCMillisecondsTime(dateEdited)}</h4>}
                             </>
                         }
                     </>

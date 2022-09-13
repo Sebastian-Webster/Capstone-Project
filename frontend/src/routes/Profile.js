@@ -184,6 +184,7 @@ const Profile = () => {
                 state.posts[editsSavedIndex].timesEdited = state.posts[editsSavedIndex].timesEdited + 1;
                 state.posts[editsSavedIndex].editMode = false;
                 state.posts[editsSavedIndex].saving = false;
+                state.posts[editsSavedIndex].dateEdited = Date.now();
                 state.posts[editsSavedIndex].title = action.newTitle;
                 state.posts[editsSavedIndex].body = action.newBody;
                 console.log(state.posts)
