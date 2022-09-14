@@ -45,21 +45,21 @@ const Profile = () => {
 
     useEffect(() => {
         setFollowerNumber(
-            profilePublicId ? 
-                profileData === null ?
+            profilePublicId ? //If you are visiting a profile from a profile on the search page (can be including your own profile)
+                profileData === null ? //If profileData has not been loaded yet, set followers to Loading...
                     'Loading...'
                 :
-                    profileData.isFollowing ? 
-                        isFollowing ? 
+                    profileData.isFollowing ?  //If when the profile was opened, was the user following the profile
+                        isFollowing ?  //if the user was following the profile when the profile was first loaded, then followers is profileData.followers. If the user stops following the profile, then the profile has lost a follower so set the followers to profileData.followers - 1
                             profileData.followers 
                         : 
                             profileData.followers - 1 
                     : 
-                        isFollowing ? 
+                        isFollowing ?  //if the user was not originally following the profile, but now is, followers is profileData.followers + 1, otherwise followers is just profileData.followers
                             profileData.followers + 1 
                         : 
                             profileData.followers 
-            : 
+            :  //If you are visiting your own profile from the profile screen
                 followers.length
         )
     }, [profilePublicId, profileData, isFollowing])
