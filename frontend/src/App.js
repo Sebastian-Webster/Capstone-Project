@@ -50,7 +50,7 @@ function App() {
 
   return (
     <Div>
-      <header style={{borderBottomColor: darkMode ? 'white' : 'black', height: 70, position: 'sticky', top: 0, backgroundColor: darkMode ? 'black' : 'white'}}>
+      <header style={{borderBottomColor: darkMode ? 'white' : 'black', height: 70, position: 'sticky', top: 0, backgroundColor: darkMode ? 'black' : 'white', zIndex: 99999}}>
         <div>
           <h1>SebMedia</h1>
           <button style={{background: 'none', margin: 0, padding: 0, border: 'none'}} onClick={() => {setDarkMode(!darkMode)}}>
