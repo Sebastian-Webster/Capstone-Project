@@ -102,11 +102,16 @@ const Profile = () => {
                 return {...state, loading: true, error: null}
             case 'addPosts':
                 console.log(action.result)
-                if (Array.isArray(action.result) && action.result.length > 0) {
-                    const newTextPosts = Array.isArray(state.posts) ? _.cloneDeep(state.posts) : []
-                    newTextPosts.push(...action.result)
-                    return {...state, posts: newTextPosts, loading: false, error: null}
-                } else return Array.isArray(state.posts) ? {...state, posts: [...action.result, ...state.posts], loading: false, error: null} : {...state, posts: [], loading: false}
+                if (action.forceReload) {
+                    return {...state, posts: action.result, loading: false, error: null}
+                } else {
+                    if (Array.isArray(action.result) && action.result.length > 0) {
+                        console.log(state.posts)
+                        const newTextPosts = Array.isArray(state.posts) ? _.cloneDeep(state.posts) : []
+                        newTextPosts.push(...action.result)
+                        return {...state, posts: newTextPosts, loading: false, error: null}
+                    } else return Array.isArray(state.posts) ? {...state, posts: [...action.result, ...state.posts], loading: false, error: null} : {...state, posts: [], loading: false}
+                }
             case 'likePost':
                 const likePostIndex = state.posts.findIndex(item => item.postId === action.postId)
                 if (likePostIndex === -1) {
@@ -297,15 +302,19 @@ const Profile = () => {
     const [imagePostState, dispatchImagePostUpdate] = useReducer(imagePostReducer, imagePostReducerInitialState)
 
     const loadPosts = {
-        textPosts: () => {
+        textPosts: (forceReload) => {
             if (textPostState.loading === false) {
                 dispatchTextPostUpdate({type: 'nowLoading'})
 
-                axios.get(`${serverUrl}/user/textPostsByUserName/?username=${profilePublicId ? profileData.name : name}&skip=${Array.isArray(textPostState.posts) ? textPostState.posts.length : 0}&publicId=${publicId}`)
+                const url = `${serverUrl}/user/textPostsByUserName/?username=${profilePublicId ? profileData.name : name}&skip=${forceReload ? 0 : Array.isArray(textPostState.posts) ? textPostState.posts.length : 0}&publicId=${publicId}`
+                console.log(url)
+
+                axios.get(url)
                 .then(response => response.data.data)
                 .then(result => {
                     dispatchTextPostUpdate({
                         type: 'addPosts',
+                        forceReload: true,
                         result
                     })
                 })
@@ -346,18 +355,18 @@ const Profile = () => {
 
     useEffect(() => {
         if (!profilePublicId || profileData !== null) {
-            loadPosts.textPosts()
+            loadPosts.textPosts(true)
         }
     }, [profilePublicId, profileData])
 
     const handleViewChange = (event, nextView) => {
         if (nextView !== view && nextView !== null) {
             setView(nextView)
-            if (nextView === 'textPosts' && textPostState.posts === null) loadPosts.textPosts()
+            if (nextView === 'textPosts' && textPostState.posts === null) loadPosts.textPosts(true)
             if (nextView === 'imagePosts' && imagePostState.posts === null) loadPosts.imagePosts()
         }
         if (nextView === null) {
-            loadPosts[view]();
+            loadPosts[view](true);
         }
     }
 
@@ -367,7 +376,7 @@ const Profile = () => {
                 <TextPost {...post} publicId={publicId} dispatch={dispatchTextPostUpdate} userId={_id} profileName={name} profileImage={profilePublicId ? profileData.profileImageUri : profileImageUri} contextMenuPostId={textPostState.contextMenuPostId} contextMenuAnchorElement={textPostState.contextMenuAnchorElement}/>
             </Fragment>
         )) : null
-    }, [textPostState.posts, textPostState.reRenderTimes, textPostState.contextMenuPostId, textPostState.contextMenuAnchorElement])
+    }, [textPostState.posts, textPostState.reRenderTimes, textPostState.contextMenuPostId, textPostState.contextMenuAnchorElement, profilePublicId])
 
     const DisplayImagePosts = useMemo(() => {
         return Array.isArray(imagePostState.posts) ? imagePostState.posts.map((post, index) => (
@@ -375,7 +384,7 @@ const Profile = () => {
                 <ImagePost {...post} publicId={publicId} dispatch={dispatchImagePostUpdate} userId={_id} profileName={name} profileImage={profilePublicId ? profileData.profileImageUri : profileImageUri} contextMenuPostId={imagePostState.contextMenuPostId} contextMenuAnchorElement={imagePostState.contextMenuAnchorElement}/>
             </Fragment>
         )) : null
-    }, [imagePostState.posts, imagePostState.reRenderTimes, imagePostState.contextMenuPostId, imagePostState.contextMenuAnchorElement])
+    }, [imagePostState.posts, imagePostState.reRenderTimes, imagePostState.contextMenuPostId, imagePostState.contextMenuAnchorElement, profilePublicId])
 
     useEffect(() => {
         console.log(profileImageToUpload[0])

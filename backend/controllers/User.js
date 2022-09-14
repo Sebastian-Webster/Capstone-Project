@@ -1152,10 +1152,12 @@ const editTextPost = async (req, res) => {
     if (isOwner.error) {
         http.ServerError(res, 'An error occur4ed while editing text post. Please try again later.')
         logger.error(isOwner.error)
+        return
     }
 
     if (isOwner !== true) {
         http.NotAuthorized(res, 'You do not have authorizarion to edit this text post.')
+        return
     }
 
     if (newTitle === postFoundById.title && newBody === postFoundById.body) {
@@ -1164,17 +1166,18 @@ const editTextPost = async (req, res) => {
         return
     }
 
+    const putEditedPostInCache = () => {
+        redis.EditTextPostInCache(newDocument).then(() => {
+            logger.log('Successfully saved edited post in redis cache')
+        }).catch(error => {
+            logger.error('Error occured while saving edited post to redis cache:')
+            logger.error(error)
+        })
+    }
+
     TextPost.editTextPost(newTitle, newBody, postFoundById)
     .then(newDocument => {
         http.OK(res, 'Successfully edited text post')
-        try {
-            redis.EditTextPostInCache(newDocument).then(() => {
-                logger.log('Successfully saved edited post in redis cache')
-            })
-        } catch (error) {
-            logger.error('Error occured while saving edited post to redis cache:')
-            logger.error(error)
-        }
     })
     .catch(error => {
         logger.error(error)
