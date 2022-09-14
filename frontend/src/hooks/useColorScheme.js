@@ -17,7 +17,7 @@ const useColorScheme = () => {
 
     useEffect(() => {
         if ((darkMode && colorScheme == darkColors) || (!darkMode && colorScheme == lightColors)) {
-            //Do not run
+            //Do not run if the color scheme is darkMode and dark mode is on OR if the color scheme is lightMode and dark mode is off
         } else {
             setColorScheme(darkMode ? darkColors : lightColors)
         }
