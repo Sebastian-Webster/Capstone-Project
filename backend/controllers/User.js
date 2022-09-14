@@ -1166,23 +1166,26 @@ const editTextPost = async (req, res) => {
         return
     }
 
-    const putEditedPostInCache = () => {
+    let newDocument;
+
+    try {
+        newDocument = await TextPost.editTextPost(newTitle, newBody, postFoundById);
+        http.OK(res, 'Successfully edited text post')
+    } catch (error) {
+        logger.error(error)
+        http.ServerError(res, 'An error occured while editing text post. Please try again later')
+    }
+
+    if (newDocument) {
         redis.EditTextPostInCache(newDocument).then(() => {
             logger.log('Successfully saved edited post in redis cache')
         }).catch(error => {
             logger.error('Error occured while saving edited post to redis cache:')
             logger.error(error)
         })
+    } else {
+        logger.error('newDocument is undefined')
     }
-
-    TextPost.editTextPost(newTitle, newBody, postFoundById)
-    .then(newDocument => {
-        http.OK(res, 'Successfully edited text post')
-    })
-    .catch(error => {
-        logger.error(error)
-        http.ServerError(res, 'An error occured while editing text post. Please try again later')
-    })
 }
 
 module.exports = {
