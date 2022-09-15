@@ -7,7 +7,7 @@ let tests;
 console.log('Starting tests...')
 console.log('Starting tests to check ErrorCheck library in backend')
 console.log('Running tests to see if ErrorCheck.checkIfValueIsValudObjectId works as intended')
-tests = 999_999_999;
+tests = 999_999;
 for (let i = 0; i < tests; i++) {
     const objectId = new ObjectId()
     const testResult = ErrorCheck.checkIfValueIsValidObjectId('objectId', objectId)
