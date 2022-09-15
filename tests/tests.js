@@ -12,9 +12,9 @@ for (let i = 0; i < tests; i++) {
     const objectId = new ObjectId()
     const testResult = ErrorCheck.checkIfValueIsValidObjectId('objectId', objectId)
     if (typeof testResult === 'string') {
-        console.log('ObjectId: ' + objectId)
-        console.log('Test result: ' + testResult)
-        console.log('ObjectId type: ' + typeof objectId)
+        console.log('ObjectId:', objectId)
+        console.log('Test result:', testResult)
+        console.log('ObjectId type:', typeof objectId)
         throw new Error('ErrorCheck.checkIfValueIsValidObjectId is returning a string (meaning that it thinks the value is not a valid objectId even though in this test case it is)')
     }
 }
