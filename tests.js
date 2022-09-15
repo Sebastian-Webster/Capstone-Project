@@ -1,4 +1,4 @@
-import useSharedCode from './frontend/src/hooks/useSharedCode'
+const useSharedCode = require('./frontend/src/hooks/useSharedCode')
 const calculateDifferenceBetweenNowAndUTCMillisecondsTime = useSharedCode().calculateDifferenceBetweenNowAndUTCMillisecondsTime
 
 let testRuns;
