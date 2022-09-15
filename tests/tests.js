@@ -10,7 +10,7 @@ console.log('Running tests to see if ErrorCheck.checkIfValueIsValudObjectId work
 tests = 999_999;
 for (let i = 0; i < tests; i++) {
     const objectId = new ObjectId()
-    const testResult = ErrorCheck.checkIfValueIsValidObjectId(objectId)
+    const testResult = ErrorCheck.checkIfValueIsValidObjectId('objectId', objectId)
     if (typeof testResult === 'string') {
         console.log('ObjectId: ' + objectId)
         console.log('Test result: ' + testResult)
