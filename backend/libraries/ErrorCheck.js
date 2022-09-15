@@ -6,8 +6,8 @@ class ErrorCheck {
             return `${key} must be supplied`
         }
 
-        if (typeof value !== 'string') {
-            return `${key} must be a string`
+        if (typeof value !== 'string' && !(typeof value === 'object' && value.toString && typeof value.toString === 'function' && isValidObjectId(value.toString()))) {
+            return `${key} must be an objectId string or object`
         }
 
         if (!isValidObjectId(value)) {
