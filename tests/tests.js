@@ -27,6 +27,7 @@ for (let i = 0; i < tests; i++) {
 for (let i = 0; i < tests; i++) {
     let objectId = 'abcdefghijklmnopqrstuvwxyz' //26 character string
     objectId = objectId.split('').sort((a,b) => Math.random() > 0.5 ? 1 : -1)
+    objectId = objectId.toString()
     const key = 'objectId'
     const testResult = ErrorCheck.checkIfValueIsValidObjectId(key, objectId)
     const expectedResult = `${key} must be a valid objectId`
@@ -45,6 +46,7 @@ for (let i = 0; i < tests; i++) {
 for (let i = 0; i < tests; i++) {
     let objectId = 'abcdefghijklmnopqrstuvwx' //24 character string
     objectId = objectId.split('').sort((a,b) => Math.random() > 0.5 ? 1 : -1)
+    objectId = objectId.toString()
     const key = 'objectId'
     const testResult = ErrorCheck.checkIfValueIsValidObjectId(key, objectId)
     const expectedResult = `${key} must be a valid objectId`
