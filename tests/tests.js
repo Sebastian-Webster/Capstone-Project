@@ -10,7 +10,12 @@ console.log('Running tests to see if ErrorCheck.checkIfValueIsValudObjectId work
 tests = 999_999;
 for (let i = 0; i < tests; i++) {
     const objectId = new ObjectId()
-    if (typeof ErrorCheck.checkIfValueIsValidObjectId(objectId) === 'string') throw new Error('ErrorCheck.checkIfValueIsValidObjectId is returning a string (meaning that it thinks the value is not a valid objectId even though in this test case it is)')
+    const testResult = ErrorCheck.checkIfValueIsValidObjectId(objectId)
+    if (typeof testResult === 'string') {
+        console.log('ObjectId: ' + objectId)
+        console.log('Test result: ' + testResult)
+        throw new Error('ErrorCheck.checkIfValueIsValidObjectId is returning a string (meaning that it thinks the value is not a valid objectId even though in this test case it is)')
+    }
 }
 console.log('Tests ran successfully')
 
