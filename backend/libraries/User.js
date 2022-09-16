@@ -123,6 +123,17 @@ class UserLibrary {
             ]).then(resolve).catch(reject)
         })
     }
+
+    getFollowersFromUserById = (userId) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const userFoundById = await this.findUserById(userId)
+                resolve(userFoundById.followers)
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
 }
 
 module.exports = UserLibrary

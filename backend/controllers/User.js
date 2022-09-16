@@ -1264,6 +1264,21 @@ const editImagePost = async (req, res) => {
     })
 }
 
+const refreshUserFollowers = (req, res) => {
+    const userId = req?.body?.userId
+
+    const error = errorCheck.checkIfValueIsValidObjectId('userId', userId)
+    if (error) {
+        return http.BadInput(res, error)
+    }
+
+    user.getFollowersFromUserById(userId).then(followers => {
+        http.OK(res, 'Successfully retrieved followers', followers.length)
+    }).catch(error => {
+        http.ServerError(res, 'An error occured while retrieving followers. Please try again later.')
+    })
+}
+
 module.exports = {
     login,
     signup,
@@ -1285,5 +1300,6 @@ module.exports = {
     getUserFollowers,
     getUserFollowing,
     editTextPost,
-    editImagePost
+    editImagePost,
+    refreshUserFollowers
 }

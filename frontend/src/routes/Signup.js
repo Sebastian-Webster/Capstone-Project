@@ -49,6 +49,7 @@ const Signup = () => {
             result.rememberMe = true;
             if (rememberMe) localStorage.setItem('SebMediaCredentials', JSON.stringify(result))
             localStorage.setItem('following', '0')
+            localStorage.setItem('followers', '0')
             navigate('/home')
         }).catch(error => {
             setLoading(false)
