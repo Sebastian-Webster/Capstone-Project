@@ -407,7 +407,7 @@ const Profile = () => {
     const DisplayTextPosts = useMemo(() => {
         return Array.isArray(textPostState.posts) ? textPostState.posts.map((post, index) => (
             <Fragment key={index.toString()}>
-                <TextPost {...post} publicId={publicId} dispatch={dispatchTextPostUpdate} userId={_id} profileName={name} profileImage={profilePublicId ? profileData.profileImageUri : profileImageUri} contextMenuPostId={textPostState.contextMenuPostId} contextMenuAnchorElement={textPostState.contextMenuAnchorElement}/>
+                <TextPost {...post} publicId={publicId} dispatch={dispatchTextPostUpdate} userId={_id} profileName={name} profileImage={profilePublicId ? profileData.profileImageUri : profileImageUri} contextMenuPostId={textPostState.contextMenuPostId} contextMenuAnchorElement={textPostState.contextMenuAnchorElement} isPostOwner={profilePublicId ? profilePublicId === publicId : true}/>
             </Fragment>
         )) : null
     }, [textPostState.posts, textPostState.reRenderTimes, textPostState.contextMenuPostId, textPostState.contextMenuAnchorElement, profilePublicId])
@@ -415,7 +415,7 @@ const Profile = () => {
     const DisplayImagePosts = useMemo(() => {
         return Array.isArray(imagePostState.posts) ? imagePostState.posts.map((post, index) => (
             <Fragment key={index.toString()}>
-                <ImagePost {...post} publicId={publicId} dispatch={dispatchImagePostUpdate} userId={_id} profileName={name} profileImage={profilePublicId ? profileData.profileImageUri : profileImageUri} contextMenuPostId={imagePostState.contextMenuPostId} contextMenuAnchorElement={imagePostState.contextMenuAnchorElement}/>
+                <ImagePost {...post} publicId={publicId} dispatch={dispatchImagePostUpdate} userId={_id} profileName={name} profileImage={profilePublicId ? profileData.profileImageUri : profileImageUri} contextMenuPostId={imagePostState.contextMenuPostId} contextMenuAnchorElement={imagePostState.contextMenuAnchorElement} isPostOwner={profilePublicId ? profilePublicId === publicId : true}/>
             </Fragment>
         )) : null
     }, [imagePostState.posts, imagePostState.reRenderTimes, imagePostState.contextMenuPostId, imagePostState.contextMenuAnchorElement, profilePublicId])
