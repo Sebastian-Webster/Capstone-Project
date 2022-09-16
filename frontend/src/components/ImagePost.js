@@ -9,6 +9,7 @@ import axios from 'axios';
 import { ServerUrlContext } from '../context/ServerUrlContext';
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem';
+import useSharedCode from '../hooks/useSharedCode';
 
 const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicId, postId, dispatch, userId, previewMode, profileName, profileImage, contextMenuPostId, contextMenuAnchorElement}) => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext)
@@ -17,6 +18,7 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
     const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
     const NetworkRequestController = new AbortController();
     const open = previewMode ? false : contextMenuPostId === postId
+    const { calculateDifferenceBetweenNowAndUTCMillisecondsTime } = useSharedCode()
 
     const toggleLike = () => {
         if (!previewMode && changingLikeStatus.current === false) {
@@ -113,6 +115,7 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
                     style={{color: liked ? 'red' : darkMode ? 'white' : 'black', cursor: 'pointer', fontSize: 30}}
                     onClick={toggleLike}
                 />
+                <h4 style={{marginTop: 10, marginBottom: 5}}>Posted {calculateDifferenceBetweenNowAndUTCMillisecondsTime(datePosted)}</h4>
             </div>
         </Grid>
     )
