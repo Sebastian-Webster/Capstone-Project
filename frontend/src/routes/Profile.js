@@ -17,7 +17,6 @@ import { ServerUrlContext } from '../context/ServerUrlContext';
 import useColorScheme from '../hooks/useColorScheme';
 import { useParams, useNavigate } from 'react-router-dom';
 import FollowButton from '../components/FollowButton';
-import { ExtraFollowersContext } from '../context/ExtraFollowersContext';
 
 var _ = require('lodash')
 
