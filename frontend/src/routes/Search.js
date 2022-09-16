@@ -1,4 +1,4 @@
-import React, {useEffect, useContext, useReducer, useMemo, Fragment} from "react";
+import React, {useEffect, useContext, useReducer, useMemo, useRef, Fragment} from "react";
 import useColorScheme from "../hooks/useColorScheme";
 import useInput from "../hooks/useInput";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -39,37 +39,46 @@ const Search = () => {
     const [searchQuery, bindSearchQuery] = useInput('', 'searchQuery', 'standard', {width: '60vw', height: 60, fontSize: 20, paddingLeft: 70, borderRadius: 30, paddingRight: 20})
     const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
     const [profileState, dispatchProfiles] = useReducer(profilesReducer, profilesInitialState)
+    const searchTimeout = useRef(null)
 
     useEffect(() => {
-        let searchQueryTrimmed;
-        if (typeof searchQuery === 'string') {
-            searchQueryTrimmed = searchQuery.trim()
-        }
-        if (typeof searchQueryTrimmed === 'string' && searchQueryTrimmed.length > 0) {
-            dispatchProfiles({type: 'startLoading'})
-            axios.get(`${serverUrl}/user/searchProfilesByName/${searchQuery}`).then(response => response.data.data)
-            .then(async (result) => {
-                console.log(result)
-                const profiles = []
-                for (const profile of result) {
-                    if (profile.profileImageKey) {
-                        const imageData = (await axios.get(`${serverUrl}/image/${profile.profileImageKey}`)).data
-                        profile.profileImage = 'data:image/jpeg;base64,' + imageData
-                        profiles.push(profile)
-                    } else {
-                        profiles.push(profile)
-                    }
-                }
-                console.log(profiles)
-                dispatchProfiles({type: 'addProfiles', profiles, replace: true})
-            }).catch(error => {
-                console.error(error)
-                dispatchProfiles({type: 'errorOccured', error: error?.response?.data?.error || error.toString()})
-            })
+        if (typeof searchQuery === 'string' && searchQuery.trim().length > 0) {
+            const searchQueryToUse = searchQuery
+            if (searchTimeout?.current) {
+                clearTimeout(searchTimeout.current)
+                searchTimeout.current = null;
+                dispatchProfiles({type: 'startLoading'})
+            }
+            searchTimeout.current = setTimeout(() => {
+                loadProfiles(searchQueryToUse.trim())
+            }, 400);
         } else {
             dispatchProfiles({type: 'resetProfiles'})
         }
     }, [searchQuery])
+
+    const loadProfiles = (searchQuery) => {
+        dispatchProfiles({type: 'startLoading'})
+        axios.get(`${serverUrl}/user/searchProfilesByName/${searchQuery}`).then(response => response.data.data)
+        .then(async (result) => {
+            console.log(result)
+            const profiles = []
+            for (const profile of result) {
+                if (profile.profileImageKey) {
+                    const imageData = (await axios.get(`${serverUrl}/image/${profile.profileImageKey}`)).data
+                    profile.profileImage = 'data:image/jpeg;base64,' + imageData
+                    profiles.push(profile)
+                } else {
+                    profiles.push(profile)
+                }
+            }
+            console.log(profiles)
+            dispatchProfiles({type: 'addProfiles', profiles, replace: true})
+        }).catch(error => {
+            console.error(error)
+            dispatchProfiles({type: 'errorOccured', error: error?.response?.data?.error || error.toString()})
+        })
+    }
 
     const displayProfiles = useMemo(() => {
         return Array.isArray(profileState.profiles) ? profileState.profiles.map((profile, index) => (
