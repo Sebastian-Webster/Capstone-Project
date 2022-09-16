@@ -282,12 +282,46 @@ const Profile = () => {
                 const newPostsAfterTurningEditModeOff = state.posts;
                 newPostsAfterTurningEditModeOff[turnOffEditIndex].editMode = false;
                 return {...state, posts: newPostsAfterTurningEditModeOff, reRenderTimes: state.reRenderTimes + 1}
-                case 'openContextMenu':
-                    return {...state, contextMenuPostId: action.postId, contextMenuAnchorElement: action.anchorElement}
-                case 'closeContextMenu':
-                    return {...state, contextMenuPostId: null, contextMenuAnchorElement: null}
+            case 'openContextMenu':
+                return {...state, contextMenuPostId: action.postId, contextMenuAnchorElement: action.anchorElement}
+            case 'closeContextMenu':
+                return {...state, contextMenuPostId: null, contextMenuAnchorElement: null}
+            case 'savingEdits':
+                const savingEditsIndex = state.posts.findIndex(item => item.postId === action.postId)
+                if (savingEditsIndex === -1) {
+                    alert('Cannot find post to edit')
+                    return {...state}
+                }
+
+                state.posts[savingEditsIndex].saving = true;
+                return {...state, reRenderTimes: state.reRenderTimes + 1}
+            case 'editsSaved':
+                const editsSavedIndex = state.posts.findIndex(item => item.postId === action.postId)
+                if (editsSavedIndex === -1) {
+                    alert('Cannot find post to edit')
+                    return {...state}
+                }
+
+                state.posts[editsSavedIndex].edited = true;
+                state.posts[editsSavedIndex].timesEdited = state.posts[editsSavedIndex].timesEdited + 1;
+                state.posts[editsSavedIndex].editMode = false;
+                state.posts[editsSavedIndex].saving = false;
+                state.posts[editsSavedIndex].dateEdited = Date.now();
+                state.posts[editsSavedIndex].title = action.newTitle;
+                state.posts[editsSavedIndex].body = action.newBody;
+                console.log(state.posts)
+                return {...state, reRenderTimes: state.reRenderTimes + 1}
+            case 'errorWhileSaving':
+                const errorWhileSavingIndex = state.posts.findIndex(item => item.postId === action.postId)
+                if (errorWhileSavingIndex === -1) {
+                    alert('Cannot find post to edit')
+                    return {...state}
+                }
+
+                state.posts[errorWhileSavingIndex].saving = false;
+                return {...state, reRenderTimes: state.reRenderTimes + 1}
             default:
-                throw new Error((action.type + ' is not a valid action for textPostReducer'))
+                throw new Error((action.type + ' is not a valid action for imagePostReducer'))
         }
     }
     

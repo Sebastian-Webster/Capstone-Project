@@ -58,6 +58,22 @@ class ImagePostLibrary {
             ImagePost.deleteOne({_id: postId}).then(() => resolve()).catch(error => reject(error))
         })
     }
+
+    editImagePost = (newTitle, newBody, postObj) => {
+        return new Promise(async (resolve, reject) => {
+            const editedDate = Date.now() //Gets UTC milliseconds since Jan 1st 1970 at midnight.
+
+            const additionalEditHistory = {
+                title: postObj.title,
+                body: postObj.body,
+                dateMade: postObj.editHistory.length > 0 ? postObj.dateEdited : postObj.datePosted
+            }
+
+            ImagePost.findOneAndUpdate({_id: postObj._id}, {$push: {editHistory: additionalEditHistory}, dateEdited: editedDate, title: newTitle, body: newBody})
+            .then(resolve)
+            .catch(reject)
+        })
+    }
 }
 
 module.exports = ImagePostLibrary;

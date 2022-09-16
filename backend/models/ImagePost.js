@@ -7,7 +7,9 @@ const ImagePostSchema = new Schema({
     title: String,
     body: String,
     datePosted: Number,
-    likes: {type: Array, default: []}
+    likes: {type: Array, default: []},
+    dateEdited: Number,
+    editHistory: {type: Array, default: []},
 })
 
 const ImagePost = mongoose.model('ImagePost', ImagePostSchema)
