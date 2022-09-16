@@ -441,7 +441,7 @@ const getImagePostsByUserName = async (req, res) => {
 
     ImagePost.findPostsByCreatorId(foundUserByName._id, limit, skip, publicId).then(result => {
         //Get rid of object IDs
-        const cleanedResult = result.map(post => ({title: post.title, body: post.body, datePosted: post.datePosted, imageKey: post.imageKey, liked: post.liked, postId: post._id}))
+        const cleanedResult = result.map(post => ({title: post.title, body: post.body, datePosted: post.datePosted, imageKey: post.imageKey, liked: post.liked, postId: post._id, edited: post.editHistory.length > 0, timesEdited: post.editHistory.length}))
         http.OK(res, 'Successfully found posts', cleanedResult)
     }).catch(error => {
         http.ServerError(res, 'An error occured while fetching image posts. Please try again later.')
@@ -1150,7 +1150,7 @@ const editTextPost = async (req, res) => {
     const isOwner = await TextPost.checkIfUserIsPostOwner(userId, postId)
 
     if (isOwner.error) {
-        http.ServerError(res, 'An error occur4ed while editing text post. Please try again later.')
+        http.ServerError(res, 'An error occured while editing text post. Please try again later.')
         logger.error(isOwner.error)
         return
     }
@@ -1188,6 +1188,82 @@ const editTextPost = async (req, res) => {
     }
 }
 
+const editImagePost = async (req, res) => {
+    const userId = req?.body?.userId;
+    const postId = req?.body?.postId;
+    let newTitle = req?.body?.newTitle;
+    let newBody = req?.body?.newBody;
+
+    const errorChecks = [
+        errorCheck.checkIfValueIsValidObjectId('userId', userId),
+        errorCheck.checkIfValueIsValidObjectId('postId', postId),
+        errorCheck.checkIfValueIsNotEmptyString('newTitle', newTitle),
+        errorCheck.checkIfValueIsNotEmptyString('newBody', newBody)
+    ]
+
+    for (const error of errorChecks) {
+        if (error) {
+            http.BadInput(res, error)
+            return
+        }
+    }
+
+    newTitle = newTitle.trim()
+    newBody = newBody.trim()
+
+    const userFoundById = await user.findUserById(userId)
+
+    if (userFoundById === null) {
+        http.NotFound(res, 'Could not find user with id.')
+        return
+    }
+
+    if (userFoundById.error) {
+        http.ServerError(res, 'An error occured while editing image post. Please try again later.')
+        logger.error(userFoundById.error)
+        return
+    }
+
+    const postFoundById = await ImagePost.findPostById(postId);
+
+    if (postFoundById === null) {
+        http.NotFound(res, 'Could not find post with id.')
+        return
+    }
+
+    if (postFoundById.error) {
+        http.ServerError(res, 'An error occured while editing image post. Please try again later.')
+        logger.error(userFoundById.error)
+        return
+    }
+
+    const isOwner = await ImagePost.checkIfUserIsPostOwner(userId, postId)
+
+    if (isOwner.error) {
+        http.ServerError(res, 'An error occured while editing image post. Please try again later.')
+        logger.error(isOwner.error)
+        return
+    }
+
+    if (isOwner !== true) {
+        http.NotAuthorized(res, 'You do not have authorizarion to edit this image post.')
+        return
+    }
+
+    if (newTitle === postFoundById.title && newBody === postFoundById.body) {
+        console.log('Not saving edit as title and body are same as original')
+        http.BadInput(res, 'The new title and body cannot be the same as the old title and body.')
+        return
+    }
+
+    ImagePost.editImagePost(newTitle, newBody, postFoundById).then(() => {
+        http.OK(res, 'Successfully edited image post')
+    }).catch(error => {
+        logger.error(error)
+    http.ServerError(res, 'An error occured while editing image post. Please try again later')
+    })
+}
+
 module.exports = {
     login,
     signup,
@@ -1208,5 +1284,6 @@ module.exports = {
     unfollowUser,
     getUserFollowers,
     getUserFollowing,
-    editTextPost
+    editTextPost,
+    editImagePost
 }
