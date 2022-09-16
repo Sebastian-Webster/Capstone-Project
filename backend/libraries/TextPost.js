@@ -13,7 +13,7 @@ class TextPostLibrary {
         return new Promise((resolve, reject) => {
             const tempArray = []
             for (const item of posts) {
-                const {_id, creatorId, likes, __v, ...cleanResult} = item;
+                const {_id, creatorId, likes, __v, editHistory, ...cleanResult} = item;
                 cleanResult.liked = user.checkIfUserLikedPost(likes, publicId)
                 if (typeof cleanResult.liked !== 'boolean') {
                     reject(cleanResult.liked) //Reject because cleanResult.liked is an error
