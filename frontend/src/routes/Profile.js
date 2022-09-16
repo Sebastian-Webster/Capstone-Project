@@ -23,7 +23,7 @@ var _ = require('lodash')
 const Profile = () => {
     const {storedCredentials, setStoredCredentials} = useContext(CredentialsContext)
     const { FlexRowCentreDiv, FlexColumnCentreDiv, FlexRowSpaceAroundDiv, H3NoMargin } = useComponent()
-    const {name, followers, following, profileImageUri, _id, publicId} = storedCredentials;
+    const {name, profileImageUri, _id, publicId} = storedCredentials;
     const [view, setView] = useState('textPosts')
     const [openProfileImageFileSelector, { plainFiles: profileImageToUpload, loading: profileImageFileLoading}] = useFilePicker({accept: 'image/jpeg', multiple: false})
     const [profileImageUploading, setProfileImageUploading] = useState(false);
@@ -37,6 +37,7 @@ const Profile = () => {
     const followingOrUnfollowing = useRef(false)
     const [isFollowing, setIsFollowing] = useState(null)
     const navigate = useNavigate()
+    const followers = parseInt(localStorage.getItem('followers'))
 
     //Set to followers if you are visitng your own profile page via the profile button.
     //Set to followers if you are visitng your own profile page via the search page.
@@ -63,6 +64,24 @@ const Profile = () => {
                 followers
         )
     }, [profilePublicId, profileData, isFollowing])
+
+    useEffect(() => {
+        //When the profile page first loads, if the user is looking at their own profile page, refresh the follower count.
+        if (!profilePublicId || profilePublicId === publicId) {
+            const toSend = {
+                userId: _id
+            }
+            const url = `${serverUrl}/user/refreshuserfollowers`
+
+            axios.post(url, toSend).then(response => response.data.data).then(result => {
+                localStorage.setItem('followers', JSON.stringify(result))
+                if (result !== followerNumber) {
+                    console.log('Updating follower number')
+                    setFollowerNumber(result)
+                }
+            })
+        }
+    }, [profilePublicId, publicId])
 
     const loadPublicProfileInformation = () => {
         setLoadingProfile(true)
