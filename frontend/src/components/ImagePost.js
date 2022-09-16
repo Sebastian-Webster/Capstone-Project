@@ -15,7 +15,7 @@ import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import useColorScheme from '../hooks/useColorScheme';
 
-const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicId, postId, dispatch, userId, previewMode, profileName, profileImage, contextMenuPostId, contextMenuAnchorElement, editMode, saving, edited, timesEdited, dateEdited}) => {
+const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicId, postId, dispatch, userId, previewMode, profileName, profileImage, contextMenuPostId, contextMenuAnchorElement, editMode, saving, edited, timesEdited, dateEdited, isPostOwner}) => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext)
     const changingLikeStatus = useRef(false)
     const deleting = useRef(false)
@@ -132,29 +132,33 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
                                 }
                             </div>
                             <div>
-                                <Button
-                                    id={`${postId}-imagepost-context-menu-button`}
-                                    aria-controls={open ? `${postId}-imagepost-context-menu` : undefined}
-                                    aria-haspopup="true"
-                                    aria-expanded={open ? 'true' : undefined}
-                                    onClick={handleContextMenuOpen}
-                                >
-                                    <i className="fa-solid fa-ellipsis" style={{fontSize: 20, cursor: 'pointer'}}></i>
-                                </Button>
+                                {isPostOwner &&
+                                    <Button
+                                        id={`${postId}-imagepost-context-menu-button`}
+                                        aria-controls={open ? `${postId}-imagepost-context-menu` : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={open ? 'true' : undefined}
+                                        onClick={handleContextMenuOpen}
+                                    >
+                                        <i className="fa-solid fa-ellipsis" style={{fontSize: 20, cursor: 'pointer'}}></i>
+                                    </Button>
+                                }
                             </div>
                         </div>
-                        <Menu
-                            id={`${postId}-imagepost-context-menu`}
-                            anchorEl={contextMenuAnchorElement}
-                            open={open}
-                            onClose={handleContextMenuClose}
-                            MenuListProps={{
-                            'aria-labelledby': `${postId}-imagepost-context-menu-button`,
-                            }}
-                        >
-                            <MenuItem onClick={editPost}>Edit</MenuItem>
-                            <MenuItem onClick={deletePost}>Delete</MenuItem>
-                        </Menu>
+                        {isPostOwner &&
+                            <Menu
+                                id={`${postId}-imagepost-context-menu`}
+                                anchorEl={contextMenuAnchorElement}
+                                open={open}
+                                onClose={handleContextMenuClose}
+                                MenuListProps={{
+                                'aria-labelledby': `${postId}-imagepost-context-menu-button`,
+                                }}
+                            >
+                                <MenuItem onClick={editPost}>Edit</MenuItem>
+                                <MenuItem onClick={deletePost}>Delete</MenuItem>
+                            </Menu>
+                        }
                         {editMode ?
                             <>
                                 <input {...bindTitle}/>
