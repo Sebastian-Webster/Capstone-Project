@@ -46,6 +46,7 @@ const Signup = () => {
             result.profileImageUri = defaultPfp
             setLoading(false)
             setStoredCredentials(result)
+            result.rememberMe = true;
             if (rememberMe) localStorage.setItem('SebMediaCredentials', JSON.stringify(result))
             navigate('/home')
         }).catch(error => {

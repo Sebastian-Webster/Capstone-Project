@@ -6,7 +6,7 @@ const Home = () => {
     const {following} = storedCredentials;
     return (
         <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
-            {following.length > 0 ?
+            {following > 0 ?
                 <h1>Home feed coming soon</h1>
             :
                 <h1>Start following some people to see a home feed! - Home feed coming soon</h1>

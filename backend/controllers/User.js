@@ -60,8 +60,8 @@ const login = async (req, res) => {
             http.OK(res, 'Successfully logged in', {
                 email: LoginResponse.email,
                 name: LoginResponse.name,
-                followers: LoginResponse.followers,
-                following: LoginResponse.following,
+                followers: LoginResponse.followers.length,
+                following: LoginResponse.following.length,
                 _id: LoginResponse._id,
                 profileImageKey: LoginResponse.profileImageKey,
                 publicId: LoginResponse.publicId
@@ -186,8 +186,8 @@ const signup = async (req, res) => {
     const toSend = {
         name: newUserResponse.name,
         email: newUserResponse.email,
-        followers: newUserResponse.followers,
-        following: newUserResponse.following,
+        followers: newUserResponse.followers.length,
+        following: newUserResponse.following.length,
         _id: newUserResponse._id,
         publicId: newUserResponse.publicId
     }

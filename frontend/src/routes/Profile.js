@@ -17,6 +17,7 @@ import { ServerUrlContext } from '../context/ServerUrlContext';
 import useColorScheme from '../hooks/useColorScheme';
 import { useParams, useNavigate } from 'react-router-dom';
 import FollowButton from '../components/FollowButton';
+import { ExtraFollowersContext } from '../context/ExtraFollowersContext';
 
 var _ = require('lodash')
 
@@ -38,10 +39,10 @@ const Profile = () => {
     const [isFollowing, setIsFollowing] = useState(null)
     const navigate = useNavigate()
 
-    //Set to followers.length if you are visitng your own profile page via the profile button.
-    //Set to followers.length if you are visitng your own profile page via the search page.
+    //Set to followers if you are visitng your own profile page via the profile button.
+    //Set to followers if you are visitng your own profile page via the search page.
     //Set to 0 if you are visiting someone else's profile as loadPublicProfileInformation() will get the amount of followers and set followerNumber to that.
-    const [followerNumber, setFollowerNumber] = useState(profilePublicId ? profilePublicId === publicId ? followers.length : 0 : followers.length)
+    const [followerNumber, setFollowerNumber] = useState(profilePublicId ? profilePublicId === publicId ? followers : 0 : followers)
 
     useEffect(() => {
         setFollowerNumber(
@@ -60,7 +61,7 @@ const Profile = () => {
                         : 
                             profileData.followers 
             :  //If you are visiting your own profile from the profile screen
-                followers.length
+                followers
         )
     }, [profilePublicId, profileData, isFollowing])
 
@@ -549,7 +550,7 @@ const Profile = () => {
                             <H3NoMargin>{followerNumber === 1 ? 'Follower' : 'Followers'}</H3NoMargin>
                         </FlexColumnCentreDiv>
                         <FlexColumnCentreDiv style={{cursor: 'pointer'}} onClick={() => profilePublicId && profilePublicId !== publicId ? navigate(`/following/${profilePublicId}/${profileData.name}`) : navigate('/following')}>
-                            <H3NoMargin>{profilePublicId ? profileData.following : following.length}</H3NoMargin>
+                            <H3NoMargin>{profilePublicId ? profileData.following : following}</H3NoMargin>
                             <H3NoMargin>Following</H3NoMargin>
                             {profilePublicId && profileData.isFollower && <H3NoMargin>({profileData.name} follows you)</H3NoMargin>}
                         </FlexColumnCentreDiv>
