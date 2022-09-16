@@ -484,6 +484,7 @@ const Profile = () => {
                         setIsFollowing(true)
                         followingOrUnfollowing.current = false;
                         console.log(result?.data?.message)
+                        localStorage.setItem('following', JSON.stringify(parseInt(localStorage.getItem('following')) + 1)) //Add one follower to the following local storage item
                     }).catch(error => {
                         console.error(error)
                         alert(error?.response?.data?.error || String(error))
@@ -499,6 +500,7 @@ const Profile = () => {
                         setIsFollowing(false)
                         followingOrUnfollowing.current = false;
                         console.log(result?.data?.message)
+                        localStorage.setItem('following', JSON.stringify(parseInt(localStorage.getItem('following')) - 1)) //Remove one follower to the following local storage item
                     }).catch(error => {
                         console.error(error)
                         alert(error?.response?.data?.error || String(error))
@@ -549,7 +551,7 @@ const Profile = () => {
                             <H3NoMargin>{followerNumber === 1 ? 'Follower' : 'Followers'}</H3NoMargin>
                         </FlexColumnCentreDiv>
                         <FlexColumnCentreDiv style={{cursor: 'pointer'}} onClick={() => profilePublicId && profilePublicId !== publicId ? navigate(`/following/${profilePublicId}/${profileData.name}`) : navigate('/following')}>
-                            <H3NoMargin>{profilePublicId ? profileData.following : following}</H3NoMargin>
+                            <H3NoMargin>{profilePublicId ? profileData.following : localStorage.getItem('following')}</H3NoMargin>
                             <H3NoMargin>Following</H3NoMargin>
                             {profilePublicId && profileData.isFollower && <H3NoMargin>({profileData.name} follows you)</H3NoMargin>}
                         </FlexColumnCentreDiv>

@@ -52,6 +52,7 @@ const Login = () => {
             accountData.rememberMe = rememberMe
             setStoredCredentials(accountData)
             if (rememberMe) localStorage.setItem('SebMediaCredentials', JSON.stringify(accountData))
+            localStorage.setItem('following', JSON.stringify(accountData.following))
             navigate('/home')
         }).catch(error => {
             setLoading(false)
