@@ -1329,7 +1329,7 @@ const loadHomeFeed = async (req, res) => {
                 uniqueIds.forEach((id, index) => {
                     userData[id] = {
                         name: userDataArray[index][0],
-                        profileImageKey: userDataArray[index][1]
+                        profileImageKey: userDataArray[index][1] || ''
                     }
                 })
 
@@ -1360,7 +1360,13 @@ const loadHomeFeed = async (req, res) => {
                     postsArray.sort((a, b) => !a.dateEdited && !b.dateEdited ? b.datePosted - a.datePosted : !a.dateEdited ? b.dateEdited - a.datePosted : !b.dateEdited ? b.datePosted - a.dateEdited : b.dateEdited - a.dateEdited)
                     const toSend = postsArray.splice(skip, generalLib.calculateHowManyItemsToSend(postsArray.length, limit, skip))
                     http.OK(res, 'Successfully loaded home feed', toSend)
+                }).catch(error => {
+                    http.ServerError(res, 'An error occured while loading home feed. Please try again later.')
+                    logger.error(error)
                 })
+            }).catch(error => {
+                http.ServerError(res, 'An error occured while loading home feed. Please try again later.')
+                logger.error(error)
             })
         })
     }).catch(error => {

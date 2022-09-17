@@ -54,12 +54,12 @@ const Home = () => {
     const [postsState, dispatch] = useReducer(postReducer, postInitialState)
 
     useEffect(() => {
-        dispatch({type: 'startLoading'})
         loadPosts()
     }, [])
 
     const loadPosts = () => {
         if (!postsState.loading) {
+            dispatch({type: 'startLoading'})
             const url = `${serverUrl}/user/gethomefeed`
             const toSend = {
                 userId: _id,
@@ -83,6 +83,8 @@ const Home = () => {
                         })
                         setProfilePictures(newProfilePictures)
                         dispatch({type: 'addPosts', posts: result})
+                    }).catch(error => {
+                        dispatch({type: 'error', error})
                     })
                 } else {
                     dispatch({type: 'addPosts', posts: result})
@@ -141,7 +143,7 @@ const Home = () => {
                                         </Box>
                                     </div>
                                 : postsState.loading ?
-                                    <Box sx={{display: 'flex', justifyContent: 'center', mt: 3}}>
+                                    <Box sx={{display: 'flex', justifyContent: 'center', mt: 3, mb: 3}}>
                                         <CircularProgress/>
                                     </Box>
                                 : postsState.noMorePosts ?
