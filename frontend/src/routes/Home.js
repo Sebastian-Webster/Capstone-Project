@@ -37,6 +37,28 @@ const Home = () => {
                     //If there are already posts showing and there aren't any more to show, then this will get set to true so there can be a message telling the user that there are no more posts to see.
                     noMorePosts: state.posts === null ? false : action.posts.length === 0 
                 }
+            case 'likePost':
+                const likePostIndex = state.posts.findIndex(item => item.postId === action.postId)
+                if (likePostIndex === -1) {
+                    alert('Cannot find post to like')
+                    return {...state}
+                }
+
+                const newPostsAfterLike = state.posts;
+                newPostsAfterLike[likePostIndex].liked = true;
+                
+                return {...state, posts: newPostsAfterLike, reRenderTimes: state.reRenderTimes + 1}
+            case 'unlikePost':
+                const unlikePostIndex = state.posts.findIndex(item => item.postId === action.postId)
+                if (unlikePostIndex === -1) {
+                    alert('Cannot find post to unlike')
+                    return {...state}
+                }
+                
+                const newPostsAfterUnlike = state.posts;
+                newPostsAfterUnlike[unlikePostIndex].liked = false;
+                
+                return {...state, posts: newPostsAfterUnlike, reRenderTimes: state.reRenderTimes + 1}
             default:
                 throw new Error(`${action.type} is not a valid action type for postReducer`)
         }
