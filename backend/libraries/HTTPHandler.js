@@ -14,18 +14,11 @@ class HTTPHandler {
     }
 
     OK(res, message, data) {
-        if (data) {
-            res.status(200).json({
-                status: "SUCCESS",
-                message,
-                data
-            })
-        } else {
-            res.status(200).json({
-                status: "SUCCESS",
-                message
-            })
-        }
+        res.status(200).json({
+            status: "SUCCESS",
+            message,
+            data
+        })
     }
 
     NotAuthorized(res, error) {

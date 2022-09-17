@@ -5,7 +5,7 @@ class Logger {
     }
 
     error(error) {
-        console.error('ERROR AT: [' + new Date() + '] ' + String(error))
+        console.error('ERROR AT: [' + new Date() + ']', error)
     }
 }
 

@@ -37,6 +37,14 @@ class ErrorCheck {
 
         return null
     }
+
+    checkIfValueIsInt = (key, value) => {
+        if (parseInt(value) === NaN) {
+            return `${key} must be a number`
+        }
+
+        return null
+    }
 }
 
 module.exports = ErrorCheck;

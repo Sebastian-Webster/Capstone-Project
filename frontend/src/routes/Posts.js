@@ -69,7 +69,7 @@ const Posts = () => {
                         'Content-Type': 'multipart/form-data'
                     }
                 }).then(result => {
-                    navigate('/home')
+                    navigate('/profile')
                 }).catch(error => {
                     console.error(error)
                     setError(error?.response?.data?.error || String(error))
@@ -89,7 +89,7 @@ const Posts = () => {
                 .then(result => {
                     setLoading(false)
                     setError(null)
-                    navigate('/home')
+                    navigate('/profile')
                 }).catch(error => {
                     setLoading(false)
                     setError(error?.response?.data?.error)
