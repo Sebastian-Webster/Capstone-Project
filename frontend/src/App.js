@@ -50,7 +50,7 @@ function App() {
 
   return (
     <Div>
-      <header style={{borderBottomColor: darkMode ? 'white' : 'black', height: 70, position: 'sticky', top: 0, backgroundColor: darkMode ? 'black' : 'white', zIndex: 99999}}>
+      <header style={{borderBottomColor: darkMode ? 'white' : 'black', height: 70, position: 'fixed', top: 0, backgroundColor: darkMode ? 'black' : 'white', zIndex: 99999, width: '100%'}}>
         <div>
           <h1>SebMedia</h1>
           <button style={{background: 'none', margin: 0, padding: 0, border: 'none'}} onClick={() => {setDarkMode(!darkMode)}}>
@@ -80,7 +80,7 @@ function App() {
         </div>
       </header>
       {storedCredentials ? 
-        <div style={{height: 'calc(100vh - 92px)', width: '100vw', margin: 0, padding: 0}}>
+        <div style={{height: 'calc(100vh - 92px)', width: '100vw', margin: 0, padding: 0, paddingTop: 70}}>
           <Outlet/>
         </div>
       : 

@@ -134,6 +134,26 @@ class UserLibrary {
             }
         })
     }
+
+    getFollowingFromUserById = (userId) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const userFoundById = await this.findUserById(userId)
+                resolve(userFoundById.following)
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    getUserIdArrayFromUserPublicIdArray = (publicIdArray) => {
+        return new Promise((resolve, reject) => {
+            User.find({publicId: {$in: publicIdArray}}).then(result => {
+                const idArray = result.map(user => user._id)
+                resolve(idArray)
+            }).catch(reject)
+        })
+    }
 }
 
 module.exports = UserLibrary

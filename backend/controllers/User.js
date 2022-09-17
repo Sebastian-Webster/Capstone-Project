@@ -105,7 +105,7 @@ const signup = async (req, res) => {
     }
 
     if (password.length < 8) {
-        http.BadInput(res, 'Password must be more than 8 characters long')
+        http.BadInput(res, 'Password must be 8 or more characters long')
         return
     }
 
@@ -441,7 +441,7 @@ const getImagePostsByUserName = async (req, res) => {
 
     ImagePost.findPostsByCreatorId(foundUserByName._id, limit, skip, publicId).then(result => {
         //Get rid of object IDs
-        const cleanedResult = result.map(post => ({title: post.title, body: post.body, datePosted: post.datePosted, imageKey: post.imageKey, liked: post.liked, postId: post._id, edited: post.editHistory.length > 0, timesEdited: post.editHistory.length}))
+        const cleanedResult = result.map(post => ({title: post.title, body: post.body, datePosted: post.datePosted, imageKey: post.imageKey, liked: post.liked, postId: post._id, edited: post.editHistory.length > 0, timesEdited: post.editHistory.length, dateEdited: post.dateEdited}))
         http.OK(res, 'Successfully found posts', cleanedResult)
     }).catch(error => {
         http.ServerError(res, 'An error occured while fetching image posts. Please try again later.')
@@ -1276,6 +1276,102 @@ const refreshUserFollowers = (req, res) => {
         http.OK(res, 'Successfully retrieved followers', followers.length)
     }).catch(error => {
         http.ServerError(res, 'An error occured while retrieving followers. Please try again later.')
+        logger.error(error)
+    })
+}
+
+const loadHomeFeed = async (req, res) => {
+    const userId = req?.body?.userId;
+    const skip = req?.body?.skip || 0;
+    const limit = 20;
+
+    const errorChecks = [
+        errorCheck.checkIfValueIsValidObjectId('userId', userId),
+        errorCheck.checkIfValueIsInt('skip', skip)
+    ]
+
+    for (const error of errorChecks) {
+        if (error) return http.BadInput(res, error)
+    }
+
+    const userFoundById = await user.findUserById(userId)
+
+    if (userFoundById === null) {
+        return http.NotFound(res, 'User with userId cannot be found')
+    }
+
+    if (userFoundById.error) {
+        logger.error(userFoundById.error)
+        return http.ServerError(res, 'An error occured while finding user with id. Please try again later.')
+    }
+
+    const userPublicId = userFoundById.publicId
+
+    user.getFollowingFromUserById(userId).then(following => {
+        user.getUserIdArrayFromUserPublicIdArray(following).then(userIds => {
+            //Create a new set of userIds (get the unique ids) and then convert it to an array
+            const uniqueIds = Array.from(new Set(userIds.map(id => String(id))))
+            console.log(uniqueIds)
+            const userData = {}
+            Promise.all(
+                uniqueIds.map(id => {
+                    return new Promise(async (resolve, reject) => {
+                        const userFoundById = await user.findUserById(id)
+
+                        if (userFoundById === null) return reject('User not found with id: ' + id)
+
+                        if (userFoundById.error) return reject(userFoundById.error)
+
+                        resolve([userFoundById.name, userFoundById.profileImageKey])
+                    })
+                })
+            ).then(userDataArray => {
+                uniqueIds.forEach((id, index) => {
+                    userData[id] = {
+                        name: userDataArray[index][0],
+                        profileImageKey: userDataArray[index][1] || ''
+                    }
+                })
+
+                console.log(userData)
+
+                Promise.all([
+                    TextPost.getTextPostsFromUserIdArray(userIds),
+                    ImagePost.getImagePostsFromUserIdArray(userIds)
+                ]).then(async ([textPosts, imagePosts]) => {
+                    textPosts = textPosts.map(post => {
+                        post = post._doc
+                        post = {...post, ...userData[post.creatorId]}
+                        return post
+                    })
+                    imagePosts = imagePosts.map(post => {
+                        post = post._doc
+                        post = {...post, ...userData[post.creatorId]}
+                        return post
+                    })
+                    textPosts = TextPost.prepareDataToSendToUserSync(textPosts, false, userPublicId)
+                    imagePosts = ImagePost.prepareDataToSendToUserSync(imagePosts, false, userPublicId)
+                    const postsArray = textPosts.concat(imagePosts)
+                    //This sort prioritizes showing posts that have recently been uploaded, and then 2nd priority is to show posts that have recently been edited, and then last priority is everything else
+                    //If both posts have not been edited, compare them by their post dates
+                    //If post a has not been edited, but post b has, compare the posts by b's edit date and a's post date
+                    //If post b has not been edited, but post a has, compare the posts by b's post date and a's edit date
+                    //If both posts have been edited, compare them by their edit dates
+                    postsArray.sort((a, b) => !a.dateEdited && !b.dateEdited ? b.datePosted - a.datePosted : !a.dateEdited ? b.dateEdited - a.datePosted : !b.dateEdited ? b.datePosted - a.dateEdited : b.dateEdited - a.dateEdited)
+                    const toSend = postsArray.splice(skip, generalLib.calculateHowManyItemsToSend(postsArray.length, limit, skip))
+                    http.OK(res, 'Successfully loaded home feed', toSend)
+                }).catch(error => {
+                    http.ServerError(res, 'An error occured while loading home feed. Please try again later.')
+                    logger.error(error)
+                })
+            }).catch(error => {
+                http.ServerError(res, 'An error occured while loading home feed. Please try again later.')
+                logger.error(error)
+            })
+        })
+    }).catch(error => {
+        http.ServerError(res, 'An error occured while loading home feed. Please try again later.')
+        logger.error(error)
     })
 }
 
@@ -1301,5 +1397,6 @@ module.exports = {
     getUserFollowing,
     editTextPost,
     editImagePost,
-    refreshUserFollowers
+    refreshUserFollowers,
+    loadHomeFeed
 }

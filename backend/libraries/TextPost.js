@@ -5,7 +5,7 @@ const user = new User();
 class TextPostLibrary {
     findPostsByCreatorId = (creatorId) => {
         return new Promise((resolve, reject) => {
-            TextPost.find({creatorId}).then(resolve).catch(reject)
+            TextPost.find({creatorId}).sort({'datePosted': -1}).then(resolve).catch(reject) //Sorts by datePosted so the post that has most recently been posted gets shown first
         })
     }
 
@@ -26,6 +26,23 @@ class TextPostLibrary {
             }
             resolve(tempArray)
         })
+    }
+
+    prepareDataToSendToUserSync = (posts, cached, publicId) => {
+        const tempArray = []
+        for (const item of posts) {
+            const {_id, creatorId, likes, __v, editHistory, ...cleanResult} = item;
+            cleanResult.liked = user.checkIfUserLikedPost(likes, publicId)
+            if (typeof cleanResult.liked !== 'boolean') {
+                throw new Error(`cleanResult.liked is not a boolean. It is actually type ${typeof cleanResult.liked} and it's value is ${cleanResult.liked}`)
+            }
+            cleanResult.cached = cached;
+            cleanResult.postId = _id;
+            cleanResult.edited = item.editHistory.length > 0;
+            cleanResult.timesEdited = item.editHistory.length;
+            tempArray.push(cleanResult)
+        }
+        return tempArray
     }
 
     likePost = (postId, userPublicId) => {
@@ -90,6 +107,12 @@ class TextPostLibrary {
             } catch (error) {
                 reject(error)
             }
+        })
+    }
+
+    getTextPostsFromUserIdArray = (userIdArray) => {
+        return new Promise((resolve, reject) => {
+            TextPost.find({creatorId: {$in: userIdArray}}).then(result => resolve(result)).catch(reject)
         })
     }
 }

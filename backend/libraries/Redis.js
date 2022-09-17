@@ -60,7 +60,7 @@ class RedisLibrary {
                 const redisCacheKey = `textposts-bycreatorid-${userId}`
                 const cache = await this.getCache(redisCacheKey)
                 if (!Array.isArray(cache)) return resolve() //No need to throw an error because there is no cache to add a post too. When someone visits the user's profile page the fresh data from the database will be put in the cache
-                cache.push(postObj)
+                cache.unshift(postObj)
                 this.setCache(redisCacheKey, cache).then(resolve)
             } catch (error) {
                 reject(error)
