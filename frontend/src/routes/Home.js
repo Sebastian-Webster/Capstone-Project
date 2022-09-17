@@ -20,6 +20,7 @@ const Home = () => {
     const {_id, publicId} = storedCredentials;
     const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
     const [profilePictures, setProfilePictures] = useState({})
+    const [imagePostPictures, setImagePostPictures] = useState({})
 
     const postReducer = (state, action) => {
         switch(action.type) {
@@ -104,17 +105,38 @@ const Home = () => {
                             newProfilePictures[uniqueProfileImageKeys[index]] = 'data:image/jpeg;base64,' + image
                         })
                         setProfilePictures(newProfilePictures)
-                        dispatch({type: 'addPosts', posts: result})
+                        addImagesToPosts(result)
                     }).catch(error => {
                         dispatch({type: 'error', error})
                     })
                 } else {
-                    dispatch({type: 'addPosts', posts: result})
+                    addImagesToPosts(result)
                 }
             }).catch(error => {
                 dispatch({type: 'error', error})
             })
         } else console.log('Not loading as posts are already getting loaded')
+    }
+
+    const addImagesToPosts = (posts) => {
+        Promise.all(
+            posts.map(post => {
+                return new Promise(async (resolve, reject) => {
+                    if (post.imageKey) {
+                        axios.get(`${serverUrl}/image/${post.imageKey}`).then(response => response.data).then(result => {
+                            post.image = 'data:image/jpeg;base64,' + result
+                            resolve(post)
+                        }).catch(reject)
+                    } else {
+                        resolve(post)
+                    }
+                })
+            })
+        ).then(posts => {
+            dispatch({type: 'addPosts', posts})
+        }).catch(error => {
+            dispatch({type: 'error', error})
+        })
     }
 
     const DisplayPosts = useMemo(() => {
