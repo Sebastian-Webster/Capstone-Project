@@ -1436,6 +1436,59 @@ const changeEmail = async (req, res) => {
     })
 }
 
+const changePassword = async (req, res) => {
+    const userId = req?.body?.userId;
+    const oldPassword = req?.body?.oldPassword;
+    const newPassword = req?.body?.newPassword;
+    const confirmPassword = req?.body?.confirmPassword;
+
+    const errorChecks = [
+        errorCheck.checkIfValueIsValidObjectId('userId', userId),
+        errorCheck.checkIfValueIsNotEmptyString('oldPassword', oldPassword),
+        errorCheck.checkIfValueIsNotEmptyString('newPassword', newPassword),
+        errorCheck.checkIfValueIsNotEmptyString('confirmPassword', confirmPassword)
+    ]
+
+    for (const error of errorChecks) {
+        if (error) return http.BadInput(res, error)
+    }
+
+    const userFoundById = await user.findUserById(userId)
+
+    if (userFoundById === null) return http.NotFound(res, 'User with id not found.')
+
+    if (userFoundById.error) {
+        logger.error(userFoundById.error)
+        return http.ServerError(res, 'An error occured while changing password. Please try again later.')
+    }
+
+    if (newPassword !== confirmPassword) return http.BadInput(res, 'Passwords do not match.')
+
+    if (newPassword.length < 8) http.BadInput(res, 'New password must be 8 or more characters long.')
+
+    bcrypt.compare(oldPassword, userFoundById.password).then(async result => {
+        if (result) {
+            const hashedPassword = await user.hashPassword(newPassword)
+            if (typeof hashedPassword === 'object' && hashedPassword !== 'null' && hashedPassword.error) {
+                logger.error(hashedPassword.error)
+                http.ServerError(res, 'An error occured while changing password. Please try again later.')
+            } else {
+                user.changePassword(userId, hashedPassword).then(() => {
+                    http.OK(res, 'Successfully changed password.')
+                }).catch(error => {
+                    logger.error(error)
+                    http.ServerError(res, 'An error occured while changing password. Please try again later.')
+                })
+            }
+        } else {
+            http.NotAuthorized(res, 'Wrong password.')
+        }
+    }).catch(error => {
+        logger.error(error)
+        http.ServerError(res, 'An error occured while changing password. Please try again later.')
+    })
+}
+
 module.exports = {
     login,
     signup,
@@ -1460,5 +1513,6 @@ module.exports = {
     editImagePost,
     refreshUserFollowers,
     loadHomeFeed,
-    changeEmail
+    changeEmail,
+    changePassword
 }
