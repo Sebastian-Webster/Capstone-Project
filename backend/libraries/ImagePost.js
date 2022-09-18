@@ -3,21 +3,9 @@ const User = require('./User')
 const user = new User();
 
 class ImagePostLibrary {
-    findPostsByCreatorId = (creatorId, limit, skip, viewerId) => {
+    findPostsByCreatorId = (creatorId, limit, skip) => {
         return new Promise((resolve, reject) => {
-            ImagePost.find({creatorId}).skip(skip).limit(limit).then(result => {
-                const toResolve = result.map(item => {
-                    const toReturn = {
-                        ...item._doc,
-                        liked: item.likes.includes(viewerId)
-                    }
-                    delete toReturn.likes
-                    return toReturn
-                })
-                resolve(toResolve)
-            }).catch(error => {
-                reject(error)
-            })
+            ImagePost.find({creatorId}).skip(skip).limit(limit).then(resolve).catch(reject)
         })
     }
 
@@ -85,8 +73,9 @@ class ImagePostLibrary {
 
     prepareDataToSendToUserSync = (posts, cached, publicId) => {
         const tempArray = []
-        for (const item of posts) {
-            const {_id, creatorId, likes, __v, editHistory, ...cleanResult} = item;
+        for (const itemIndex in posts) {
+            const item = posts[itemIndex]
+            const {_id, creatorId, likes, __v, editHistory, ...cleanResult} = item._doc || item; //If there is a ._doc, choose it over item
             cleanResult.liked = user.checkIfUserLikedPost(likes, publicId)
             if (typeof cleanResult.liked !== 'boolean') {
                 throw new Error(`cleanResult.liked is not a boolean. It is actually type ${typeof cleanResult.liked} and it's value is ${cleanResult.liked}`)
@@ -95,6 +84,8 @@ class ImagePostLibrary {
             cleanResult.postId = _id;
             cleanResult.edited = item.editHistory.length > 0;
             cleanResult.timesEdited = item.editHistory.length;
+            cleanResult.likeCount = likes.length;
+            console.log(cleanResult)
             tempArray.push(cleanResult)
         }
         return tempArray

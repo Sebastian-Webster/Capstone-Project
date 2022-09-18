@@ -439,9 +439,9 @@ const getImagePostsByUserName = async (req, res) => {
         return
     }
 
-    ImagePost.findPostsByCreatorId(foundUserByName._id, limit, skip, publicId).then(result => {
+    ImagePost.findPostsByCreatorId(foundUserByName._id, limit, skip).then(result => {
         //Get rid of object IDs
-        const cleanedResult = result.map(post => ({title: post.title, body: post.body, datePosted: post.datePosted, imageKey: post.imageKey, liked: post.liked, postId: post._id, edited: post.editHistory.length > 0, timesEdited: post.editHistory.length, dateEdited: post.dateEdited}))
+        const cleanedResult = ImagePost.prepareDataToSendToUserSync(result, false, publicId)
         http.OK(res, 'Successfully found posts', cleanedResult)
     }).catch(error => {
         http.ServerError(res, 'An error occured while fetching image posts. Please try again later.')
