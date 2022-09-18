@@ -22,6 +22,7 @@ class TextPostLibrary {
                 cleanResult.postId = _id;
                 cleanResult.edited = item.editHistory.length > 0;
                 cleanResult.timesEdited = item.editHistory.length;
+                cleanResult.likeCount = likes.length;
                 tempArray.push(cleanResult)
             }
             resolve(tempArray)
@@ -40,6 +41,7 @@ class TextPostLibrary {
             cleanResult.postId = _id;
             cleanResult.edited = item.editHistory.length > 0;
             cleanResult.timesEdited = item.editHistory.length;
+            cleanResult.likeCount = likes.length;
             tempArray.push(cleanResult)
         }
         return tempArray
