@@ -160,6 +160,12 @@ class UserLibrary {
             User.findOneAndUpdate({_id: userId}, {email}).then(resolve).catch(reject)
         })
     }
+
+    changePassword = (userId, hashedPassword) => {
+        return new Promise((resolve, reject) => {
+            User.findOneAndUpdate({_id: userId}, {password: hashedPassword}).then(resolve).catch(reject)
+        })
+    }
 }
 
 module.exports = UserLibrary
