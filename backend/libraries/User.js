@@ -166,6 +166,12 @@ class UserLibrary {
             User.findOneAndUpdate({_id: userId}, {password: hashedPassword}).then(resolve).catch(reject)
         })
     }
+
+    resetProfilePicture = (userId) => {
+        return new Promise((resolve, reject) => {
+            User.findOneAndUpdate({_id: userId}, {profileImageKey: ''}).then(resolve).catch(reject)
+        })
+    }
 }
 
 module.exports = UserLibrary

@@ -21,6 +21,7 @@ const LazySettings = lazy(() => import('./routes/Settings'))
 const LazyProfileStats = lazy(() => import('./routes/ProfileStats'))
 const LazyChangePasswordSettings = lazy(() => import('./routes/Settings/ChangePassword'))
 const LazyChangeEmailSettings = lazy(() => import('./routes/Settings/ChangeEmail'))
+const LazyChangeProfilePictureSettings = lazy(() => import('./routes/Settings/ChangeProfilePicture'))
 
 const LazyLoadingComponent = ({text}) => {
   return (
@@ -65,6 +66,7 @@ const ComponentToRender = () => {
                   <Route path="settings" element={<Suspense fallback={<LazyLoadingComponent text="Settings Screen is loading..."/>}><LazySettings/></Suspense>}>
                     <Route path="changepassword" element={<Suspense fallback={<LazyLoadingComponent text="Change Password Settings is loading..."/>}><LazyChangePasswordSettings/></Suspense>}/>
                     <Route path="changeemail" element={<Suspense fallback={<LazyLoadingComponent text="Change Email Settings is loading..."/>}><LazyChangeEmailSettings/></Suspense>}/>
+                    <Route path="changeprofilepicture" element={<Suspense fallback={<LazyLoadingComponent text="Change Profile Picture Settings is loading..."/>}><LazyChangeProfilePictureSettings/></Suspense>}/>
                   </Route>
                 </Route>
                 <Route path="login" element={<Suspense fallback={<LazyLoadingComponent text="Login Screen is loading..."/>}><LazyLogin/></Suspense>}/>

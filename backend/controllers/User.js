@@ -1489,6 +1489,29 @@ const changePassword = async (req, res) => {
     })
 }
 
+const resetProfilePicture = async (req, res) => {
+    const userId = req?.body?.userId;
+
+    const error = errorCheck.checkIfValueIsValidObjectId('userId', userId)
+    if (error) return http.BadInput(res, error)
+
+    const userFoundById = await user.findUserById(userId)
+
+    if (userFoundById === null) return http.NotFound(res, 'User with id could not be found.')
+
+    if (userFoundById.error) {
+        logger.error(userFoundById.error)
+        return http.ServerError(res, 'An error occured while resetting profile picture. Please try again later.')
+    }
+
+    user.resetProfilePicture(userId).then(() => {
+        http.OK(res, 'Successfully reset profile picture')
+    }).catch(error => {
+        logger.error(error)
+        http.ServerError(res, 'An error occur4ed while resetting profile picture. Please try again later.')
+    })
+}
+
 module.exports = {
     login,
     signup,
@@ -1514,5 +1537,6 @@ module.exports = {
     refreshUserFollowers,
     loadHomeFeed,
     changeEmail,
-    changePassword
+    changePassword,
+    resetProfilePicture
 }
