@@ -25,7 +25,8 @@ const {
     refreshUserFollowers,
     loadHomeFeed,
     changeEmail,
-    changePassword
+    changePassword,
+    resetProfilePicture
 } = require('../controllers/User')
 const multer = require('multer')
 const path = require('path')
@@ -127,5 +128,7 @@ router.post('/gethomefeed', loadHomeFeed)
 router.post('/changeemail', changeEmail)
 
 router.post('/changepassword', changePassword)
+
+router.delete('/profilepicture', resetProfilePicture)
 
 module.exports = router;
