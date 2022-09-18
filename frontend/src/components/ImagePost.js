@@ -181,6 +181,7 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
                             </>
                         :
                             <>
+                                <br/>
                                 <div style={{display: 'flex', justifyContent: 'left', alignItems: 'center'}}>
                                     <FontAwesomeIcon 
                                         icon={liked ? fasHeart : farHeart}
@@ -189,6 +190,7 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
                                     />
                                     <h3 style={{margin: 0, marginLeft: 10}}>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</h3>
                                 </div>
+                                <br/>
                                 <h4 style={{marginTop: 10, marginBottom: 5}}>Posted {calculateDifferenceBetweenNowAndUTCMillisecondsTime(datePosted)}</h4>
                                 {edited && <h4 style={{margin: 0}}>Edited {calculateDifferenceBetweenNowAndUTCMillisecondsTime(dateEdited)}</h4>}
                             </>
