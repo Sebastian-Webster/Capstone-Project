@@ -1375,6 +1375,67 @@ const loadHomeFeed = async (req, res) => {
     })
 }
 
+const changeEmail = async (req, res) => {
+    let newEmail = req?.body?.newEmail;
+    const password = req?.body?.password;
+    const userId = req?.body?.userId;
+
+    if (typeof newEmail !== 'string') {
+        return http.BadInput(res, 'newEmail must be a string')
+    }
+
+    if (typeof password !== 'string') {
+        return http.BadInput(res, 'password must be a string')
+    }
+
+    newEmail = newEmail.trim()
+
+    if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(newEmail)) {
+        return http.BadInput(res, 'Email is invalid')
+    }
+
+    const userFoundByEmail = await user.findUserByEmail(newEmail)
+
+    if (typeof userFoundByEmail === 'object' && userFoundByEmail !== null && userFoundByEmail.error) {
+        logger.error(userFoundByEmail.error)
+        return http.ServerError(res, 'An error occured while changing email. Please try again later.')
+    }
+
+    if (userFoundByEmail !== null) {
+        return http.BadInput(res, 'User with that email already exists.')
+    }
+
+    const userIdError = errorCheck.checkIfValueIsValidObjectId('userId', userId)
+    if (userIdError) return http.BadInput(res, userIdError)
+
+    const userFoundById = await user.findUserById(userId)
+
+    if (userFoundById === null) {
+        return http.NotFound(res, 'User with id cannot be found')
+    }
+
+    if (userFoundById.error) {
+        logger.error(userFoundById.error)
+        return http.ServerError(res, 'An error occured while changing email. Please try again later.')
+    }
+
+    bcrypt.compare(password, userFoundById.password).then(result => {
+        if (result) {
+            user.changeEmail(userId, newEmail).then(() => {
+                http.OK(res, 'Successfully changed email.')
+            }).catch(error => {
+                logger.error(error)
+                http.ServerError(res, 'An error occured while changing email. Please try again later.')
+            })
+        } else {
+            http.NotAuthorized(res, 'Wrong password.')
+        }
+    }).catch(error => {
+        logger.error(error)
+        http.ServerError(res, 'An error occured while changing email. Please try again later.')
+    })
+}
+
 module.exports = {
     login,
     signup,
@@ -1398,5 +1459,6 @@ module.exports = {
     editTextPost,
     editImagePost,
     refreshUserFollowers,
-    loadHomeFeed
+    loadHomeFeed,
+    changeEmail
 }

@@ -154,6 +154,12 @@ class UserLibrary {
             }).catch(reject)
         })
     }
+
+    changeEmail = (userId, email) => {
+        return new Promise((resolve, reject) => {
+            User.findOneAndUpdate({_id: userId}, {email}).then(resolve).catch(reject)
+        })
+    }
 }
 
 module.exports = UserLibrary
