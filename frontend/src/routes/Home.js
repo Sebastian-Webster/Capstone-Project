@@ -47,6 +47,7 @@ const Home = () => {
 
                 const newPostsAfterLike = state.posts;
                 newPostsAfterLike[likePostIndex].liked = true;
+                newPostsAfterLike[likePostIndex].likeCount = newPostsAfterLike[likePostIndex].likeCount + 1;
                 
                 return {...state, posts: newPostsAfterLike, reRenderTimes: state.reRenderTimes + 1}
             case 'unlikePost':
@@ -58,6 +59,7 @@ const Home = () => {
                 
                 const newPostsAfterUnlike = state.posts;
                 newPostsAfterUnlike[unlikePostIndex].liked = false;
+                newPostsAfterUnlike[unlikePostIndex].likeCount = newPostsAfterUnlike[unlikePostIndex].likeCount - 1;
                 
                 return {...state, posts: newPostsAfterUnlike, reRenderTimes: state.reRenderTimes + 1}
             default:
@@ -89,6 +91,7 @@ const Home = () => {
                 skip: Array.isArray(postsState.posts) ? postsState.posts.length : 0
             }
             axios.post(url, toSend).then(response => response.data.data).then(result => {
+                console.log(result)
                 const uniqueProfileImageKeys = Array.from(new Set(result.map(result => result.profileImageKey))).filter(item => item !== '' && !Object.keys(profilePictures).includes(item))
                 if (uniqueProfileImageKeys.length > 0) {
                     Promise.all(

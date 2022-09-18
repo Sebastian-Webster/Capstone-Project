@@ -141,6 +141,7 @@ const Profile = () => {
 
                 const newPostsAfterLike = state.posts;
                 newPostsAfterLike[likePostIndex].liked = true;
+                newPostsAfterLike[likePostIndex].likeCount = newPostsAfterLike[likePostIndex].likeCount + 1;
                 
                 return {...state, posts: newPostsAfterLike, reRenderTimes: state.reRenderTimes + 1}
             case 'unlikePost':
@@ -152,6 +153,7 @@ const Profile = () => {
                 
                 const newPostsAfterUnlike = state.posts;
                 newPostsAfterUnlike[unlikePostIndex].liked = false;
+                newPostsAfterUnlike[unlikePostIndex].likeCount = newPostsAfterUnlike[unlikePostIndex].likeCount - 1;
                 
                 return {...state, posts: newPostsAfterUnlike, reRenderTimes: state.reRenderTimes + 1}
             case 'deletePost':
