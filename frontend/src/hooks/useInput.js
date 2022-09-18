@@ -5,7 +5,7 @@ const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
-const useInput = (initialText = '', inputName, variant = 'outlined', extraStyles = {}) => {
+const useInput = (initialText = '', inputName, variant = 'outlined', extraStyles = {}, inputType = 'text') => {
     const [text, setText] = useState(initialText);
     const {darkMode, setDarkMode} = useContext(DarkModeContext);
 
@@ -19,7 +19,7 @@ const useInput = (initialText = '', inputName, variant = 'outlined', extraStyles
             setText(e.target.value)
         },
         name: inputName,
-        type: 'text',
+        type: inputType,
         sx: {
             mt: 2
         },

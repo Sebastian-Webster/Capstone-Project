@@ -23,7 +23,8 @@ const {
     editTextPost,
     editImagePost,
     refreshUserFollowers,
-    loadHomeFeed
+    loadHomeFeed,
+    changeEmail
 } = require('../controllers/User')
 const multer = require('multer')
 const path = require('path')
@@ -121,5 +122,7 @@ router.put('/imagepost', editImagePost)
 router.post('/refreshuserfollowers', refreshUserFollowers)
 
 router.post('/gethomefeed', loadHomeFeed)
+
+router.post('/changeemail', changeEmail)
 
 module.exports = router;
