@@ -15,7 +15,7 @@ import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import useColorScheme from '../hooks/useColorScheme';
 
-const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicId, postId, dispatch, userId, previewMode, profileName, profileImage, contextMenuPostId, contextMenuAnchorElement, editMode, saving, edited, timesEdited, dateEdited, isPostOwner}) => {
+const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicId, postId, dispatch, userId, previewMode, profileName, profileImage, contextMenuPostId, contextMenuAnchorElement, editMode, saving, edited, timesEdited, dateEdited, isPostOwner, likeCount}) => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext)
     const changingLikeStatus = useRef(false)
     const deleting = useRef(false)
@@ -181,11 +181,14 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
                             </>
                         :
                             <>
-                                <FontAwesomeIcon 
-                                    icon={liked ? fasHeart : farHeart}
-                                    style={{color: liked ? 'red' : darkMode ? 'white' : 'black', cursor: 'pointer', fontSize: 30}}
-                                    onClick={toggleLike}
-                                />
+                                <div style={{display: 'flex', justifyContent: 'left', alignItems: 'center'}}>
+                                    <FontAwesomeIcon 
+                                        icon={liked ? fasHeart : farHeart}
+                                        style={{color: liked ? 'red' : darkMode ? 'white' : 'black', cursor: 'pointer', fontSize: 30}}
+                                        onClick={toggleLike}
+                                    />
+                                    <h3 style={{margin: 0, marginLeft: 10}}>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</h3>
+                                </div>
                                 <h4 style={{marginTop: 10, marginBottom: 5}}>Posted {calculateDifferenceBetweenNowAndUTCMillisecondsTime(datePosted)}</h4>
                                 {edited && <h4 style={{margin: 0}}>Edited {calculateDifferenceBetweenNowAndUTCMillisecondsTime(dateEdited)}</h4>}
                             </>
