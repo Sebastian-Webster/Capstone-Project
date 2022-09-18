@@ -19,6 +19,8 @@ const LazyPosts = lazy(() => import('./routes/Posts'))
 const LazySearch = lazy(() => import('./routes/Search'))
 const LazySettings = lazy(() => import('./routes/Settings'))
 const LazyProfileStats = lazy(() => import('./routes/ProfileStats'))
+const LazyChangePasswordSettings = lazy(() => import('./routes/Settings/ChangePassword'))
+const LazyChangeEmailSettings = lazy(() => import('./routes/Settings/ChangeEmail'))
 
 const LazyLoadingComponent = ({text}) => {
   return (
@@ -60,7 +62,10 @@ const ComponentToRender = () => {
                   <Route path="followers/:publicId/:accountName" element={<Suspense fallback={<LazyLoadingComponent text="Followers Screen is loading..."/>}><LazyProfileStats type='followers'/></Suspense>}/>
                   <Route path="following" element={<Suspense fallback={<LazyLoadingComponent text="Following Screen is loading..."/>}><LazyProfileStats type='following'/></Suspense>}/>
                   <Route path="following/:publicId/:accountName" element={<Suspense fallback={<LazyLoadingComponent text="Following Screen is loading..."/>}><LazyProfileStats type='following'/></Suspense>}/>
-                  <Route path="settings" element={<Suspense fallback={<LazyLoadingComponent text="Settings Screen is loading..."/>}><LazySettings/></Suspense>}/>
+                  <Route path="settings" element={<Suspense fallback={<LazyLoadingComponent text="Settings Screen is loading..."/>}><LazySettings/></Suspense>}>
+                    <Route path="changepassword" element={<Suspense fallback={<LazyLoadingComponent text="Change Password Settings is loading..."/>}><LazyChangePasswordSettings/></Suspense>}/>
+                    <Route path="changeemail" element={<Suspense fallback={<LazyLoadingComponent text="Change Email Settings is loading..."/>}><LazyChangeEmailSettings/></Suspense>}/>
+                  </Route>
                 </Route>
                 <Route path="login" element={<Suspense fallback={<LazyLoadingComponent text="Login Screen is loading..."/>}><LazyLogin/></Suspense>}/>
                 <Route path="signup" element={<Suspense fallback={<LazyLoadingComponent text="Signup Screen is loading..."/>}><LazySignup/></Suspense>}/>
