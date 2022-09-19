@@ -190,7 +190,12 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
                                         style={{color: liked ? 'red' : darkMode ? 'white' : 'black', cursor: 'pointer', fontSize: 30}}
                                         onClick={toggleLike}
                                     />
-                                    <h3 onClick={() => navigate(`/postLikeCount/${postId}/image`)} style={{margin: 0, marginLeft: 10, textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', textDecorationThickness: 2, textDecoration: 'underline', cursor: 'pointer'}}>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</h3>
+                                    {previewMode ? 
+                                        <h3 style={{margin: 0, marginLeft: 10, textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', textDecorationThickness: 2, textDecoration: 'underline', cursor: 'pointer'}}>0 likes</h3>
+                                        
+                                    :
+                                        <h3 onClick={() => navigate(`/postLikeCount/${postId}/image`)} style={{margin: 0, marginLeft: 10, textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', textDecorationThickness: 2, textDecoration: 'underline', cursor: 'pointer'}}>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</h3>
+                                    }
                                 </div>
                                 <br/>
                                 <h4 style={{marginTop: 10, marginBottom: 5}}>Posted {calculateDifferenceBetweenNowAndUTCMillisecondsTime(datePosted)}</h4>

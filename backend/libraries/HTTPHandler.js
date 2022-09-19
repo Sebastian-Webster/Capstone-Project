@@ -34,6 +34,13 @@ class HTTPHandler {
             error
         })
     }
+
+    Forbidden(res, error) {
+        res.status(403).json({
+            status: "FORBIDDEN",
+            error
+        })
+    }
 }
 
 module.exports = HTTPHandler;

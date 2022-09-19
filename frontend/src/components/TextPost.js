@@ -16,7 +16,7 @@ import useColorScheme from '../hooks/useColorScheme';
 import useSharedCode from '../hooks/useSharedCode';
 import { useNavigate } from 'react-router-dom'
 
-const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, userId, editMode, previewMode, profileImage, profileName, contextMenuPostId, contextMenuAnchorElement, saving, edited, timesEdited, dateEdited, isPostOwner, likeCount}) => {
+const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, userId, editMode, previewMode, profileImage, profileName, contextMenuPostId, contextMenuAnchorElement, saving, edited, timesEdited, dateEdited, isPostOwner, likeCount, dateMade, disableFunctionality}) => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext);
     const changingLikeStatus = useRef(false)
     const deleting = useRef(false)
@@ -30,7 +30,7 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
     const navigate = useNavigate()
 
     const toggleLike = () => {
-        if (!previewMode) {
+        if (!previewMode && !disableFunctionality) {
             if (liked) {
                 //Unlike the post
                 changingLikeStatus.current = true
@@ -56,7 +56,7 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
     }
 
     const deletePost = () => { //Self-destruct :-)
-        if (!previewMode) {
+        if (!previewMode && !disableFunctionality) {
             if (deleting.current === false) {
                 deleting.current = true;
                 axios.delete(`${serverUrl}/user/textPost`, {data: {userId, postId}, signal: NetworkRequestController.signal}).then(() => {
@@ -72,14 +72,14 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
     }
 
     const editPost = () => {
-        if (!previewMode) {
+        if (!previewMode && !disableFunctionality) {
             dispatch({type: 'turnOnEditMode', postId})
             handleContextMenuClose()
         }
     }
 
     const revertEdits = () => {
-        if (!previewMode) {
+        if (!previewMode && !disableFunctionality) {
             resetTitle()
             resetBody()
             dispatch({type: 'turnOffEditMode', postId})
@@ -87,7 +87,7 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
     }
 
     const saveEdits = () => {
-        if (!previewMode) {
+        if (!previewMode && !disableFunctionality) {
             dispatch({type: 'savingEdits', postId})
             axios.put(`${serverUrl}/user/textpost`, {userId, postId, newTitle: editedTitle, newBody: editedBody}, {signal: NetworkRequestController.signal}).then(() => {
                 dispatch({type: 'editsSaved', postId, newTitle: editedTitle, newBody: editedBody})
@@ -131,7 +131,7 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
                                 <img src={profileImage} alt={`Profile Image for user ${profileName}`} style={{width: 50, height: 50, borderRadius: '50%'}}/>
                                 <h3 style={{marginLeft: 10}}>{profileName}</h3>
                                 {edited &&
-                                    <div style={{border: `1px solid ${colors.tertiary}`, borderRadius: 20, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '15px 15px', marginLeft: 10, cursor: 'pointer'}} onClick={() => alert('Edit history viewer coming soon')}>
+                                    <div style={{border: `1px solid ${colors.tertiary}`, borderRadius: 20, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '15px 15px', marginLeft: 10, cursor: 'pointer'}} onClick={() => navigate(`/historyviewer/${postId}/text`)}>
                                         <p style={{color: colors.tertiary, fontWeight: 'bold', textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', margin: 0, textDecorationThickness: 1, textDecorationLine: 'underline'}}>Edited {timesEdited} {timesEdited === 1 ? 'time' : 'times'}</p>
                                     </div>
                                 }
@@ -184,19 +184,34 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
                             </>
                         :
                             <>
-                                <div style={{display: 'flex', justifyContent: 'left', alignItems: 'center'}}>
-                                    <FontAwesomeIcon 
-                                        icon={liked ? fasHeart : farHeart}
-                                        style={{color: liked ? 'red' : darkMode ? 'white' : 'black', cursor: 'pointer', fontSize: 30}}
-                                        onClick={() => {
-                                            if (changingLikeStatus.current === false) toggleLike()
-                                        }}
-                                    />
-                                    <h3 onClick={() => navigate(`/postLikeCount/${postId}/text`)} style={{margin: 0, marginLeft: 10, textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', textDecorationThickness: 2, textDecoration: 'underline', cursor: 'pointer'}}>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</h3>
-                                </div>
-                                <br/>
-                                <h4 style={{marginTop: 10, marginBottom: 5}}>Posted {calculateDifferenceBetweenNowAndUTCMillisecondsTime(datePosted)}</h4>
-                                {edited && <h4 style={{margin: 0}}>Edited {calculateDifferenceBetweenNowAndUTCMillisecondsTime(dateEdited)}</h4>}
+                                {dateMade || disableFunctionality ? null :
+                                    <>
+                                        <div style={{display: 'flex', justifyContent: 'left', alignItems: 'center'}}>
+                                            <FontAwesomeIcon 
+                                                icon={liked ? fasHeart : farHeart}
+                                                style={{color: liked ? 'red' : darkMode ? 'white' : 'black', cursor: 'pointer', fontSize: 30}}
+                                                onClick={() => {
+                                                    if (changingLikeStatus.current === false) toggleLike()
+                                                }}
+                                            />
+                                            {previewMode ? 
+                                                <h3 style={{margin: 0, marginLeft: 10, textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', textDecorationThickness: 2, textDecoration: 'underline', cursor: 'pointer'}}>0 likes</h3>
+                                                
+                                            :
+                                                <h3 onClick={() => navigate(`/postLikeCount/${postId}/text`)} style={{margin: 0, marginLeft: 10, textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', textDecorationThickness: 2, textDecoration: 'underline', cursor: 'pointer'}}>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</h3>
+                                            }
+                                        </div>
+                                        <br/>
+                                    </>
+                                }
+                                {dateMade ?
+                                    <h4 style={{marginTop: 10, marginBottom: 5}}>Created {calculateDifferenceBetweenNowAndUTCMillisecondsTime(dateMade)}</h4>
+                                :
+                                    <>
+                                        <h4 style={{marginTop: 10, marginBottom: 5}}>Posted {calculateDifferenceBetweenNowAndUTCMillisecondsTime(datePosted)}</h4>
+                                        {edited && <h4 style={{margin: 0}}>Edited {calculateDifferenceBetweenNowAndUTCMillisecondsTime(dateEdited)}</h4>}
+                                    </>
+                                }
                             </>
                         }
                     </>
