@@ -27,7 +27,8 @@ const {
     changeEmail,
     changePassword,
     resetProfilePicture,
-    getPostLikes
+    getPostLikes,
+    getPostHistory
 } = require('../controllers/User')
 const multer = require('multer')
 const path = require('path')
@@ -133,5 +134,7 @@ router.post('/changepassword', changePassword)
 router.delete('/profilepicture', resetProfilePicture)
 
 router.get('/postlikes', getPostLikes)
+
+router.get('/posthistory', getPostHistory)
 
 module.exports = router;

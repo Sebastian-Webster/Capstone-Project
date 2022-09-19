@@ -1147,6 +1147,10 @@ const editTextPost = async (req, res) => {
         return
     }
 
+    if (postFoundById.editHistory.length > 19) {
+        return http.Forbidden(res, 'Post has been edited too many times')
+    }
+
     const isOwner = await TextPost.checkIfUserIsPostOwner(userId, postId)
 
     if (isOwner.error) {
@@ -1235,6 +1239,10 @@ const editImagePost = async (req, res) => {
         http.ServerError(res, 'An error occured while editing image post. Please try again later.')
         logger.error(userFoundById.error)
         return
+    }
+
+    if (postFoundById.editHistory.length > 19) {
+        return http.Forbidden(res, 'Post has been edited too many times')
     }
 
     const isOwner = await ImagePost.checkIfUserIsPostOwner(userId, postId)
@@ -1550,6 +1558,56 @@ const getPostLikes = async (req, res) => {
     }
 }
 
+const getPostHistory = async (req, res) => {
+    const {postId, postType, publicId} = req.query;
+    console.log(req.query)
+
+    const postIdErrorCheck = errorCheck.checkIfValueIsValidObjectId('postId', postId)
+    if (postIdErrorCheck) return http.BadInput(res, postIdErrorCheck)
+
+    var post;
+
+    if (postType === 'image') {
+        post = await ImagePost.findPostById(postId)
+    } else if (postType === 'text') {
+        post = await TextPost.findPostById(postId)
+    } else {
+        return http.BadInput(res, 'postType must be either image or text')
+    }
+
+    if (post === null) return http.NotFound(res, 'Post with id cannot be found')
+
+    if (post.error) {
+        logger.error(post.error)
+        return http.ServerError(res, 'An error occured while retrieving post history. Please try again later.')
+    }
+
+    const userFoundByPostCreatorId = await user.findUserById(post.creatorId)
+
+    if (userFoundByPostCreatorId === null) {
+        return hhtp.NotFound(res, 'User that created post could not be found')
+    }
+
+    if (userFoundByPostCreatorId.error) {
+        logger.error(userFoundByPostCreatorId.error)
+        http.ServerError(res, 'An error occured while retrieving post history. Please try again later.')
+    }
+
+    const publicProfileInformation = generalLib.returnPublicProfileInformation(userFoundByPostCreatorId)
+
+    var publicPostInformation;
+
+    if (postType === 'image') {
+        publicPostInformation = ImagePost.prepareDataToSendToUserSync([post._doc], false, publicId)[0]
+    } else {
+        publicPostInformation = TextPost.prepareDataToSendToUserSync([post._doc], false, publicId)[0]
+    }
+
+    console.log(publicPostInformation)
+
+    http.OK(res, 'Successfully retrieved post history', {profileData: publicProfileInformation, editHistory: post.editHistory, currentPost: publicPostInformation})
+}
+
 module.exports = {
     login,
     signup,
@@ -1577,5 +1635,6 @@ module.exports = {
     changeEmail,
     changePassword,
     resetProfilePicture,
-    getPostLikes
+    getPostLikes,
+    getPostHistory
 }
