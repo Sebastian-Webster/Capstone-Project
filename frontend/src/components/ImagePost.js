@@ -14,6 +14,7 @@ import useInput from '../hooks/useInput';
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import useColorScheme from '../hooks/useColorScheme';
+import { useNavigate } from 'react-router-dom';
 
 const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicId, postId, dispatch, userId, previewMode, profileName, profileImage, contextMenuPostId, contextMenuAnchorElement, editMode, saving, edited, timesEdited, dateEdited, isPostOwner, likeCount}) => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext)
@@ -26,6 +27,7 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
     const [editedTitle, bindTitle, resetTitle] = useInput(title, 'title', 'standard', {fontSize: 30, maxWidth: '80%', marginTop: 10})
     const [editedBody, bindBody, resetBody] = useInput(body, 'body', 'standard', {fontSize: 18, maxWidth: '90%', marginTop: 10, marginBottom: 10, maxHeight: 300})
     const colors = useColorScheme()
+    const navigate = useNavigate()
 
     const toggleLike = () => {
         if (!previewMode && changingLikeStatus.current === false) {
@@ -188,7 +190,7 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
                                         style={{color: liked ? 'red' : darkMode ? 'white' : 'black', cursor: 'pointer', fontSize: 30}}
                                         onClick={toggleLike}
                                     />
-                                    <h3 style={{margin: 0, marginLeft: 10}}>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</h3>
+                                    <h3 onClick={() => navigate(`/postLikeCount/${postId}/image`)} style={{margin: 0, marginLeft: 10, textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', textDecorationThickness: 2, textDecoration: 'underline', cursor: 'pointer'}}>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</h3>
                                 </div>
                                 <br/>
                                 <h4 style={{marginTop: 10, marginBottom: 5}}>Posted {calculateDifferenceBetweenNowAndUTCMillisecondsTime(datePosted)}</h4>
