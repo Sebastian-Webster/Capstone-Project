@@ -24,6 +24,10 @@ ports.forEach(port => {
     servers.push(express())
 })
 
+fs.readdirSync('uploads').forEach(file => {
+    console.log(file);
+});
+
 servers.forEach((server, index) => {
     server.use(cors())
 
