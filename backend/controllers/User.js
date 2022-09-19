@@ -1512,6 +1512,44 @@ const resetProfilePicture = async (req, res) => {
     })
 }
 
+const getPostLikes = async (req, res) => {
+    let {postType, postId, skip = 0} = req.query;
+    const limit = 20;
+
+    skip = parseInt(skip)
+
+    if (skip === NaN) return http.BadInput(res, 'Skip must be a number or not specified')
+
+    const postIdErrorCheck = errorCheck.checkIfValueIsValidObjectId('postId', postId)
+    if (postIdErrorCheck) return http.BadInput(res, postIdErrorCheck)
+
+    if (postType === 'image') {
+        const postFound = await ImagePost.findPostById(postId)
+
+        if (postFound === null) return http.NotFound(res, 'Post with Id could not be found')
+
+        if (postFound.error) {
+            logger.error(postFound.error)
+            http.ServerError(res, 'An error occured while getting post like count. Please try again later.')
+        }
+
+        http.OK(res, 'Successfully found post likes', postFound.likes.splice(skip, generalLib.calculateHowManyItemsToSend(postFound.likes.length, limit, skip)))
+    } else if (postType === 'text') {
+        const postFound = await TextPost.findPostById(postId)
+
+        if (postFound === null) return http.NotFound(res, 'Post with Id could not be found')
+
+        if (postFound.error) {
+            logger.error(postFound.error)
+            http.ServerError(res, 'An error occured while getting post like count. Please try again later.')
+        }
+
+        http.OK(res, 'Successfully found post likes', postFound.likes.splice(skip, generalLib.calculateHowManyItemsToSend(postFound.likes.length, limit, skip)))
+    } else {
+        http.BadInput(res, 'postType must either be image or text')
+    }
+}
+
 module.exports = {
     login,
     signup,
@@ -1538,5 +1576,6 @@ module.exports = {
     loadHomeFeed,
     changeEmail,
     changePassword,
-    resetProfilePicture
+    resetProfilePicture,
+    getPostLikes
 }

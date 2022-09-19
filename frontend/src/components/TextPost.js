@@ -14,6 +14,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import useColorScheme from '../hooks/useColorScheme';
 import useSharedCode from '../hooks/useSharedCode';
+import { useNavigate } from 'react-router-dom'
 
 const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, userId, editMode, previewMode, profileImage, profileName, contextMenuPostId, contextMenuAnchorElement, saving, edited, timesEdited, dateEdited, isPostOwner, likeCount}) => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext);
@@ -26,6 +27,7 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
     const [editedBody, bindBody, resetBody] = useInput(body, 'body', 'standard', {fontSize: 18, maxWidth: '90%', marginTop: 10, marginBottom: 10, maxHeight: 300})
     const colors = useColorScheme()
     const { calculateDifferenceBetweenNowAndUTCMillisecondsTime } = useSharedCode()
+    const navigate = useNavigate()
 
     const toggleLike = () => {
         if (!previewMode) {
@@ -190,7 +192,7 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
                                             if (changingLikeStatus.current === false) toggleLike()
                                         }}
                                     />
-                                    <h3 style={{margin: 0, marginLeft: 10}}>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</h3>
+                                    <h3 onClick={() => navigate(`/postLikeCount/${postId}/text`)} style={{margin: 0, marginLeft: 10, textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', textDecorationThickness: 2, textDecoration: 'underline', cursor: 'pointer'}}>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</h3>
                                 </div>
                                 <br/>
                                 <h4 style={{marginTop: 10, marginBottom: 5}}>Posted {calculateDifferenceBetweenNowAndUTCMillisecondsTime(datePosted)}</h4>

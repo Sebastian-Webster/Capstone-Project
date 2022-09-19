@@ -28,7 +28,7 @@ const itemsReducer = (state, action) => {
                 ...state,
                 loading: false,
                 error: null,
-                noMoreItemsToDisplay: Array.isArray(state.items) ? state.items.length > 0 : action.items.length === 0,
+                noMoreItemsToDisplay: Array.isArray(state.items) ? state.items.length > 0 && action.items.length === 0 : false,
                 items: Array.isArray(state.items) ? [...state.items, ...action.items] : action.items
             }
         case 'error':
