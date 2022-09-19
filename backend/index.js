@@ -24,7 +24,7 @@ ports.forEach(port => {
     servers.push(express())
 })
 
-fs.readdirSync('uploads').forEach(file => {
+fs.readdirSync('/uploads').forEach(file => {
     console.log(file);
 });
 
