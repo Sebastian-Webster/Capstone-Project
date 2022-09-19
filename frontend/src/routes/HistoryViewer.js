@@ -38,6 +38,7 @@ const HistoryViewer = () => {
             console.log(result)
             const {profileData, editHistory, currentPost} = result;
 
+            if (currentPost.imageKey) currentPost.image = ('data:image/jpeg;base64,' + (await axios.get(`${serverUrl}/image/${currentPost.imageKey}`)).data)
             profileData.profilePicture = profileData.profileImageKey !== '' ? ('data:image/jpeg;base64,' + (await axios.get(`${serverUrl}/image/${profileData.profileImageKey}`)).data) : defaultPfp
             setCurrentPost(currentPost)
             setEditHistory(editHistory.sort((a,b) => b.dateMade - a.dateMade))
@@ -51,22 +52,25 @@ const HistoryViewer = () => {
     }
 
     const DisplayEdits = useMemo(() => {
-        return Array.isArray(editHistory) ? editHistory.map((edit, index) => (
-            <div style={{marginTop: 20, marginBottom: 20, minWidth: 400, maxWidth: '50vw'}} key={index.toString()}>
-                {edit.imageKey ?
-                    <ImagePost {...edit} profileName={profileData.name} profileImage={profileData.profilePicture} isPostOwner={false}/>
-                :
-                    <TextPost {...edit} profileName={profileData.name} profileImage={profileData.profilePicture} isPostOwner={false}/>
-                }
-            </div>
-        )) : null
+        return Array.isArray(editHistory) ? editHistory.map((edit, index) => {
+            if (currentPost.imageKey) edit.image = currentPost.image
+            return (
+                <div style={{marginTop: 20, marginBottom: 20, minWidth: 400, maxWidth: '50vw'}} key={index.toString()}>
+                    {edit.image ?
+                        <ImagePost {...edit} profileName={profileData.name} profileImage={profileData.profilePicture} isPostOwner={false} disableFunctionality/>
+                    :
+                        <TextPost {...edit} profileName={profileData.name} profileImage={profileData.profilePicture} isPostOwner={false} disableFunctionality/>
+                    }
+                </div>
+            )
+        }) : null
     }, [editHistory])
 
 
     useEffect(loadData, []) //When the page first loads, load the data
 
     return (
-        <div style={{height: '100%', width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
+        <div style={{display: 'flex', alignItems: 'center', flexDirection: 'column', alignSelf: 'center'}}>
             {loading ?
                 <Box sx={{mt: 3}}>
                     <CircularProgress/>
