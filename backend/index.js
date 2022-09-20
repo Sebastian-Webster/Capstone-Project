@@ -24,21 +24,27 @@ ports.forEach(port => {
     servers.push(express())
 })
 
-fs.readdirSync('/uploads').forEach(file => {
-    console.log(file);
-});
+let uploadDir = 'uploads'
+
+try {
+    fs.readdirSync('uploads')
+    console.log('uploadDir is uploads')
+} catch {
+    uploadDir = '/uploads'
+    console.log('uploadDir is /uploads')
+}
 
 servers.forEach((server, index) => {
     server.use(cors())
 
     server.use(bodyParser.json())
 
-    server.use('/user', UserRoute)
+    server.use('/user', UserRoute(uploadDir))
 
     server.get('/image/:imageKey', (req, res) => {
         const imageKey = req?.params?.imageKey;
         try {
-            const filepath = path.resolve('uploads', imageKey)
+            const filepath = path.resolve(uploadDir, imageKey)
 
             const readableStream = fs.createReadStream(filepath, {encoding: 'base64'})
             const passthroughStream = new stream.PassThrough()
