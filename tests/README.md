@@ -2,10 +2,10 @@
 Tests get ran by GitHub actions every time you commit to the repository or create a pull request.
 
 **Manual Testing**
-If you want to run these tests manually, checkout the code from GitHub, and then cd into tests and run the command `node tests`
+For aspects of SebMedia that cannot be automatically tested, refer to manual-testing.md to read instructions on how to do manual testing.
 
 **Test Results**
-If the tests ran successfully, the last log line will be 
+If the automatic tests ran successfully, the last log line will be 
 
 > Tests ran successfully
 
