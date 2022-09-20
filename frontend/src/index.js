@@ -29,7 +29,7 @@ const LazyLoadingComponent = ({text}) => {
   return (
     <>
       <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column'}}>
-        <h1>{text}</h1>
+        <h1 style={{textAlign: 'center'}}>{text}</h1>
         <CircularProgress/>
       </div>
     </>
