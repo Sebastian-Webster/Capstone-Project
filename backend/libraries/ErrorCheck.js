@@ -39,7 +39,7 @@ class ErrorCheck {
     }
 
     checkIfValueIsInt = (key, value) => {
-        if (parseInt(value) === NaN) {
+        if (isNaN(parseInt(value))) {
             return `${key} must be a number`
         }
 

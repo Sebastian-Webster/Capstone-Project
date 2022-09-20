@@ -480,7 +480,7 @@ const updateProfileImage = async (req, res) => {
     }
 
     if (typeof userFoundById.profileImageKey === 'string' && userFoundById.profileImageKey.trim().length > 0) {
-        filesystem.deleteFileSync(`uploads/${userFoundById.profileImageKey}`)
+        filesystem.deleteFileAsync(`uploads/${userFoundById.profileImageKey}`)
     }
 
     user.updateProfileImage(userId, req.file.filename)
