@@ -109,6 +109,11 @@ const signup = async (req, res) => {
         return
     }
 
+    if (password.length > 18) {
+        http.BadInput(res, 'Password must be 18 or less characters long')
+        return
+    }
+
     if (name.length < 1) {
         http.BadInput('Name cannot be an empty string')
         return
