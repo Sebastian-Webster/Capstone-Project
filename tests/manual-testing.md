@@ -1,7 +1,7 @@
-**Manual Testing of SebMedia**
+**Manual Testing of SebMedia**<br>
 This is a list of instructions to do manual testing of SebMedia, and to make sure that everything is working properly.
 
-**Signing up to SebMedia**
+**Signing up to SebMedia**<br>
 Before people can use SebMedia, they must signup and create a SebMedia account. In order to test to make sure that users can signup and make their own accounts, follow these steps
 
  1. Open SebMedia
@@ -23,7 +23,7 @@ The test succeeded if:
  1. When the information entered does not meet the requirements set above, an error is shown and the new user does not get created
  2. When the information entered is correct and meets the requirements set above, the new user gets created and you get logged in and taken to the home screen
 
-**Logging into SebMedia**
+**Logging into SebMedia**<br>
 Before you can use SebMedia, you must be logged into your account. To test that logging in works correctly, follow these steps
 
  1. Open SebMedia
@@ -37,7 +37,7 @@ The test succeeded if:
  1. When wrong information was entered (wrong password for an account, or email that doesn't associate with a user) you do not get logged in and an error is displayed
  2. When correct information is entered (correct password and email for an account that exists on SebMedia) you get logged in and taken to the home screen
 
-**Finding users' profiles - Search Screen**
+**Finding users' profiles - Search Screen**<br>
 In order to test to make sure that the Search Screen is working properly, follow these steps
 
  1. Open SebMedia
@@ -49,7 +49,7 @@ If the test succeeded, you will see the user's profile (their name and profile p
 
 If the test has failed, you will not see the user's profile.
 
-**Following a friend - Following users**
+**Following a friend - Following users**<br>
 In order to test to make sure that you can follow users, follow these steps
 
  1. Open SebMedia
@@ -63,7 +63,7 @@ In order to test to make sure that you can follow users, follow these steps
  
 If the user you just followed is showing up in the following screen, the test succeeded. If not, the test failed.
 
-**Creating a post - Post Screen**
+**Creating a post - Post Screen**<br>
 In order to test to make sure that you can upload your own posts, follow these steps
 
  1. Open SebMedia
@@ -79,7 +79,7 @@ In order to test to make sure that you can upload your own posts, follow these s
 
 If you can see the post you have just created, the test succeeded. If not, the test failed.
 
-**Editing a post**
+**Editing a post**<br>
 In order to test that you can edit posts, follow these steps
 
  1. Open SebMedia
