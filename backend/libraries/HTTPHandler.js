@@ -1,14 +1,14 @@
 class HTTPHandler {
     BadInput(res, error) {
         res.status(400).json({
-            status: "FAILED",
+            status: "BAD INPUT",
             error
         })
     }
 
     ServerError(res, error) {
         res.status(500).json({
-            status: "FAILED",
+            status: "SERVER ERROR",
             error
         })
     }
@@ -23,14 +23,14 @@ class HTTPHandler {
 
     NotAuthorized(res, error) {
         res.status(401).json({
-            status: "FAILED",
+            status: "NOT AUTHORIZED",
             error
         })
     }
 
     NotFound(res, error) {
         res.status(404).json({
-            status: "FAILED",
+            status: "NOT FOUND",
             error
         })
     }

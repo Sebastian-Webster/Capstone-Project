@@ -1,12 +1,14 @@
 const ErrorCheckLibrary = require('../backend/libraries/ErrorCheck')
 const FilesystemLibrary = require('../backend/libraries/Filesystem')
 const GeneralLibrary = require('../backend/libraries/General')
+const HTTPHandler = require('../backend/libraries/HTTPHandler')
 const fs = require('fs')
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Types.ObjectId
 const ErrorCheck = new ErrorCheckLibrary()
 const filesystem = new FilesystemLibrary()
 const general = new GeneralLibrary()
+const http = new HTTPHandler()
 let tests;
 
 console.log('Starting tests...')
@@ -284,3 +286,177 @@ function testGeneralDotCalculateHowManyItemsToSend() {
     }
 }
 testGeneralDotCalculateHowManyItemsToSend()
+console.log('Running tests to see if general.returnPublicProfileInformation is working as intended')
+function testGeneralDotReturnPublicProfileInformation() {
+    const expectedKeys = ['profileImageKey', 'name', 'followers', 'following', 'publicId']
+    let userObj = {
+        _id: 10,
+        __v: 0,
+        name: 'Username',
+        privateItem: 'This is a private item that should not be shown in the returned object',
+        profileImageKey: 'image key',
+        privateItemTwo: 'this should not be found in the returned object',
+        followers: ['followerOne', 'followerTwo'],
+        lol: 0,
+        hello: false,
+        following: ['followingOne', 'randomGuy'],
+        privateId: 'this is private',
+        publicId: 'this is public',
+        veryPrivateId: 'Cannot be released to anyone'
+    }
+    const testResult = general.returnPublicProfileInformation(userObj)
+    for (const key of Object.keys(testResult)) {
+        if (!expectedKeys.includes(key)) {
+            throw new Error(`${key} was found in public profile information returned from general.returnPublicProfileInformation. This is not public information and should not be returned.`)
+        }
+    }
+}
+testGeneralDotReturnPublicProfileInformation()
+console.log('Starting tests to see if the HTTPHandler library is working as intended')
+class HTTPHandlerTester {
+    constructor() {
+        this.statusReturned = null;
+        this.jsonReturned = null
+    }
+
+    status(status) {
+        this.statusReturned = status
+        return this
+    }
+
+    json(json) {
+        this.jsonReturned = json
+        return this
+    }
+
+    returnResults() {
+        return {status: this.statusReturned, json: this.jsonReturned}
+    }
+}
+console.log('Running test to see if http.BadInput works as intended')
+function testingHTTPDotBadInput() {
+    const tester = new HTTPHandlerTester()
+    const error = 'An error occured'
+    http.BadInput(tester, error)
+    const result = tester.returnResults()
+    if (result.status !== 400) {
+        throw new Error(`http.BadInput returned status code ${result.status} instead of returning code 400`)
+    }
+    if (result.json.status !== 'BAD INPUT') {
+        throw new Error(`http.BadInput returned json.status ${result.json.status} instead of returning BAD INPUT`)
+    }
+    if (result.json.error !== error) {
+        throw new Error(`http.BadInput returned json.error ${result.json.error} instead of returning ${error}`)
+    }
+    console.log('Results from http.BadInput test:', result)
+}
+testingHTTPDotBadInput()
+function testingHTTPDotServerError() {
+    const tester = new HTTPHandlerTester()
+    const error = 'An error occured. A very bad one. Yes indeed. This is an error we need to fix. Yes. Very much so. Indubitably sir.'
+    http.ServerError(tester, error)
+    const result = tester.returnResults()
+    if (result.status !== 500) {
+        throw new Error(`http.ServerError returned status code ${result.status} instead of returning code 500`)
+    }
+    if (result.json.status !== 'SERVER ERROR') {
+        throw new Error(`http.ServerError returned json.status ${result.json.status} instead of returning SERVER ERROR`)
+    }
+    if (result.json.error !== error) {
+        throw new Error(`http.ServerError returned json.error ${result.json.error} instead of returning ${error}`)
+    }
+    console.log('Results from http.ServerError test:', result)
+}
+testingHTTPDotServerError()
+function testingHTTPDotOKWithoutData() {
+    const tester = new HTTPHandlerTester()
+    const message = 'A thing was successfully executed. Good job! This has worked quite well. Very good job indeed.'
+    http.OK(tester, message)
+    const result = tester.returnResults()
+    if (result.status !== 200) {
+        throw new Error(`http.OK returned status code ${result.status} instead of returning code 200`)
+    }
+    if (result.json.status !== 'SUCCESS') {
+        throw new Error(`http.OK returned json.status ${result.json.status} instead of returning SUCCESS`)
+    }
+    if (result.json.message !== message) {
+        throw new Error(`http.OK returned json.message ${result.json.message} instead of returning ${message}`)
+    }
+    if (result.json.data !== undefined) {
+        throw new Error(`http.OK returned json.data ${result.json.data} instead of returning undefined`)
+    }
+    console.log('Results from http.OK without data test:', result)
+}
+testingHTTPDotOKWithoutData()
+function testingHTTPDotOKWithData() {
+    const tester = new HTTPHandlerTester()
+    const message = 'Good job.'
+    const data = 'This is some data.'
+    http.OK(tester, message, data)
+    const result = tester.returnResults()
+    if (result.status !== 200) {
+        throw new Error(`http.OK returned status code ${result.status} instead of returning code 200`)
+    }
+    if (result.json.status !== 'SUCCESS') {
+        throw new Error(`http.OK returned json.status ${result.json.status} instead of returning SUCCESS`)
+    }
+    if (result.json.message !== message) {
+        throw new Error(`http.OK returned json.message ${result.json.message} instead of returning ${message}`)
+    }
+    if (result.json.data !== data) {
+        throw new Error(`http.OK returned json.data ${result.json.data} instead of returning ${data}`)
+    }
+    console.log('Results from http.OK with data test:', result)
+}
+testingHTTPDotOKWithData()
+function testingHTTPDotNotAuthorized() {
+    const tester = new HTTPHandlerTester()
+    const error = 'This is an error'
+    http.NotAuthorized(tester, error)
+    const result = tester.returnResults()
+    if (result.status !== 401) {
+        throw new Error(`http.NotAuthorized returned status code ${result.status} instead of returning code 401`)
+    }
+    if (result.json.status !== 'NOT AUTHORIZED') {
+        throw new Error(`http.NotAuthorized returned json.status ${result.json.status} instead of returning NOT AUTHORIZED`)
+    }
+    if (result.json.error !== error) {
+        throw new Error(`http.NotAuthorized returned json.error ${result.json.error} instead of returning ${error}`)
+    }
+    console.log('http.NotAuthorized test:', result)
+}
+testingHTTPDotNotAuthorized()
+function testingHTTPDotNotFound() {
+    const tester = new HTTPHandlerTester()
+    const error = 'We could not find your data. Whoopsies.'
+    http.NotFound(tester, error)
+    const result = tester.returnResults()
+    if (result.status !== 404) {
+        throw new Error(`http.NotFound returned status code ${result.status} instead of returning code 404`)
+    }
+    if (result.json.status !== 'NOT FOUND') {
+        throw new Error(`http.NotFound returned json.status ${result.json.status} instead of returning NOT FOUND`)
+    }
+    if (result.json.error !== error) {
+        throw new Error(`http.NotFound returned json.error ${result.json.error} instead of returning ${error}`)
+    }
+    console.log('http.NotFound test:', result)
+}
+testingHTTPDotNotFound()
+function testingHTTPDotForbidden() {
+    const tester = new HTTPHandlerTester()
+    const error = 'You are forbidden to do this certain thing that you are trying to do.'
+    http.Forbidden(tester, error)
+    const result = tester.returnResults()
+    if (result.status !== 403) {
+        throw new Error(`http.Forbidden returned status code ${result.status} instead of returning code 403`)
+    }
+    if (result.json.status !== 'FORBIDDEN') {
+        throw new Error(`http.Forbidden returned json.status ${result.json.status} instead of returning FORBIDDEN`)
+    }
+    if (result.json.error !== error) {
+        throw new Error(`http.Forbidden returned json.error ${result.json.error} instead of returning ${error}`)
+    }
+    console.log('http.Forbidden test:', result)
+}
+testingHTTPDotForbidden()
