@@ -143,7 +143,6 @@ const Posts = () => {
                                         </Fab>
                                     }
                                     <Fab color="primary" aria-label="submit" variant="extended" sx={{mt: 3}} onClick={post}>
-                                        <AddIcon />
                                         Submit
                                     </Fab>
                                     {error && <h2 style={{color: 'red'}}>{error}</h2>}
