@@ -11,14 +11,7 @@ class Filesystem {
     }
 
     deleteFileSync = (filepath) => {
-        return new Promise((resolve, reject) => {
-            try {
-                fs.unlinkSync(filepath)
-                resolve()
-            } catch (error) {
-                reject(error)
-            }
-        })
+        fs.unlinkSync(filepath)
     }
 }
 
