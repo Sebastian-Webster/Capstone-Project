@@ -19,7 +19,7 @@ class General {
         }
 
         const itemsNotSkipped = arrayLength - skip;
-        return itemsNotSkipped > limit ? limit : itemsNotSkipped
+        return itemsNotSkipped > limit ? limit : itemsNotSkipped < 0 ? 0 : itemsNotSkipped
     }
 
     returnPublicProfileInformation = (profile) => {
