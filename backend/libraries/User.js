@@ -109,8 +109,8 @@ class UserLibrary {
     followUser = (followerPublicId, userToFollowPublicId) => {
         return new Promise((resolve, reject) => {
             Promise.all([
-                User.findOneAndUpdate({publicId: followerPublicId}, {$push: {following: userToFollowPublicId}}),
-                User.findOneAndUpdate({publicId: userToFollowPublicId}, {$push: {followers: followerPublicId}})
+                User.findOneAndUpdate({publicId: followerPublicId}, {$push: { following: { $each: [userToFollowPublicId], $position: 0 } }}), //Put the userToFollowPublicId at the start of the following array for the user with publicId followerPublicId
+                User.findOneAndUpdate({publicId: userToFollowPublicId}, {$push: { followers: { $each: [followerPublicId], $position: 0 } }}) //Put the followerPublicId at the start of the following array for the user with publicId userToFollowPublicId
             ]).then(resolve).catch(reject)
         })
     }
