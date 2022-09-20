@@ -1,10 +1,12 @@
 const ErrorCheckLibrary = require('../backend/libraries/ErrorCheck')
 const FilesystemLibrary = require('../backend/libraries/Filesystem')
+const GeneralLibrary = require('../backend/libraries/General')
 const fs = require('fs')
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Types.ObjectId
 const ErrorCheck = new ErrorCheckLibrary()
 const filesystem = new FilesystemLibrary()
+const general = new GeneralLibrary()
 let tests;
 
 console.log('Starting tests...')
@@ -211,7 +213,6 @@ for (let i = 0; i < tests; i++) {
         throw new Error('expected result was not test result for ErrorCheck.checkIfValueIsInt')
     }
 }
-console.log('Tests for the ErrorCheck backend library were successful')
 console.log('Starting tests to see if the FilesystemLibrary is working as intended')
 console.log('Running tests to see if filesystem.deleteFileSync works as intended')
 for (let i = 0; i < tests; i++) {
@@ -252,3 +253,34 @@ for (let i = 0; i < tests; i++) {
         })
     })
 }
+console.log('Starting tests to see if the GeneralLibrary is working as intended')
+console.log('Running tests to see if general.calculateHowManyItemsToSend is working as intended')
+function testGeneralDotCalculateHowManyItemsToSend() {
+    let arrayLength = 20;
+    let skip = 14;
+    let limit = 10;
+    let testResult = general.calculateHowManyItemsToSend(arrayLength, limit, skip)
+    let expectedResult = 6
+    if (testResult !== expectedResult) {
+        console.log('testResult:', testResult)
+        console.log('expectedResult:', expectedResult)
+        throw new Error('testResult does not equal expectedResult when running test for general.calculateHowManyItemsToSend')
+    }
+    skip = 24
+    testResult = general.calculateHowManyItemsToSend(arrayLength, limit, skip)
+    expectedResult = 0
+    if (testResult !== expectedResult) {
+        console.log('testResult:', testResult)
+        console.log('expectedResult:', expectedResult)
+        throw new Error('testResult does not equal expectedResult when running test for general.calculateHowManyItemsToSend')
+    }
+    skip = 0;
+    testResult = general.calculateHowManyItemsToSend(arrayLength, limit, skip)
+    expectedResult = 10
+    if (testResult !== expectedResult) {
+        console.log('testResult:', testResult)
+        console.log('expectedResult:', expectedResult)
+        throw new Error('testResult does not equal expectedResult when running test for general.calculateHowManyItemsToSend')
+    }
+}
+testGeneralDotCalculateHowManyItemsToSend()
