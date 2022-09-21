@@ -57,7 +57,7 @@ const HistoryViewer = () => {
             return (
                 <div style={{marginTop: 20, marginBottom: 20, minWidth: 400, maxWidth: '50vw'}} key={index.toString()}>
                     {edit.image ?
-                        <ImagePost {...edit} profileName={profileData.name} profileImage={profileData.profilePicture} isPostOwner={false} disableFunctionality/>
+                        <ImagePost {...edit} profileName={profileData.name} profileImage={profileData.profilePicture} isPostOwner={false} editNumber={editHistory.length - index - 1} disableFunctionality/>
                     :
                         <TextPost {...edit} profileName={profileData.name} profileImage={profileData.profilePicture} isPostOwner={false} editNumber={editHistory.length - index - 1} disableFunctionality/>
                     }
