@@ -1,7 +1,7 @@
 import React, {useContext, useRef, useEffect} from 'react';
 import { DarkModeContext } from '../context/DarkModeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
+import { faHeart as farHeart, faPaste } from '@fortawesome/free-regular-svg-icons';
 import { faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';
 import Button from '@mui/material/Button'
 import axios from 'axios';
@@ -114,6 +114,17 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
         dispatch({type: 'closeContextMenu'})
     }
 
+    const copyLinkToClipboard = () => {
+        const link = `http://${window.location.hostname}/textpost?postId=${postId}`
+        if (!navigator.clipboard.writeText) return dispatch({type: 'openLinkCopyFailSnackbar', error: 'Your browser does not allow automatic clipboard writing'})
+        navigator.clipboard.writeText(link).then(() => {
+            dispatch({type: 'openLinkCopySuccessSnackbar'})
+        }).catch(error => {
+            console.error(error)
+            dispatch({type: 'openLinkCopyFailSnackbar', error: String(error)})
+        })
+    }
+
     return (
         <Grid item xs={12} md={6} lg={4} xl={3}>
             <div style={{border: `1px solid ${darkMode ? 'white' : 'black'}`, padding: 10}}>
@@ -186,20 +197,23 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
                             <>
                                 {dateMade || disableFunctionality ? null :
                                     <>
-                                        <div style={{display: 'flex', justifyContent: 'left', alignItems: 'center'}}>
-                                            <FontAwesomeIcon 
-                                                icon={liked ? fasHeart : farHeart}
-                                                style={{color: liked ? 'red' : darkMode ? 'white' : 'black', cursor: 'pointer', fontSize: 30}}
-                                                onClick={() => {
-                                                    if (changingLikeStatus.current === false) toggleLike()
-                                                }}
-                                            />
-                                            {previewMode ? 
-                                                <h3 style={{margin: 0, marginLeft: 10, textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', textDecorationThickness: 2, textDecoration: 'underline', cursor: 'pointer'}}>0 likes</h3>
-                                                
-                                            :
-                                                <h3 onClick={() => navigate(`/postLikeCount/${postId}/text`)} style={{margin: 0, marginLeft: 10, textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', textDecorationThickness: 2, textDecoration: 'underline', cursor: 'pointer'}}>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</h3>
-                                            }
+                                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                            <div style={{display: 'flex', justifyContent: 'left', alignItems: 'center'}}>
+                                                <FontAwesomeIcon 
+                                                    icon={liked ? fasHeart : farHeart}
+                                                    style={{color: liked ? 'red' : darkMode ? 'white' : 'black', cursor: 'pointer', fontSize: 30}}
+                                                    onClick={() => {
+                                                        if (changingLikeStatus.current === false) toggleLike()
+                                                    }}
+                                                />
+                                                {previewMode ? 
+                                                    <h3 style={{margin: 0, marginLeft: 10, textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', textDecorationThickness: 2, textDecoration: 'underline', cursor: 'pointer'}}>0 likes</h3>
+                                                    
+                                                :
+                                                    <h3 onClick={() => navigate(`/postLikeCount/${postId}/text`)} style={{margin: 0, marginLeft: 10, textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', textDecorationThickness: 2, textDecoration: 'underline', cursor: 'pointer'}}>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</h3>
+                                                }
+                                            </div>
+                                            <FontAwesomeIcon icon={faPaste} style={{fontSize: 28, marginRight: 10, cursor: 'pointer'}} onClick={copyLinkToClipboard}/>
                                         </div>
                                         <br/>
                                     </>

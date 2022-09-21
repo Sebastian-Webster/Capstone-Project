@@ -12,6 +12,8 @@ import Button from '@mui/material/Button'
 import ImagePost from '../components/ImagePost';
 import TextPost from '../components/TextPost';
 import { defaultPfp } from '../constants';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 const Home = () => {
     const following = localStorage.getItem('following')
@@ -62,6 +64,14 @@ const Home = () => {
                 newPostsAfterUnlike[unlikePostIndex].likeCount = newPostsAfterUnlike[unlikePostIndex].likeCount - 1;
                 
                 return {...state, posts: newPostsAfterUnlike, reRenderTimes: state.reRenderTimes + 1}
+            case 'openLinkCopySuccessSnackbar':
+                return {...state, linkCopySuccessSnackbarOpen: true, linkCopyFailSnackbarOpen: false}
+            case 'closeLinkCopySuccessSnackbar':
+                return {...state, linkCopySuccessSnackbarOpen: false}
+            case 'openLinkCopyFailSnackbar':
+                return {...state, linkCopySuccessSnackbarOpen: false, linkCopyFailSnackbarOpen: true, linkCopyError: action.error || 'An error occured while copying link to clipboard'}
+            case 'closeLinkCopyFailSnackbar':
+                return {...state, linkCopyFailSnackbarOpen: false}
             default:
                 throw new Error(`${action.type} is not a valid action type for postReducer`)
         }
@@ -155,62 +165,70 @@ const Home = () => {
     }, [postsState.posts, postsState.reRenderTimes])
 
     return (
-        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
-            {following > 0 ?
-                postsState.posts === null ?
-                    postsState.loading ?
-                        <Box sx={{display: 'flex', justifyContent: 'center', mt: 3}}>
-                            <CircularProgress/>
-                        </Box>
-                    : postsState.error ?
-                        <div style={{marginTop: 20}}>
-                            <h1 style={{color: 'red', textAlign: 'center'}}>An error occured. Please try again later.</h1>
-                            <h3 style={{color: 'red', textAlign: 'center'}}>{postsState.error?.response?.data?.error || String(postsState.error)}</h3>
-                            <Box sx={{mt: 3, display: 'flex', justifyContent: 'center'}}>
-                                <Button color='error' onClick={loadPosts}>Retry</Button>
+        <>
+            <Snackbar open={postsState.linkCopySuccessSnackbarOpen} autoHideDuration={2000} onClose={() => dispatch({type: 'closeLinkCopySuccessSnackbar'})}>
+                <Alert severity="success" sx={{ width: '100%' }}>Copied post link to clipboard</Alert>
+            </Snackbar>
+            <Snackbar open={postsState.linkCopyFailSnackbarOpen} autoHideDuration={2000} onClose={() => dispatch({type: 'closeLinkCopyFailSnackbar'})}>
+                <Alert severity="error" sx={{ width: '100%' }}>{postsState.linkCopyError}</Alert>
+            </Snackbar>
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
+                {following > 0 ?
+                    postsState.posts === null ?
+                        postsState.loading ?
+                            <Box sx={{display: 'flex', justifyContent: 'center', mt: 3}}>
+                                <CircularProgress/>
                             </Box>
-                        </div>
-                    : null
-                :
-                    postsState.posts.length === 0 ?
-                        <div style={{marginTop: 20}}>
-                            <h1 style={{textAlign: 'center'}}>The people you follow don't have any posts!</h1>
-                            <h3 style={{textAlign: 'center'}}>Ask them to post some posts or go to the search screen to find more users to follow!</h3>
-                        </div>
+                        : postsState.error ?
+                            <div style={{marginTop: 20}}>
+                                <h1 style={{color: 'red', textAlign: 'center'}}>An error occured. Please try again later.</h1>
+                                <h3 style={{color: 'red', textAlign: 'center'}}>{postsState.error?.response?.data?.error || String(postsState.error)}</h3>
+                                <Box sx={{mt: 3, display: 'flex', justifyContent: 'center'}}>
+                                    <Button color='error' onClick={loadPosts}>Retry</Button>
+                                </Box>
+                            </div>
+                        : null
                     :
-                        <div style={{marginTop: 20}}>
-                            {DisplayPosts}
-                            {
-                                postsState.error ?
-                                    <div style={{marginTop: 10}}>
-                                        <h1 style={{color: 'red', textAlign: 'center'}}>An error occured. Please try again later.</h1>
-                                        <h3 style={{color: 'red', textAlign: 'center'}}>{postsState.error?.response?.data?.error || String(postsState.error)}</h3>
-                                        <Box sx={{mt: 3, display: 'flex', justifyContent: 'center'}}>
-                                            <Button color='error' onClick={loadPosts}>Retry</Button>
+                        postsState.posts.length === 0 ?
+                            <div style={{marginTop: 20}}>
+                                <h1 style={{textAlign: 'center'}}>The people you follow don't have any posts!</h1>
+                                <h3 style={{textAlign: 'center'}}>Ask them to post some posts or go to the search screen to find more users to follow!</h3>
+                            </div>
+                        :
+                            <div style={{marginTop: 20}}>
+                                {DisplayPosts}
+                                {
+                                    postsState.error ?
+                                        <div style={{marginTop: 10}}>
+                                            <h1 style={{color: 'red', textAlign: 'center'}}>An error occured. Please try again later.</h1>
+                                            <h3 style={{color: 'red', textAlign: 'center'}}>{postsState.error?.response?.data?.error || String(postsState.error)}</h3>
+                                            <Box sx={{mt: 3, display: 'flex', justifyContent: 'center'}}>
+                                                <Button color='error' onClick={loadPosts}>Retry</Button>
+                                            </Box>
+                                        </div>
+                                    : postsState.loading ?
+                                        <Box sx={{display: 'flex', justifyContent: 'center', mt: 3, mb: 3}}>
+                                            <CircularProgress/>
                                         </Box>
-                                    </div>
-                                : postsState.loading ?
-                                    <Box sx={{display: 'flex', justifyContent: 'center', mt: 3, mb: 3}}>
-                                        <CircularProgress/>
-                                    </Box>
-                                : postsState.noMorePosts ?
-                                    <h3 style={{marginTop: 10, textAlign: 'center'}}>No more posts to show</h3>
-                                :
-                                    <Box sx={{mt: 3, display: 'flex', justifyContent: 'center', mb: 3}}>
-                                        <Button onClick={loadPosts}>Load More</Button>
-                                    </Box>
-                            }
-                        </div>
-            :
-                <>
-                    <h1>Start following some people to see a home feed!</h1>
-                    <h3>Press the search icon here or at the top of the screen to find users to follow!</h3>
-                    <Link to="/search">
-                        <FontAwesomeIcon icon={faMagnifyingGlass} style={{color: 'blue'}}/>
-                    </Link>
-                </>
-            }
-        </div>
+                                    : postsState.noMorePosts ?
+                                        <h3 style={{marginTop: 10, textAlign: 'center'}}>No more posts to show</h3>
+                                    :
+                                        <Box sx={{mt: 3, display: 'flex', justifyContent: 'center', mb: 3}}>
+                                            <Button onClick={loadPosts}>Load More</Button>
+                                        </Box>
+                                }
+                            </div>
+                :
+                    <>
+                        <h1>Start following some people to see a home feed!</h1>
+                        <h3>Press the search icon here or at the top of the screen to find users to follow!</h3>
+                        <Link to="/search">
+                            <FontAwesomeIcon icon={faMagnifyingGlass} style={{color: 'blue'}}/>
+                        </Link>
+                    </>
+                }
+            </div>
+        </>
     )
 }
 

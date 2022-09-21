@@ -17,6 +17,8 @@ import { ServerUrlContext } from '../context/ServerUrlContext';
 import useColorScheme from '../hooks/useColorScheme';
 import { useParams, useNavigate } from 'react-router-dom';
 import FollowButton from '../components/FollowButton';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 var _ = require('lodash')
 
@@ -231,6 +233,14 @@ const Profile = () => {
 
                 state.posts[errorWhileSavingIndex].saving = false;
                 return {...state, reRenderTimes: state.reRenderTimes + 1}
+            case 'openLinkCopySuccessSnackbar':
+                return {...state, linkCopySuccessSnackbarOpen: true, linkCopyFailSnackbarOpen: false}
+            case 'closeLinkCopySuccessSnackbar':
+                return {...state, linkCopySuccessSnackbarOpen: false}
+            case 'openLinkCopyFailSnackbar':
+                return {...state, linkCopySuccessSnackbarOpen: false, linkCopyFailSnackbarOpen: true, linkCopyError: action.error || 'An error occured while copying link to clipboard'}
+            case 'closeLinkCopyFailSnackbar':
+                return {...state, linkCopyFailSnackbarOpen: false}
             default:
                 throw new Error((action.type + ' is not a valid action for textPostReducer'))
         }
@@ -350,6 +360,14 @@ const Profile = () => {
 
                 state.posts[errorWhileSavingIndex].saving = false;
                 return {...state, reRenderTimes: state.reRenderTimes + 1}
+            case 'openLinkCopySuccessSnackbar':
+                return {...state, linkCopySuccessSnackbarOpen: true, linkCopyFailSnackbarOpen: false}
+            case 'closeLinkCopySuccessSnackbar':
+                return {...state, linkCopySuccessSnackbarOpen: false}
+            case 'openLinkCopyFailSnackbar':
+                return {...state, linkCopySuccessSnackbarOpen: false, linkCopyFailSnackbarOpen: true, linkCopyError: action.error || 'An error occured while copying link to clipboard'}
+            case 'closeLinkCopyFailSnackbar':
+                return {...state, linkCopyFailSnackbarOpen: false}
             default:
                 throw new Error((action.type + ' is not a valid action for imagePostReducer'))
         }
@@ -546,6 +564,12 @@ const Profile = () => {
 
     return (
         <>
+            <Snackbar open={view === 'textPosts' ? textPostState.linkCopySuccessSnackbarOpen : imagePostState.linkCopySuccessSnackbarOpen} autoHideDuration={2000} onClose={() => view === 'textPosts' ? dispatchTextPostUpdate({type: 'closeLinkCopySuccessSnackbar'}) : dispatchImagePostUpdate({type: 'closeLinkCopySuccessSnackbar'})}>
+                <Alert severity="success" sx={{ width: '100%' }}>Copied post link to clipboard</Alert>
+            </Snackbar>
+            <Snackbar open={view === 'textPosts' ? textPostState.linkCopyFailSnackbarOpen : imagePostState.linkCopyFailSnackbarOpen} autoHideDuration={2000} onClose={() => view === 'textPosts' ? dispatchTextPostUpdate({type: 'closeLinkCopyFailSnackbar'}) : dispatchImagePostUpdate({type: 'closeLinkCopyFailSnackbar'})}>
+                <Alert severity="error" sx={{ width: '100%' }}>{view === 'textPosts' ? textPostState.linkCopyError : imagePostState.linkCopyError}</Alert>
+            </Snackbar>
             {errorLoadingProfile ?
                 <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column'}}>
                     <h1 style={{color: 'red', textAlign: 'center'}}>An error occured while loading the profile. Please check your internet connection and try again later.</h1>
