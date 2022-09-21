@@ -107,7 +107,7 @@ const TextPostPage = () => {
                         </Box>
                     </>
                 : state.post ?
-                    <TextPost {...state.post} publicId={publicId} dispatch={dispatch}/>
+                    <TextPost {...state.post} publicId={publicId} dispatch={dispatch} minWidth={400}/>
                 : null}
             </div>
         </>

@@ -16,7 +16,7 @@ import useColorScheme from '../hooks/useColorScheme';
 import useSharedCode from '../hooks/useSharedCode';
 import { useNavigate } from 'react-router-dom'
 
-const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, userId, editMode, previewMode, profileImage, profileName, contextMenuPostId, contextMenuAnchorElement, saving, edited, timesEdited, dateEdited, isPostOwner, likeCount, dateMade, disableFunctionality, editNumber}) => {
+const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, userId, editMode, previewMode, profileImage, profileName, contextMenuPostId, contextMenuAnchorElement, saving, edited, timesEdited, dateEdited, isPostOwner, likeCount, dateMade, disableFunctionality, editNumber, minWidth}) => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext);
     const changingLikeStatus = useRef(false)
     const deleting = useRef(false)
@@ -127,7 +127,7 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
 
     return (
         <Grid item xs={12} md={6} lg={4} xl={3}>
-            <div style={{border: `1px solid ${darkMode ? 'white' : 'black'}`, padding: 10}}>
+            <div style={{border: `1px solid ${darkMode ? 'white' : 'black'}`, padding: 10, minWidth}}>
                 {saving ?
                     <div style={{height: '100%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
                         <h2 style={{textAlign: 'center'}}>Saving your masterpiece...</h2>
