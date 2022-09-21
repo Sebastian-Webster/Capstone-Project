@@ -288,7 +288,7 @@ function testGeneralDotCalculateHowManyItemsToSend() {
 testGeneralDotCalculateHowManyItemsToSend()
 console.log('Running tests to see if general.returnPublicProfileInformation is working as intended')
 function testGeneralDotReturnPublicProfileInformation() {
-    const expectedKeys = ['profileImageKey', 'name', 'followers', 'following', 'publicId', 'hideFollowing']
+    const expectedKeys = ['profileImageKey', 'name', 'followers', 'following', 'publicId', 'hideFollowing', 'hideFollowers']
     let userObj = {
         _id: 10,
         __v: 0,
@@ -304,7 +304,10 @@ function testGeneralDotReturnPublicProfileInformation() {
         publicId: 'this is public',
         veryPrivateId: 'Cannot be released to anyone',
         hideFollowing: true,
-        extremelyPrivateInformation: '123456789- '
+        extremelyPrivateInformation: '123456789- ',
+        hideFollowers: false,
+        randomItem: 'This is a random item. Although it is random, it must not be shared with anyone but the user that this very random item belongs to.',
+        oompa: 'loompa'
     }
     const testResult = general.returnPublicProfileInformation(userObj)
     for (const key of Object.keys(testResult)) {

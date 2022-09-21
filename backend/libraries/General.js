@@ -23,10 +23,10 @@ class General {
     }
 
     returnPublicProfileInformation = (profile) => {
-        let {profileImageKey, name, followers, following, publicId, hideFollowing} = profile;
+        let {profileImageKey, name, followers, following, publicId, hideFollowing, hideFollowers} = profile;
         followers = followers.length;
         following = following.length;
-        return {profileImageKey, name, followers, following, publicId, hideFollowing}
+        return {profileImageKey, name, followers, following, publicId, hideFollowing, hideFollowers}
     }
 }
 
