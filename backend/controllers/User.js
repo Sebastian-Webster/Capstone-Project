@@ -807,8 +807,8 @@ const findProfilesByName = (req, res) => {
 }
 
 const getPublicProfileInformation = async (req, res) => {
-    const userPublicId = req?.params?.userPublicId //The publicId of the user that is requesting the information
-    const publicId = req?.params?.publicId //The publicId of the user to get the information of
+    const userId = req?.body?.userId //The id of the user that is requesting the information
+    const publicId = req?.body?.publicId //The publicId of the user to get the information of
 
     if (!publicId) {
         http.BadInput(res, 'You must provide a publicId')
@@ -820,14 +820,18 @@ const getPublicProfileInformation = async (req, res) => {
         return
     }
 
-    if (!userPublicId) {
-        http.BadInput(res, 'You must provide a userPublicId')
+    if (!userId) {
+        http.BadInput(res, 'You must provide a userId')
         return
     }
 
-    if (typeof userPublicId !== 'string') {
-        http.BadInput(res, 'userPublicId must be a string')
+    if (typeof userId !== 'string') {
+        http.BadInput(res, 'userId must be a string')
         return
+    }
+
+    if (!isValidObjectId(userId)) {
+        return http.BadInput(res, 'userId must be a valid objectId')
     }
 
     const userFound = await user.findUserByPublicId(publicId)
@@ -843,9 +847,22 @@ const getPublicProfileInformation = async (req, res) => {
         return
     }
 
+    const userFoundById = await user.findUserById(userId)
+
+    if (userFoundById === null) {
+        return http.NotFound(res, 'Cannot find user by id')
+    }
+
+    if (userFoundById.error) {
+        return http.ServerError(res, 'An error occured while retrieving public profile information. Please try again later.')
+    }
+
     const cleanedResult = generalLib.returnPublicProfileInformation(userFound)
-    cleanedResult.isFollowing = userFound.followers.includes(userPublicId)
-    cleanedResult.isFollower = userFound.following.includes(userPublicId)
+    cleanedResult.isFollowing = userFound.followers.includes(userFoundById.publicId)
+    cleanedResult.isFollower = userFound.following.includes(userFoundById.publicId)
+    if (userFound.hideFollowing) {
+        cleanedResult.followingDisabled = userId !== String(userFound._id)
+    }
 
     http.OK(res, 'Successfully retreived public profile information', cleanedResult)
 }
@@ -1053,7 +1070,7 @@ const getUserFollowers = async (req, res) => {
 }
 
 const getUserFollowing = async (req, res) => {
-    const userId = req?.body?.userId; //Once we implement hiding people who the user follows from certain users, the userId will be used to see if that user can see who they follow
+    const userId = req?.body?.userId;
     const profilePublicId = req?.body?.profilePublicId
     const limit = 20;
     let skip = req?.body?.skip
@@ -1095,8 +1112,13 @@ const getUserFollowing = async (req, res) => {
         return
     }
 
+    if (userFound.hideFollowing === true && userId !== String(userFound._id)) {
+        return http.NotAuthorized(res, `You are not authorized to see who ${userFound.name} is following`)
+    }
+
     try {
         const followingToSend = userFound.following.splice(skip, generalLib.calculateHowManyItemsToSend(userFound.following.length, limit, skip))
+        console.log(followingToSend)
         http.OK(res, 'Successfully found following', followingToSend)
     } catch (error) {
         http.ServerError(res, 'An error occured while finding following. Please try again later.')
@@ -1613,6 +1635,68 @@ const getPostHistory = async (req, res) => {
     http.OK(res, 'Successfully retrieved post history', {profileData: publicProfileInformation, editHistory: post.editHistory, currentPost: publicPostInformation})
 }
 
+const getPrivacySettings = async (req, res) => {
+    const userId = req?.body?.userId
+
+    const userIdErrorCheck = errorCheck.checkIfValueIsValidObjectId('userId', userId)
+    if (userIdErrorCheck) return http.BadInput(res, userIdErrorCheck)
+
+    const userFoundById = await user.findUserById(userId)
+
+    if (userFoundById === null) {
+        return http.NotFound(res, 'User could not be found by id')
+    }
+
+    if (userFoundById.error) {
+        logger.error(userFoundById.error)
+        return http.ServerError(res, 'An error occured while getting privacy settings. Please try again later.')
+    }
+
+    const settings = {
+        hideFollowing: userFoundById.hideFollowing
+    }
+
+    http.OK(res, 'Successfully found privacy settings', settings)
+}
+
+const changePrivacySettings = (req, res) => {
+    const newPrivacySettings = req?.body?.newPrivacySettings;
+    const userId = req?.body?.userId;
+    const settingsToChange = {}
+    const acceptableKeys = ['hideFollowing']
+
+    if (typeof newPrivacySettings !== 'object' && newPrivacySettings === null && Array.isArray(newPrivacySettings)) {
+        return http.BadInput(res, 'newPrivacySettings must be an object')
+    }
+
+    if (Object.keys(newPrivacySettings).length === 0) {
+        return http.NotModified(res, 'No new settings were provided in the newPrivacySettings object. No data was modified.')
+    }
+
+    for (const [key, value] of Object.entries(newPrivacySettings)) {
+        if (acceptableKeys.includes(key)) {
+            if (value === false || value === true) {
+                settingsToChange[key] = value
+            } else {
+                return http.BadInput(res, `Value for key ${key} must be a Boolean`)
+            }
+        } else {
+            return http.BadInput(res, `${key} is not a valid privacy setting`)
+        }
+    }
+
+    user.updatePrivacySettings(userId, settingsToChange).then((newUserDocument) => {
+        const toSend = {}
+        acceptableKeys.forEach(key => {
+            toSend[key] = newUserDocument[key]
+        })
+        http.OK(res, 'Successfully updated user privacy settings', toSend)
+    }).catch(error => {
+        logger.error(error)
+        http.ServerError(res, 'An error occured while changing privacy settings. Please try again later.')
+    })
+}
+
 module.exports = {
     login,
     signup,
@@ -1641,5 +1725,7 @@ module.exports = {
     changePassword,
     resetProfilePicture,
     getPostLikes,
-    getPostHistory
+    getPostHistory,
+    getPrivacySettings,
+    changePrivacySettings
 }

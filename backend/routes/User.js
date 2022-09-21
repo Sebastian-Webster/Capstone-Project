@@ -27,7 +27,9 @@ const {
     changePassword,
     resetProfilePicture,
     getPostLikes,
-    getPostHistory
+    getPostHistory,
+    getPrivacySettings,
+    changePrivacySettings
 } = require('../controllers/User')
 const multer = require('multer')
 const path = require('path')
@@ -110,7 +112,7 @@ const userRoute = (uploadDir) => {
         findProfilesByName(req, res)
     })
 
-    router.get('/publicProfileInformation/:publicId/:userPublicId', getPublicProfileInformation)
+    router.post('/getPublicProfileInformation', getPublicProfileInformation)
 
     router.post('/followUser', followUser)
 
@@ -137,6 +139,10 @@ const userRoute = (uploadDir) => {
     router.get('/postlikes', getPostLikes)
 
     router.get('/posthistory', getPostHistory)
+
+    router.post('/getPrivacySettings', getPrivacySettings)
+
+    router.patch('/changeprivacysettings', changePrivacySettings)
 
     return router
 }
