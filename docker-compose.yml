@@ -24,6 +24,9 @@ services:
       - 8080:8080
     expose:
       - 8080
+    #environment:
+      #- MONGODB_URI=MongoDB
+      #- REDIS_URL=Redis
 
 
   frontend:
