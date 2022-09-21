@@ -41,6 +41,13 @@ class HTTPHandler {
             error
         })
     }
+
+    NotModified(res, error) {
+        res.status(304).json({
+            status: 'NOT MODIFIED',
+            error
+        })
+    }
 }
 
 module.exports = HTTPHandler;

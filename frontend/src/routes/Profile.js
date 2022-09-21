@@ -87,7 +87,13 @@ const Profile = () => {
     const loadPublicProfileInformation = () => {
         setLoadingProfile(true)
         setErrorLoadingProfile(null)
-        axios.get(`${serverUrl}/user/publicProfileInformation/${profilePublicId}/${publicId}`)
+        const url = `${serverUrl}/user/getPublicProfileInformation`
+        const toSend = {
+            publicId: profilePublicId,
+            userId: _id
+        }
+
+        axios.post(url, toSend)
         .then(response => response.data.data)
         .then(async result => {
             if (result.profileImageKey) {
@@ -542,7 +548,7 @@ const Profile = () => {
         <>
             {errorLoadingProfile ?
                 <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column'}}>
-                    <h1 style={{color: 'red'}}>An error occured while loading the profile. Please check your internet connection and try again later.</h1>
+                    <h1 style={{color: 'red', textAlign: 'center'}}>An error occured while loading the profile. Please check your internet connection and try again later.</h1>
                     <Box sx={{mt: 3}}>
                         <Button variant="outlined" color="error" onClick={loadPublicProfileInformation}>Retry</Button>
                     </Box>
@@ -574,7 +580,7 @@ const Profile = () => {
                             <H3NoMargin>{followerNumber}</H3NoMargin>
                             <H3NoMargin>{followerNumber === 1 ? 'Follower' : 'Followers'}</H3NoMargin>
                         </FlexColumnCentreDiv>
-                        <FlexColumnCentreDiv style={{cursor: 'pointer'}} onClick={() => profilePublicId && profilePublicId !== publicId ? navigate(`/following/${profilePublicId}/${profileData.name}`) : navigate('/following')}>
+                        <FlexColumnCentreDiv style={{cursor: profilePublicId && profileData ? profileData.followingDisabled ? 'not-allowed' : 'pointer' : 'pointer'}} onClick={() => profilePublicId && profilePublicId !== publicId ? profileData && profileData.followingDisabled ? null : navigate(`/following/${profilePublicId}/${profileData.name}`) : navigate('/following')}>
                             <H3NoMargin>{profilePublicId ? profileData.following : localStorage.getItem('following')}</H3NoMargin>
                             <H3NoMargin>Following</H3NoMargin>
                             {profilePublicId && profileData.isFollower && <H3NoMargin>({profileData.name} follows you)</H3NoMargin>}

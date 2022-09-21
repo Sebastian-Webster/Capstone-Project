@@ -172,6 +172,12 @@ class UserLibrary {
             User.findOneAndUpdate({_id: userId}, {profileImageKey: ''}).then(resolve).catch(reject)
         })
     }
+
+    updatePrivacySettings = (userId, newSettings) => {
+        return new Promise((resolve, reject) => {
+            User.findOneAndUpdate({_id: userId}, {...newSettings}, {returnDocument: 'after'}).then(newUserDocument => resolve(newUserDocument)).catch(reject)
+        })
+    }
 }
 
 module.exports = UserLibrary

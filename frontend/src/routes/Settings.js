@@ -47,9 +47,12 @@ const Settings = () => {
                     <NavLink to='changeprofilepicture' style={selectStyles}>
                         <p>Change Profile Picture</p>
                     </NavLink>
+                    <NavLink to='privacy' style={selectStyles}>
+                        <p>Privacy</p>
+                    </NavLink>
                     <Button variant="outlined" onClick={Logout} size="large" sx={{width: '100%'}}>Logout</Button>
                 </div>
-                <div style={{width: '100%', paddingBottom: 30, paddingTop: 30, display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'scroll'}}>
+                <div style={{width: '100%', paddingBottom: 30, paddingTop: 30, display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'scroll', flexDirection: 'column'}}>
                     <Outlet/>
                 </div>
             </div>

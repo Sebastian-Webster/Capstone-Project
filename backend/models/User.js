@@ -8,7 +8,8 @@ const UserSchema = new Schema({
     followers: Array,
     following: Array,
     profileImageKey: String,
-    publicId: String
+    publicId: String,
+    hideFollowing: {type: Boolean, default: false}
 })
 
 const User = mongoose.model('User', UserSchema);

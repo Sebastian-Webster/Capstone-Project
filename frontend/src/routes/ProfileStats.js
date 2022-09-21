@@ -65,14 +65,20 @@ const ProfileStats = ({type}) => {
             axios.post(`${serverUrl}/user/getUser${type === 'followers' ? 'Followers' : 'Following'}`, toSend).then(response => response.data.data).then(result => {
                 console.log(type)
                 console.log(result)
-                Promise.all(result.map(item => axios.get(`${serverUrl}/user/publicProfileInformation/${item}/${publicId}`))).then(profiles => profiles.map(profile => profile.data.data)).then(profiles => {
+                Promise.all(result.map(item => axios.post(`${serverUrl}/user/getPublicProfileInformation`, {userId: _id, publicId: item}))).then(profiles => profiles.map(profile => profile.data.data)).then(profiles => {
                     console.log('Profiles:')
                     console.log(profiles)
                     Promise.all(profiles.map(sharedCode.addProfilePictureToProfileObject)).then(profilesWithProfilePictures => {
                         console.log('profilesWithProfilePictures:')
                         console.log(profilesWithProfilePictures)
                         dispatch({type: 'doneLoading', items: profilesWithProfilePictures})
+                    }).catch(error => {
+                        dispatch({type: 'error', error})
+                        console.error(error)
                     })
+                }).catch(error => {
+                    dispatch({type: 'error', error})
+                    console.error(error)
                 })
             }).catch(error => {
                 dispatch({type: 'error', error})

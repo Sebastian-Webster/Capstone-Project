@@ -288,7 +288,7 @@ function testGeneralDotCalculateHowManyItemsToSend() {
 testGeneralDotCalculateHowManyItemsToSend()
 console.log('Running tests to see if general.returnPublicProfileInformation is working as intended')
 function testGeneralDotReturnPublicProfileInformation() {
-    const expectedKeys = ['profileImageKey', 'name', 'followers', 'following', 'publicId']
+    const expectedKeys = ['profileImageKey', 'name', 'followers', 'following', 'publicId', 'hideFollowing']
     let userObj = {
         _id: 10,
         __v: 0,
@@ -302,7 +302,9 @@ function testGeneralDotReturnPublicProfileInformation() {
         following: ['followingOne', 'randomGuy'],
         privateId: 'this is private',
         publicId: 'this is public',
-        veryPrivateId: 'Cannot be released to anyone'
+        veryPrivateId: 'Cannot be released to anyone',
+        hideFollowing: true,
+        extremelyPrivateInformation: '123456789- '
     }
     const testResult = general.returnPublicProfileInformation(userObj)
     for (const key of Object.keys(testResult)) {
@@ -460,3 +462,20 @@ function testingHTTPDotForbidden() {
     console.log('http.Forbidden test:', result)
 }
 testingHTTPDotForbidden()
+function testingHTTPDotNotModified() {
+    const tester = new HTTPHandlerTester()
+    const error = 'You supplied data that is already in the database. The data did not get modified.'
+    http.NotModified(tester, error)
+    const result = tester.returnResults()
+    if (result.status !== 304) {
+        throw new Error(`http.NotModified returned status code ${result.status} instead of returning code 304`)
+    }
+    if (result.json.status !== 'NOT MODIFIED') {
+        throw new Error(`http.NotModified returned json.status ${result.json.status} instead of returning NOT MODIFIED`)
+    }
+    if (result.json.error !== error) {
+        throw new Error(`http.NotModified returned json.error ${result.json.error} instead of returning ${error}`)
+    }
+    console.log('http.NotModified test:', result)
+}
+testingHTTPDotNotModified()
