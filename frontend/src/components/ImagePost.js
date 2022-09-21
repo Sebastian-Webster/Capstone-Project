@@ -16,7 +16,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import useColorScheme from '../hooks/useColorScheme';
 import { useNavigate } from 'react-router-dom';
 
-const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicId, postId, dispatch, userId, previewMode, profileName, profileImage, contextMenuPostId, contextMenuAnchorElement, editMode, saving, edited, timesEdited, dateEdited, isPostOwner, likeCount, dateMade, disableFunctionality}) => {
+const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicId, postId, dispatch, userId, previewMode, profileName, profileImage, contextMenuPostId, contextMenuAnchorElement, editMode, saving, edited, timesEdited, dateEdited, isPostOwner, likeCount, dateMade, disableFunctionality, editNumber}) => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext)
     const changingLikeStatus = useRef(false)
     const deleting = useRef(false)
@@ -127,9 +127,9 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
                             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
                                 <img src={profileImage} alt={`Profile Image for user ${profileName}`} style={{width: 50, height: 50, borderRadius: '50%', marginRight: 10}}/>
                                 <h3>{profileName}</h3>
-                                {edited &&
-                                    <div style={{border: `1px solid ${colors.tertiary}`, borderRadius: 20, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '15px 15px', marginLeft: 10, cursor: 'pointer'}} onClick={() => navigate(`/historyviewer/${postId}/image`)}>
-                                        <p style={{color: colors.tertiary, fontWeight: 'bold', textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', margin: 0, textDecorationThickness: 1, textDecorationLine: 'underline'}}>Edited {timesEdited} {timesEdited === 1 ? 'time' : 'times'}</p>
+                                {(edited || typeof editNumber === 'number') &&
+                                    <div style={{border: `1px solid ${colors.tertiary}`, borderRadius: 20, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '15px 15px', marginLeft: 10, cursor: disableFunctionality ? 'initial' : 'pointer'}} onClick={() => disableFunctionality ? null : navigate(`/historyviewer/${postId}/image`)}>
+                                        <p style={{color: colors.tertiary, fontWeight: 'bold', textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', margin: 0, textDecorationThickness: 1, textDecorationLine: disableFunctionality ? 'none' : 'underline'}}>{typeof editNumber === 'number' ? editNumber === 0 ? 'Original Post' : `Edit #${editNumber}` : `Edited ${timesEdited} ${timesEdited === 1 ? 'time' : 'times'}`}</p>
                                     </div>
                                 }
                             </div>
