@@ -91,8 +91,9 @@ const Posts = () => {
                     setError(null)
                     navigate('/profile')
                 }).catch(error => {
+                    console.error(error)
                     setLoading(false)
-                    setError(error?.response?.data?.error)
+                    setError(error?.response?.data?.error || String(error))
                 })
             }
         } else {
