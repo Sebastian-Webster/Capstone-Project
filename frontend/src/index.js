@@ -25,6 +25,7 @@ const LazyChangeProfilePictureSettings = lazy(() => import('./routes/Settings/Ch
 const LazyPostLikeCount = lazy(() => import('./routes/PostLikeCount'))
 const LazyHistoryViewer = lazy(() => import('./routes/HistoryViewer'))
 const LazyPrivacySettings = lazy(() => import('./routes/Settings/Privacy'))
+const LazyTextPostPage = lazy(() => import('./routes/TextPostPage'))
 
 const LazyLoadingComponent = ({text}) => {
   return (
@@ -68,6 +69,7 @@ const ComponentToRender = () => {
                   <Route path="following" element={<Suspense fallback={<LazyLoadingComponent text="Following Screen is loading..."/>}><LazyProfileStats type='following'/></Suspense>}/>
                   <Route path="following/:publicId/:accountName" element={<Suspense fallback={<LazyLoadingComponent text="Following Screen is loading..."/>}><LazyProfileStats type='following'/></Suspense>}/>
                   <Route path="historyviewer/:postId/:postType" element={<Suspense fallback={<LazyLoadingComponent text="History Viewer is loading..."/>}><LazyHistoryViewer/></Suspense>}/>
+                  <Route path="textpost" element={<Suspense fallback={<LazyLoadingComponent text="Text Post Viewer is loading..."/>}><LazyTextPostPage/></Suspense>}/>
                   <Route path="settings" element={<Suspense fallback={<LazyLoadingComponent text="Settings Screen is loading..."/>}><LazySettings/></Suspense>}>
                     <Route path="changepassword" element={<Suspense fallback={<LazyLoadingComponent text="Change Password Settings is loading..."/>}><LazyChangePasswordSettings/></Suspense>}/>
                     <Route path="changeemail" element={<Suspense fallback={<LazyLoadingComponent text="Change Email Settings is loading..."/>}><LazyChangeEmailSettings/></Suspense>}/>

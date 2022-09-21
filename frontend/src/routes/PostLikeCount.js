@@ -40,7 +40,7 @@ const PostLikeCount = () => {
     const {postId,  postType} = useParams();
     const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
     const {storedCredentials, setStoredCredentials} = useContext(CredentialsContext)
-    const {publicId} = storedCredentials;
+    const {publicId, _id} = storedCredentials;
     const [likesState, dispatch] = useReducer(likesReducer, likesInitialState)
     const sharedCode = useSharedCode()
     console.log(likesState)
@@ -51,14 +51,20 @@ const PostLikeCount = () => {
         console.log(url)
         axios.get(url).then(response => response.data.data).then(result => {
             console.log(result)
-            Promise.all(result.map(item => axios.get(`${serverUrl}/user/publicProfileInformation/${item}/${publicId}`))).then(profiles => profiles.map(profile => profile.data.data)).then(profiles => {
+            Promise.all(result.map(item => axios.post(`${serverUrl}/user/getPublicProfileInformation`, {userId: _id, publicId: item}))).then(profiles => profiles.map(profile => profile.data.data)).then(profiles => {
                 console.log('Profiles:')
                 console.log(profiles)
                 Promise.all(profiles.map(sharedCode.addProfilePictureToProfileObject)).then(profilesWithProfilePictures => {
                     console.log('profilesWithProfilePictures:')
                     console.log(profilesWithProfilePictures)
                     dispatch({type: 'doneLoading', likes: profilesWithProfilePictures})
+                }).catch(error => {
+                    dispatch({type: 'error', error})
+                    console.error(error)
                 })
+            }).catch(error => {
+                dispatch({type: 'error', error})
+                console.error(error)
             })
         }).catch(error => {
             dispatch({type: 'error', error})
@@ -90,7 +96,7 @@ const PostLikeCount = () => {
                         </>
                     : likesState.error ? 
                         <>
-                            <h1 style={{color: 'red'}}>{likesState.error}</h1>
+                            <h1 style={{color: 'red'}}>{likesState.error?.response?.data?.error || String(likesState.error)}</h1>
                             <Box sx={{mt: 3, display: 'flex', justifyContent: 'center'}}>
                                 <Button color='error' onClick={loadLikes}>Retry</Button>
                             </Box>
