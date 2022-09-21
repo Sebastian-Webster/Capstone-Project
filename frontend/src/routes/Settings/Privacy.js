@@ -77,6 +77,10 @@ const Privacy = () => {
                     <Box sx={{display: 'flex', justifyContent: 'center'}}>
                         <Button variant='outlined' color={settings.hideFollowing ? 'error' : 'success'} onClick={() => changeSettings({hideFollowing: !settings.hideFollowing})}>{settings.hideFollowing ? 'Disable' : 'Enable'}</Button>
                     </Box>
+                    <h2>Hide who follows you from other users</h2>
+                    <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                        <Button variant='outlined' color={settings.hideFollowers ? 'error' : 'success'} onClick={() => changeSettings({hideFollowers: !settings.hideFollowers})}>{settings.hideFollowers ? 'Disable' : 'Enable'}</Button>
+                    </Box>
                     {errorChangingSettings && <h2 style={{color: 'red'}}>{errorChangingSettings}</h2>}
                 </>
             : null}

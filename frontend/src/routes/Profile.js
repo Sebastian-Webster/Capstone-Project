@@ -576,7 +576,7 @@ const Profile = () => {
                             }
                             {profilePublicId && profilePublicId !== publicId && <FollowButton following={isFollowing} followBack={profileData.isFollower} onPress={handleFollowButtonPress} extraStyles={{marginLeft: 10}}/>}
                         </FlexRowCentreDiv>
-                        <FlexColumnCentreDiv style={{cursor: 'pointer'}} onClick={() => profilePublicId && profilePublicId !== publicId ? navigate(`/followers/${profilePublicId}/${profileData.name}`) : navigate('/followers')}>
+                        <FlexColumnCentreDiv style={{cursor: profileData && profileData.followersDisabled ? 'not-allowed' : 'pointer'}} onClick={() => profilePublicId && profilePublicId !== publicId ? profileData && profileData.followersDisabled ? null : navigate(`/followers/${profilePublicId}/${profileData.name}`) : navigate('/followers')}>
                             <H3NoMargin>{followerNumber}</H3NoMargin>
                             <H3NoMargin>{followerNumber === 1 ? 'Follower' : 'Followers'}</H3NoMargin>
                         </FlexColumnCentreDiv>

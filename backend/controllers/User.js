@@ -863,6 +863,9 @@ const getPublicProfileInformation = async (req, res) => {
     if (userFound.hideFollowing) {
         cleanedResult.followingDisabled = userId !== String(userFound._id)
     }
+    if (userFound.hideFollowers) {
+        cleanedResult.followersDisabled = userId !== String(userFound._id)
+    }
 
     http.OK(res, 'Successfully retreived public profile information', cleanedResult)
 }
@@ -1019,7 +1022,7 @@ const unfollowUser = async (req, res) => {
 }
 
 const getUserFollowers = async (req, res) => {
-    const userId = req?.body?.userId; //Once we implement hiding followers from certain users, the userId will be used to see if that user can see the followers
+    const userId = req?.body?.userId;
     const profilePublicId = req?.body?.profilePublicId
     const limit = 20;
     let skip = req?.body?.skip
@@ -1059,6 +1062,10 @@ const getUserFollowers = async (req, res) => {
     if (userFound.error) {
         http.ServerError(res, 'An error occured while finding followers. Please try again later.')
         return
+    }
+
+    if (userFound.hideFollowers && userId !== String(userFound._id)) {
+        return http.NotAuthorized(res, `You are not authorized to see who follows ${userFound.name}`)
     }
 
     try {
@@ -1653,7 +1660,8 @@ const getPrivacySettings = async (req, res) => {
     }
 
     const settings = {
-        hideFollowing: userFoundById.hideFollowing
+        hideFollowing: userFoundById.hideFollowing,
+        hideFollowers: userFoundById.hideFollowers
     }
 
     http.OK(res, 'Successfully found privacy settings', settings)
@@ -1663,7 +1671,7 @@ const changePrivacySettings = (req, res) => {
     const newPrivacySettings = req?.body?.newPrivacySettings;
     const userId = req?.body?.userId;
     const settingsToChange = {}
-    const acceptableKeys = ['hideFollowing']
+    const acceptableKeys = ['hideFollowing', 'hideFollowers']
 
     if (typeof newPrivacySettings !== 'object' && newPrivacySettings === null && Array.isArray(newPrivacySettings)) {
         return http.BadInput(res, 'newPrivacySettings must be an object')
