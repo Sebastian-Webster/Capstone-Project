@@ -59,7 +59,7 @@ const HistoryViewer = () => {
                     {edit.image ?
                         <ImagePost {...edit} profileName={profileData.name} profileImage={profileData.profilePicture} isPostOwner={false} disableFunctionality/>
                     :
-                        <TextPost {...edit} profileName={profileData.name} profileImage={profileData.profilePicture} isPostOwner={false} disableFunctionality/>
+                        <TextPost {...edit} profileName={profileData.name} profileImage={profileData.profilePicture} isPostOwner={false} editNumber={editHistory.length - index - 1} disableFunctionality/>
                     }
                 </div>
             )
