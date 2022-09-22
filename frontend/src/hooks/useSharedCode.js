@@ -45,9 +45,34 @@ const useSharedCode = () => {
         'Just Now'
     }
 
+    const copyTextToClipboardPromise = (text) => {
+        //navigator.clipboard does not work without https or localhost (secure context)
+    if (navigator.clipboard && window.isSecureContext) {
+        // use async clipboard API
+        return navigator.clipboard.writeText(text); //Returns promise
+    } else {
+        // use legacy way of copying text
+        let textArea = document.createElement("textarea");
+        textArea.value = text;
+        // make the textarea out of viewport
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        return new Promise((resolve, reject) => {
+            // copy the text
+            document.execCommand('copy') ? resolve() : reject('Your browser cannot copy the post link');
+            textArea.remove();
+        });
+    }
+    }
+
     return {
         addProfilePictureToProfileObject,
-        calculateDifferenceBetweenNowAndUTCMillisecondsTime
+        calculateDifferenceBetweenNowAndUTCMillisecondsTime,
+        copyTextToClipboardPromise
     }
 }
 
