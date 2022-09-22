@@ -1,5 +1,19 @@
 # SebMedia<br>
-SebMedia is the social media platform designed with user privacy in mind. Social media companies today gather as much data as they can on their users. SebMedia does none of that. SebMedia only collects the essential data needed to run the service, and nothing more.
+SebMedia is the social media platform designed with user privacy in mind. Social media companies today gather as much data as they can on their users. SebMedia does none of that. SebMedia only collects the essential data needed to run the service, and nothing more.<br>
+
+Privacy-oriented social media platforms do not have to compromise on functionality. SebMedia has many different features that everyone will love, such as:
+
+ 1. Publishing posts with just text or text + image
+ 2. Following friends, family, and other users on SebMedia
+ 3. Edit posts - Never get embarrased by typos ever again
+ 4. History Viewer - A way to view the history of edits on a post. Want to see the original post before it was edited? Or maybe the timeline of edits? Or go to a specific edit, for example the 5th or 8th one? History Viewer is essentially a time machine for SebMedia posts.
+
+SebMedia even has some features that you won't find on other social media platforms:
+
+ 1. Edit posts up to 20 times and with history viewer see when the posts were edited, and see each edit's individual changes.
+ 2. See what your posts are going to look like before you publish them with post preview.
+
+SebMedia protects your privacy, and has a great set of features. It's the well-rounded social media platform for all!
 
 **How to run on your own system**<br>
 SebMedia was designed from the ground up to be able to be downloaded and used by anyone. Here is details on how to get the frontend, backend, and tests to run on your system.
