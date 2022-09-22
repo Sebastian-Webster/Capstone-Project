@@ -53,7 +53,7 @@ const Signup = () => {
             navigate('/home')
         }).catch(error => {
             setLoading(false)
-            setError(error?.response?.data?.error || 'Unknown error occured')
+            setError(error?.response?.data?.error || String(error))
             console.error(error)
         })
     }
