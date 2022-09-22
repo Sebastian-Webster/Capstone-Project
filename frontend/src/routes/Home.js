@@ -220,8 +220,8 @@ const Home = () => {
                             </div>
                 :
                     <>
-                        <h1>Start following some people to see a home feed!</h1>
-                        <h3>Press the search icon here or at the top of the screen to find users to follow!</h3>
+                        <h1 style={{textAlign: 'center'}}>Start following some people to see a home feed!</h1>
+                        <h3 style={{textAlign: 'center'}}>Press the search icon here or at the top of the screen to find users to follow!</h3>
                         <Link to="/search">
                             <FontAwesomeIcon icon={faMagnifyingGlass} style={{color: 'blue'}}/>
                         </Link>
