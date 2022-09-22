@@ -26,7 +26,7 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
     const [editedTitle, bindTitle, resetTitle] = useInput(title, 'title', 'standard', {fontSize: 30, maxWidth: '80%', marginTop: 10})
     const [editedBody, bindBody, resetBody] = useInput(body, 'body', 'standard', {fontSize: 18, maxWidth: '90%', marginTop: 10, marginBottom: 10, maxHeight: 300})
     const colors = useColorScheme()
-    const { calculateDifferenceBetweenNowAndUTCMillisecondsTime } = useSharedCode()
+    const { calculateDifferenceBetweenNowAndUTCMillisecondsTime, copyTextToClipboardPromise } = useSharedCode()
     const navigate = useNavigate()
 
     const toggleLike = () => {
@@ -116,8 +116,7 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
 
     const copyLinkToClipboard = () => {
         const link = `http://${window.location.hostname}/textpost?postId=${postId}`
-        if (!navigator.clipboard.writeText) return dispatch({type: 'openLinkCopyFailSnackbar', error: 'Your browser does not allow automatic clipboard writing'})
-        navigator.clipboard.writeText(link).then(() => {
+        copyTextToClipboardPromise(link).then(() => {
             dispatch({type: 'openLinkCopySuccessSnackbar'})
         }).catch(error => {
             console.error(error)
