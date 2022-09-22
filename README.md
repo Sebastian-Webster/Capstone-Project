@@ -1,4 +1,4 @@
-**SebMedia**<br>
+<center>##**SebMedia**</center><br>
 SebMedia is the social media platform designed with user privacy in mind. Social media companies today gather as much data as they can on their users. SebMedia does none of that. SebMedia only collects the essential data needed to run the service, and nothing more.
 
 **How to run on your own system**<br>
