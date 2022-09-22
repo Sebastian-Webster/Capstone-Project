@@ -23,6 +23,8 @@ The test succeeded if:
  1. When the information entered does not meet the requirements set above, an error is shown and the new user does not get created
  2. When the information entered is correct and meets the requirements set above, the new user gets created and you get logged in and taken to the home screen
 
+Otherwise if both of those two passing requirements were not met, the test has failed.
+
 **Logging into SebMedia**<br>
 Before you can use SebMedia, you must be logged into your account. To test that logging in works correctly, follow these steps
 
@@ -36,6 +38,8 @@ The test succeeded if:
 
  1. When wrong information was entered (wrong password for an account, or email that doesn't associate with a user) you do not get logged in and an error is displayed
  2. When correct information is entered (correct password and email for an account that exists on SebMedia) you get logged in and taken to the home screen
+
+Otherwise if both of those two passing requirements were not met, the test has failed.
 
 **Finding users' profiles - Search Screen**<br>
 In order to test to make sure that the Search Screen is working properly, follow these steps
