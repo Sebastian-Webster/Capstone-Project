@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { CredentialsContext } from '../context/CredentialsContext';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -27,6 +27,9 @@ const Signup = () => {
     const theme = createTheme();
     const { StyledTextField } = useComponent();
     const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
+    const [queryParams, setQueryParams] = useSearchParams()
+    const redirect = JSON.parse(queryParams.get('redirect'))
+    console.log('redirect:', redirect)
 
     const handleSignup = (e) => {
         e.preventDefault();
@@ -50,7 +53,7 @@ const Signup = () => {
             if (rememberMe) localStorage.setItem('SebMediaCredentials', JSON.stringify(result))
             localStorage.setItem('following', '0')
             localStorage.setItem('followers', '0')
-            navigate('/home')
+            navigate(redirect || '/home')
         }).catch(error => {
             setLoading(false)
             setError(error?.response?.data?.error || String(error))
@@ -139,7 +142,7 @@ const Signup = () => {
                                     Signup
                                     </Button>
                                     <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                                        <Link variant='h5' onClick={() => navigate('/login')} sx={{cursor: 'pointer'}}>Already have an account? Login</Link>
+                                        <Link variant='h5' onClick={() => navigate(`/login?redirect=${JSON.stringify(redirect)}`)} sx={{cursor: 'pointer'}}>Already have an account? Login</Link>
                                     </Box>
                                 </Box>
                             </Box>

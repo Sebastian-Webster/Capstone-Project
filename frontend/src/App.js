@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import { Outlet, NavLink, Navigate, useOutlet, useNavigate } from 'react-router-dom'
+import { Outlet, NavLink, Navigate, useOutlet, useNavigate, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHouse, faChartLine, faPlus, faGear, faMoon, faSun, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import './App.css'
@@ -20,6 +20,7 @@ function App() {
   const colors = useColorScheme();
   const outlet = useOutlet();
   const navigate = useNavigate()
+  const location = useLocation()
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     console.log(event.currentTarget)
@@ -92,7 +93,7 @@ function App() {
           <Outlet/>
         </div>
       : 
-        <Navigate to="login"/>
+        <Navigate to={`login?redirect=${JSON.stringify(location.pathname)}`}/>
       }
     </Div>
   );
