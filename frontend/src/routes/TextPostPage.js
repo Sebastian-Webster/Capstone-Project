@@ -9,6 +9,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import TextPost from "../components/TextPost";
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import { defaultPfp } from "../constants";
 
 const TextPostPage = () => {
     const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
@@ -68,17 +69,15 @@ const TextPostPage = () => {
             userId: _id
         }
 
-        axios.post(url, toSend).then(response => response.data.data).then(result => {
-            console.log(result)
-            if (result.profileImageKey) {
-                axios.get(`${serverUrl}/image/${result.profileImageKey}`).then(response => response.data).then(image => {
-                    result.profileImage = 'data:image/jpeg;base64,' + image;
-                    dispatch({type: 'addPost', post: result})
-                }).catch(error => {
-                    console.error(error)
-                    dispatch({type: 'error', error})
-                })
-            } else dispatch({type: 'addPost', post: result})
+        axios.post(url, toSend).then(response => response.data.data).then(async result => {
+            try {
+                console.log(result)
+                result.profileImage = result.profileImageKey ? 'data:image/jpeg;base64,' + (await axios.get(`${serverUrl}/image/${result.profileImageKey}`)).data : defaultPfp
+                dispatch({type: 'addPost', post: result})
+            } catch (error) {
+                console.error(error)
+                dispatch({type: 'error', error})
+            }
         }).catch(error => {
             console.error(error)
             dispatch({type: 'error', error})
