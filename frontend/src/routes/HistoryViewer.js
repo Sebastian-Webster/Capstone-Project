@@ -86,11 +86,13 @@ const HistoryViewer = () => {
             : currentPost && editHistory && profileData ?
                 <>
                     <h1>Current Post:</h1>
-                    {postType === 'text' ?
-                        <TextPost {...currentPost} profileName={profileData.name} profileImage={profileData.profilePicture} isPostOwner={false} editNumber={editHistory.length} disableFunctionality/>
-                    :
-                        <ImagePost {...currentPost} profileName={profileData.name} profileImage={profileData.profilePicture} isPostOwner={false} editNumber={editHistory.length} disableFunctionality/>
-                    }
+                    <div style={{maxWidth: '50vw'}}>
+                        {postType === 'text' ?
+                            <TextPost {...currentPost} profileName={profileData.name} profileImage={profileData.profilePicture} isPostOwner={false} editNumber={editHistory.length} disableFunctionality/>
+                        :
+                            <ImagePost {...currentPost} profileName={profileData.name} profileImage={profileData.profilePicture} isPostOwner={false} editNumber={editHistory.length} disableFunctionality/>
+                        }
+                    </div>
                     <h1>Edits (Most Recent - Least Recent):</h1>
                     {DisplayEdits}
                 </>
