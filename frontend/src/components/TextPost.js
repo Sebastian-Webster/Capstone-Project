@@ -125,7 +125,7 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
     }
 
     return (
-        <Grid item xs={12} md={6} lg={4} xl={3}>
+        <Grid item xs={12} md={6} xl={4}>
             <div style={{border: `1px solid ${darkMode ? 'white' : 'black'}`, padding: 10, minWidth}}>
                 {saving ?
                     <div style={{height: '100%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
