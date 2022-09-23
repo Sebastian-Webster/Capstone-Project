@@ -1760,6 +1760,61 @@ const loadIndividualTextPost = async (req, res) => {
     http.OK(res, 'Successfully found text post', preparedData)
 }
 
+const loadIndividualImagePost = async (req, res) => {
+    const postId = req?.body?.postId;
+    const userId = req?.body?.userId;
+
+    const errorChecks = [
+        errorCheck.checkIfValueIsValidObjectId('postId', postId),
+        errorCheck.checkIfValueIsValidObjectId('userId', userId)
+    ]
+
+    for (const error of errorChecks) {
+        if (error) return http.BadInput(res, error)
+    }
+
+    const postFound = await ImagePost.findPostById(postId)
+
+    if (postFound === null) {
+        return http.NotFound(res, 'Post with id could not be found')
+    }
+
+    if (postFound.error) {
+        logger.error(postFound.error)
+        return http.ServerError(res, 'An error occured while retrieving the image post. Please try again later.')
+    }
+
+    const userFound = await user.findUserById(userId)
+
+    if (userFound === null) {
+        return http.BadInput(res, 'User could not be found with id')
+    }
+
+    if (userFound.error) {
+        logger.error(userFound.error)
+        return http.ServerError(res, 'An error occured while retrieving the image post. Please try again later.')
+    }
+
+    const preparedData = ImagePost.prepareDataToSendToUserSync([postFound._doc], false, userFound.publicId)[0]
+
+    const postCreatorFound = await user.findUserById(String(postFound.creatorId))
+
+    if (postCreatorFound === null) {
+        logger.error(`User with ID ${postFound.creatorId} owns post with id ${postId} even though the user does not exist`)
+        http.NotFound(res, 'Post creator could not be found')
+    }
+
+    if (postCreatorFound.error) {
+        logger.error(postCreatorFound.error)
+        return http.ServerError(res, 'An error occured while retrieving image post. Please try again later.')
+    }
+
+    preparedData.profileName = postCreatorFound.name
+    preparedData.profileImageKey = postCreatorFound.profileImageKey
+
+    http.OK(res, 'Successfully found image post', preparedData)
+}
+
 module.exports = {
     login,
     signup,
@@ -1791,5 +1846,6 @@ module.exports = {
     getPostHistory,
     getPrivacySettings,
     changePrivacySettings,
-    loadIndividualTextPost
+    loadIndividualTextPost,
+    loadIndividualImagePost
 }
