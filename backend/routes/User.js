@@ -30,7 +30,8 @@ const {
     getPostHistory,
     getPrivacySettings,
     changePrivacySettings,
-    loadIndividualTextPost
+    loadIndividualTextPost,
+    loadIndividualImagePost
 } = require('../controllers/User')
 const multer = require('multer')
 const path = require('path')
@@ -146,6 +147,8 @@ const userRoute = (uploadDir) => {
     router.patch('/changeprivacysettings', changePrivacySettings)
 
     router.post('/getindividualtextpost', loadIndividualTextPost)
+
+    router.post('/getindividualimagepost', loadIndividualImagePost)
 
     return router
 }
