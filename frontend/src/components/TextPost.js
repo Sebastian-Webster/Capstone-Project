@@ -142,7 +142,7 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
                                 <h3 style={{marginLeft: 10}}>{profileName}</h3>
                                 {(edited || typeof editNumber === 'number') &&
                                     <div style={{border: `1px solid ${colors.tertiary}`, borderRadius: 20, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '15px 15px', marginLeft: 10, cursor: disableFunctionality ? 'initial' : 'pointer'}} onClick={() => disableFunctionality ? null : navigate(`/historyviewer/${postId}/text`)}>
-                                        <p style={{color: colors.tertiary, fontWeight: 'bold', textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', margin: 0, textDecorationThickness: 1, textDecorationLine: disableFunctionality ? 'none' : 'underline'}}>{typeof editNumber === 'number' ? editNumber === 0 ? 'Original Post' : `Edit #${editNumber}` : `Edited ${timesEdited} ${timesEdited === 1 ? 'time' : 'times'}`}</p>
+                                        <p style={{color: colors.tertiary, fontWeight: 'bold', textDecorationColor: colors.tertiary, textDecorationStyle: 'solid', margin: 0, textDecorationThickness: 1, textDecorationLine: disableFunctionality ? 'none' : 'underline', textAlign: 'center'}}>{typeof editNumber === 'number' ? editNumber === 0 ? 'Original Post' : `Edit #${editNumber}` : `Edited ${timesEdited} ${timesEdited === 1 ? 'time' : 'times'}`}</p>
                                     </div>
                                 }
                             </div>
