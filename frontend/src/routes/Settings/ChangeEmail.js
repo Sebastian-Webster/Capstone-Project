@@ -52,7 +52,7 @@ const ChangeEmail = () => {
                 </>
             :
                 <>
-                    <h1>Current email: {email}</h1>
+                    <h1 style={{textAlign: 'center'}}>Current email: {email}</h1>
                     <form onSubmit={changeEmail} style={{display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center'}}>
                         <h3>New Email</h3>
                         <input {...bindNewEmail}/>

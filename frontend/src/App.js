@@ -88,7 +88,7 @@ function App() {
         </div>
       </header>
       {storedCredentials ? 
-        <div style={{height: 'calc(100vh - 92px)', width: '100vw', margin: 0, padding: 0, paddingTop: 70}}>
+        <div style={{height: '100vh', width: '100vw', margin: 0, padding: 0, paddingTop: 70}}>
           <Outlet/>
         </div>
       : 

@@ -22,7 +22,7 @@ const Settings = () => {
 
     const selectStyles = ({isActive}) => ({
         color: colors.tertiary,
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: isActive ? 'bold' : 'normal',
         textDecoration: 'none',
         textAlign: 'center'
@@ -35,9 +35,8 @@ const Settings = () => {
 
     return (
         <div style={{width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
-            <h1>Settings</h1>
-            <div style={{height: '90%', width: '50%', maxWidth: '50%', backgroundColor: colors.secondary, display: 'flex', flexDirection: 'row', borderRadius: 30}}>
-                <div style={{width: 170, height: 'calc(100% - 60px)', borderRight: `2px solid ${colors.tertiary}`, padding: '30px 5px', overflow: 'scroll'}}>
+            <div style={{height: '85%', width: '50%', maxWidth: '50%', backgroundColor: colors.secondary, display: 'flex', flexDirection: 'row', borderRadius: 30}}>
+                <div style={{width: 170, height: '100%', borderRight: `2px solid ${colors.tertiary}`, padding: '30px 5px', overflow: 'scroll'}}>
                     <NavLink to='changepassword' style={selectStyles}>
                         <p>Change Password</p>
                     </NavLink>
