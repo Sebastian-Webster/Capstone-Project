@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CredentialsContext } from '../context/CredentialsContext';
 import axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -27,6 +27,9 @@ const Login = () => {
     const {darkMode, setDarkMode} = useContext(DarkModeContext);
     const { StyledTextField } = useComponent();
     const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
+    const [queryParams, setQueryParams] = useSearchParams()
+    const redirect = JSON.parse(queryParams.get('redirect'))
+    console.log('redirect:', redirect)
 
     const handleLogin = (e) => {
         e.preventDefault()
@@ -54,7 +57,7 @@ const Login = () => {
             if (rememberMe) localStorage.setItem('SebMediaCredentials', JSON.stringify(accountData))
             localStorage.setItem('following', JSON.stringify(accountData.following))
             localStorage.setItem('followers', JSON.stringify(accountData.followers))
-            navigate('/home')
+            navigate(redirect || '/home')
         }).catch(error => {
             setLoading(false)
             setError(error?.response?.data?.error || String(error))
@@ -130,7 +133,7 @@ const Login = () => {
                                     Sign In
                                     </Button>
                                     <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                                        <Link variant='h5' onClick={() => navigate('/signup')} sx={{cursor: 'pointer'}}>Don't have an account? Signup</Link>
+                                        <Link variant='h5' onClick={() => navigate(`/signup?redirect=${JSON.stringify(redirect)}`)} sx={{cursor: 'pointer'}}>Don't have an account? Signup</Link>
                                     </Box>
                                 </Box>
                             </Box>
