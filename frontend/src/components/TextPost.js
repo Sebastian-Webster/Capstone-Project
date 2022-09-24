@@ -115,13 +115,15 @@ const TextPost = ({title, body, datePosted, liked, publicId, postId, dispatch, u
     }
 
     const copyLinkToClipboard = () => {
-        const link = `http://${window.location.hostname}/textpost?postId=${postId}`
-        copyTextToClipboardPromise(link).then(() => {
-            dispatch({type: 'openLinkCopySuccessSnackbar'})
-        }).catch(error => {
-            console.error(error)
-            dispatch({type: 'openLinkCopyFailSnackbar', error: String(error)})
-        })
+        if (!previewMode && !disableFunctionality) {
+            const link = `http://${window.location.hostname}/textpost?postId=${postId}`
+            copyTextToClipboardPromise(link).then(() => {
+                dispatch({type: 'openLinkCopySuccessSnackbar'})
+            }).catch(error => {
+                console.error(error)
+                dispatch({type: 'openLinkCopyFailSnackbar', error: String(error)})
+            })
+        }
     }
 
     return (
