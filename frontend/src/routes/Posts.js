@@ -28,8 +28,8 @@ const Container = (props) => {
 }
 
 const Posts = () => {
-    const [title, bindTitle] = useInput('', 'title', 'standard', {height: 30, width: '20%'})
-    const [body, bindBody] = useInput('', 'body', 'standard', {maxWidth: '95%', minWidth: '20%'})
+    const [title, bindTitle] = useInput('', 'title', 'standard', {height: 30, width: '20%'}, 'text', true)
+    const [body, bindBody] = useInput('', 'body', 'standard', {maxWidth: '95%', minWidth: '20%'}, 'text', true)
     const [imagePreview, setImagePreview] = useState(null)
     const { FlexColumnCentreDiv } = useComponent()
     const [openFilePicker, { plainFiles: imageToUpload }] = useFilePicker({accept: 'image/jpeg', multiple: false})

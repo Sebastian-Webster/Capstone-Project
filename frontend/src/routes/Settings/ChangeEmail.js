@@ -11,8 +11,8 @@ import * as _ from 'lodash'
 const ChangeEmail = () => {
     const {storedCredentials, setStoredCredentials} = useContext(CredentialsContext)
     const {email, _id} = storedCredentials;
-    const [newEmail, bindNewEmail] = useInput('', 'newEmail', 'standard', {height: 30, fontSize: 20, minWidth: '70%'})
-    const [password, bindPassword] = useInput('', 'password', 'standard', {height: 30, fontSize: 20, minWidth: '70%'}, 'password')
+    const [newEmail, bindNewEmail] = useInput('', 'newEmail', 'standard', {height: 30, fontSize: 20, minWidth: '70%'}, 'email', true)
+    const [password, bindPassword] = useInput('', 'password', 'standard', {height: 30, fontSize: 20, minWidth: '70%'}, 'password', true)
     const [changingEmail, setChangingEmail] = useState(false)
     const [errorChangingEmail, setErrorChangingEmail] = useState(null)
     const {serverUrl, setServerUrl} = useContext(ServerUrlContext)

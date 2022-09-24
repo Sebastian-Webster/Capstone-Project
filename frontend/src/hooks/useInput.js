@@ -5,7 +5,7 @@ const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
-const useInput = (initialText = '', inputName, variant = 'outlined', extraStyles = {}, inputType = 'text') => {
+const useInput = (initialText = '', inputName, variant = 'outlined', extraStyles = {}, inputType = 'text', standardInput) => {
     const [text, setText] = useState(initialText);
     const {darkMode, setDarkMode} = useContext(DarkModeContext);
 
@@ -13,18 +13,7 @@ const useInput = (initialText = '', inputName, variant = 'outlined', extraStyles
         setText(initialText)
     }
 
-    const bind = {
-        value: text,
-        onChange: (e) => {
-            setText(e.target.value)
-        },
-        name: inputName,
-        type: inputType,
-        sx: {
-            mt: 2
-        },
-        variant,
-        label: capitalizeFirstLetter(inputName),
+    const muiBind = {
         InputLabelProps: {
             style: {
                 color: darkMode ? 'white' : 'black'
@@ -65,13 +54,30 @@ const useInput = (initialText = '', inputName, variant = 'outlined', extraStyles
             notchedOutline: {
                 color: darkMode ? 'white' : 'black'
             }
+        }
+    }
+
+    const extras = standardInput ? {} : muiBind
+
+    const bind = {
+        value: text,
+        onChange: (e) => {
+            setText(e.target.value)
         },
+        name: inputName,
+        type: inputType,
+        sx: {
+            mt: 2
+        },
+        variant,
+        label: capitalizeFirstLetter(inputName),
         style: {
             backgroundColor: 'transparent',
             border: `2px solid ${darkMode ? 'white' : 'black'}`,
             color: darkMode ? 'white' : 'black',
             ...extraStyles
-        }
+        },
+        ...extras
     }
 
     return [text, bind, resetToDefault];

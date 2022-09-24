@@ -10,9 +10,9 @@ import CircularProgress from '@mui/material/CircularProgress'
 const ChangePassword = () => {
     const {storedCredentials, setStoredCredentials} = useContext(CredentialsContext)
     const {_id} = storedCredentials;
-    const [oldPassword, bindOldPassword, resetOldPassword] = useInput('', 'oldPassword', 'standard', {height: 30, fontSize: 20, minWidth: '70%'}, 'password')
-    const [newPassword, bindNewPassword, resetNewPassword] = useInput('', 'newPassword', 'standard', {height: 30, fontSize: 20, minWidth: '70%'}, 'password')
-    const [confirmPassword, bindConfirmPassword, resetConfirmPassword] = useInput('', 'confirmPassword', 'standard', {height: 30, fontSize: 20, minWidth: '70%'}, 'password')
+    const [oldPassword, bindOldPassword, resetOldPassword] = useInput('', 'oldPassword', 'standard', {height: 30, fontSize: 20, minWidth: '70%'}, 'password', true)
+    const [newPassword, bindNewPassword, resetNewPassword] = useInput('', 'newPassword', 'standard', {height: 30, fontSize: 20, minWidth: '70%'}, 'password', true)
+    const [confirmPassword, bindConfirmPassword, resetConfirmPassword] = useInput('', 'confirmPassword', 'standard', {height: 30, fontSize: 20, minWidth: '70%'}, 'password', true)
     const [changingPassword, setChangingPassword] = useState(false)
     const [changingPasswordError, setChangingPasswordError] = useState(null)
     const [successfullyChangedPassword, setSuccessfullyChangedPassword] = useState(false)
