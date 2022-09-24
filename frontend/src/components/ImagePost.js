@@ -24,8 +24,8 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
     const NetworkRequestController = new AbortController();
     const open = previewMode ? false : contextMenuPostId === postId
     const { calculateDifferenceBetweenNowAndUTCMillisecondsTime, copyTextToClipboardPromise } = useSharedCode()
-    const [editedTitle, bindTitle, resetTitle] = useInput(title, 'title', 'standard', {fontSize: 30, maxWidth: '80%', marginTop: 10})
-    const [editedBody, bindBody, resetBody] = useInput(body, 'body', 'standard', {fontSize: 18, maxWidth: '90%', marginTop: 10, marginBottom: 10, maxHeight: 300})
+    const [editedTitle, bindTitle, resetTitle] = useInput(title, 'title', 'standard', {fontSize: 30, maxWidth: '80%', marginTop: 10}, 'text', true)
+    const [editedBody, bindBody, resetBody] = useInput(body, 'body', 'standard', {fontSize: 18, maxWidth: '90%', marginTop: 10, marginBottom: 10, maxHeight: 300}, 'text', true)
     const colors = useColorScheme()
     const navigate = useNavigate()
 

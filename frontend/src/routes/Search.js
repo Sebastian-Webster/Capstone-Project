@@ -36,7 +36,7 @@ const profilesInitialState = {
 
 const Search = () => {
     const colors = useColorScheme()
-    const [searchQuery, bindSearchQuery] = useInput('', 'searchQuery', 'standard', {width: '60vw', height: 60, fontSize: 20, paddingLeft: 70, borderRadius: 30, paddingRight: 20})
+    const [searchQuery, bindSearchQuery] = useInput('', 'searchQuery', 'standard', {width: '60vw', height: 60, fontSize: 20, paddingLeft: 70, borderRadius: 30, paddingRight: 20}, 'text', true)
     const {serverUrl, setServerUrl} = useContext(ServerUrlContext)
     const [profileState, dispatchProfiles] = useReducer(profilesReducer, profilesInitialState)
     const searchTimeout = useRef(null)
