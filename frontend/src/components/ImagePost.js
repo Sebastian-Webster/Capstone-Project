@@ -84,14 +84,14 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
     }
 
     const editPost = () => {
-        if (!previewMode && disableFunctionality) {
+        if (!previewMode && !disableFunctionality) {
             dispatch({type: 'turnOnEditMode', postId})
             handleContextMenuClose()
         }
     }
 
     const revertEdits = () => {
-        if (!previewMode && disableFunctionality) {
+        if (!previewMode && !disableFunctionality) {
             resetTitle()
             resetBody()
             dispatch({type: 'turnOffEditMode', postId})
@@ -99,7 +99,7 @@ const ImagePost = ({title, body, datePosted, image, previewImage, liked, publicI
     }
 
     const saveEdits = () => {
-        if (!previewMode && disableFunctionality) {
+        if (!previewMode && !disableFunctionality) {
             dispatch({type: 'savingEdits', postId})
             axios.put(`${serverUrl}/user/imagepost`, {userId, postId, newTitle: editedTitle, newBody: editedBody}, {signal: NetworkRequestController.signal}).then(() => {
                 dispatch({type: 'editsSaved', postId, newTitle: editedTitle, newBody: editedBody})
