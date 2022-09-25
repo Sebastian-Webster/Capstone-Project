@@ -7,7 +7,7 @@ const UserSchema = new Schema({
     password: String,
     followers: Array,
     following: Array,
-    profileImageKey: String,
+    profileImageKey: {type: String, default: ''},
     publicId: String,
     hideFollowing: {type: Boolean, default: false},
     hideFollowers: {type: Boolean, default: false}
