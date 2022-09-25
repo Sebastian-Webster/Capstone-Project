@@ -39,7 +39,7 @@ const HistoryViewer = () => {
             const {profileData, editHistory, currentPost} = result;
 
             if (currentPost.imageKey) currentPost.image = ('data:image/jpeg;base64,' + (await axios.get(`${serverUrl}/image/${currentPost.imageKey}`)).data)
-            profileData.profilePicture = profileData.profileImageKey !== '' ? ('data:image/jpeg;base64,' + (await axios.get(`${serverUrl}/image/${profileData.profileImageKey}`)).data) : defaultPfp
+            profileData.profilePicture = profileData?.profileImageKey && profileData?.profileImageKey !== '' ? ('data:image/jpeg;base64,' + (await axios.get(`${serverUrl}/image/${profileData.profileImageKey}`)).data) : defaultPfp
             setCurrentPost(currentPost)
             setEditHistory(editHistory.sort((a,b) => b.dateMade - a.dateMade))
             setProfileData(profileData)
