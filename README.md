@@ -45,7 +45,7 @@ This tutorial assumes you already have Redis installed and have it running on yo
  7. In the 2nd line, write ``REDIS_URL="url-here"``. Replace ``url-here`` with the url to the Redis cache running on your system (if you are running Redis with default settings the url will be ``redis://127.0.0.1:6379``)
  8. In the backend folder, run the command ``npm start``
  9. In the frontend folder, also run the command ``npm start`` (may ask for administrator password as the react development server will run on port 80, and generally any port under 1024 needs administrator permissions. If you want to run this without your administrator password, go to package.json in the frontend folder and change the ``PORT=80`` part in ``scripts.start`` and change 80 to the port you want to use)
- 10. Once both the backend and frontend have launched, open a browser and open ``http://localhost`` OR ``http://localhost:port-you-chose-here`` if you changed the port in step 7
+ 10. Once both the backend and frontend have launched, open a browser and open ``http://localhost`` OR ``http://localhost:port-you-chose-here`` if you changed the port in step 9
 
 If everything was successful, a login page will show up.<br>
 If anything other than that happens, it was not successful.<br>
