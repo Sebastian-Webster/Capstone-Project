@@ -25,10 +25,13 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: npm install for tests folder
-      run: cd tests && npm install
+      working-directory: tests
+      run: npm install
 
     - name: npm install for backend folder
-      run: cd backend && npm install
+      working-directory: backend
+      run: npm install
 
     - name: Run tests
-      run: cd tests && node tests
+      working-directory: tests
+      run: node tests
