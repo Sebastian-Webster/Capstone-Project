@@ -1,3 +1,8 @@
+# :warning: Repository Archived :warning:
+This repository has been archived. The issues marked as "wontimplement" were marked as "wontimplement" because there was not enough time to get it done before the Capstone Project presentation date. The commits made in December 2022 were made to fix a typo in documentation and the commits made in February 2023 were made to update CI dependencies. There have been no functional changes made to this project since the Capstone Project due date (September 26th 2022). This repository is a snapshot of my coding ability in September 2022. Documentation from 2022 starts below this message...
+
+<br><br>
+
 # SebMedia<br>
 SebMedia is the social media platform designed with user privacy in mind. Social media companies today gather as much data as they can on their users. SebMedia does none of that. SebMedia only collects the essential data needed to run the service, and nothing more.<br>
 
